@@ -4300,6 +4300,27 @@ main { padding-top: var(--header-h); }
         if (f1Sources[state]) f1Img.src = f1Sources[state];
       });
     });
+
+    // Preload the OTHER state's SVG once F1 scrolls into view, so the first
+    // toggle click is instant instead of waiting on a ~10MB download.
+    var f1Wrap = f1Img.closest('.f1-wrap');
+    if (f1Wrap && 'IntersectionObserver' in window) {
+      var preloaded = false;
+      var preloadObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting && !preloaded) {
+            preloaded = true;
+            // Determine which state isn't currently loaded and prefetch it
+            var currentSrc = f1Img.getAttribute('src') || '';
+            var other = currentSrc.indexOf('jails') > -1 ? f1Sources.prisons : f1Sources.jails;
+            var preImg = new Image();
+            preImg.src = other;  // browser caches it; toggle click is instant
+            preloadObs.unobserve(en.target);
+          }
+        });
+      }, { rootMargin: '300px 0px 300px 0px' });  // start preload 300px before F1 hits viewport
+      preloadObs.observe(f1Wrap);
+    }
   }
 
   /* ---------- Finding video click overlays ----------
