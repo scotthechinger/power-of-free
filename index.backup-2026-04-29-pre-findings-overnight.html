@@ -1,0 +1,3417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The Power of Free — Critical Connections</title>
+<meta name="description" content="How free communication in prisons and jails is transforming lives, strengthening families, and reshaping reentry." />
+
+<!-- ============================================================
+     POWER OF FREE — Standalone backup site
+     - Single-file HTML / CSS / JS (no build, no dependencies)
+     - Animation system via [data-anim] + IntersectionObserver
+     - To trigger any animation on any element:
+         <div data-anim="fade-up">          → fade in + rise
+         <div data-anim="slide-left">       → slide in from right
+         <div data-anim="slide-right">      → slide in from left
+         <div data-anim="scale-in">         → grow from 95%
+         <div data-anim="mask-wipe">        → reveal left→right
+         <div data-anim="bar-grow">         → height: 0 → final
+         <div data-anim="counter" data-counter-end="73"> → number rolls up
+         data-anim-delay="200"  → stagger ms
+         data-anim-duration="900" → override default
+     - Adding a new primitive: add @keyframes + .anim--name + an entry
+       in animateEnter() if it needs JS (counter, bar-grow).
+============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   FONTS
+============================================================ */
+@font-face {
+  font-family: 'ConcretteXL';
+  src: url('https://static1.squarespace.com/static/69e1203d112d1a457a907074/t/69f0555522b0f60778021aba/1777358166235/ConcretteXL-MediumItalic.woff2') format('woff2'),
+       url('https://static1.squarespace.com/static/69e1203d112d1a457a907074/t/69f0555526608a246e28a2c6/1777358166576/ConcretteXL-MediumItalic.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ============================================================
+   DESIGN TOKENS
+============================================================ */
+:root {
+  /* Brand palette */
+  --cloud-neutral:   #F0EEE9;
+  --deep-plum:       #4B0F63;
+  --royal-aubergine: #5C1A7A;
+  --soft-lavender:   #D6B4FC;
+  --warm-coral:      #E4572E;
+  --mist-sage:       #C8D2B3;
+  --acid-lime:       #8FBF3D;
+  --ink:             #32302F;
+  --ink-soft:        #5a544f;
+  --rule:            rgba(34, 34, 34, 0.10);
+
+  /* Type */
+  --display: "Inter Display", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sans:    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --accent:  "ConcretteXL", "Fraunces", Georgia, serif;
+
+  /* Layout */
+  --gutter:      clamp(20px, 5vw, 71px);    /* side margin to text on either side */
+  --gutter-edge: clamp(20px, 1.5vw, 28px);  /* tighter for edge-bleeding sections (header, footer logos) */
+  --top-pad:     clamp(96px, 16vh, 151px);  /* top padding for sections — targets 151 from top edge to first text/eyebrow */
+  --header-h:    72px;
+  --subnav-h:    60px;
+
+  /* Motion */
+  --ease:      cubic-bezier(.2,.7,.2,1);
+  --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+  --anim-dur:  900ms;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+/* Anchor scroll target — leave room for the sticky header so #aboutreport,
+   #findings, #actions, #aboutproject, #hero-video all land flush with section top
+   instead of being half-hidden under the nav bar. */
+:target,
+section[id] { scroll-margin-top: var(--header-h); }
+[id="hero-video"], [id="aboutreport"], [id="aboutproject"], [id="findings"], [id="actions"] { scroll-margin-top: var(--header-h); }
+body {
+  font-family: var(--display);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--cloud-neutral);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "cv11";
+}
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+
+
+/* ============================================================
+   TYPOGRAPHY
+============================================================ */
+.display, .display-sub, .h-display, .finding-title {
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.10;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--ink);
+}
+.display      { font-size: clamp(64px, 9vw, 132px); line-height: 1.0; }
+.display-sub  { font-size: clamp(22px, 2.4vw, 32px); font-weight: 600; line-height: 1.2; margin-top: 12px; letter-spacing: 0.02em; text-transform: none; color: var(--ink-soft); }
+.h-display    { font-size: clamp(40px, 5.4vw, 72px); }
+.h-display em { font-style: italic; font-family: var(--accent); font-weight: 500; color: var(--warm-coral); letter-spacing: -0.01em; }
+.finding-title{ font-size: clamp(36px, 5vw, 64px); }
+
+.lede {
+  font-size: clamp(16px, 1.2vw, 18px);
+  max-width: 56ch;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+.lead-para {
+  font-family: var(--display);
+  font-size: clamp(17px, 1.2vw, 19px);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--ink);
+}
+.eyebrow-plum  { color: var(--deep-plum); }
+.eyebrow-light { color: #fff; }
+
+
+/* ============================================================
+   ANIMATION SYSTEM
+   - Each primitive sets initial state on the element.
+   - `.is-in` triggers the transition to the resting state.
+   - Delays/durations come from inline custom properties set by JS.
+============================================================ */
+[data-anim] {
+  --d: var(--anim-dur);
+  --delay: 0ms;
+  transition-duration: var(--d);
+  transition-delay: var(--delay);
+  transition-timing-function: var(--ease-out);
+  will-change: transform, opacity;
+}
+
+/* fade-up */
+[data-anim="fade-up"]            { opacity: 0; transform: translateY(40px); transition-property: opacity, transform; }
+[data-anim="fade-up"].is-in      { opacity: 1; transform: translateY(0); }
+
+/* slide-left (enters from right) */
+[data-anim="slide-left"]         { opacity: 0; transform: translateX(60px); transition-property: opacity, transform; }
+[data-anim="slide-left"].is-in   { opacity: 1; transform: translateX(0); }
+
+/* slide-right (enters from left) */
+[data-anim="slide-right"]        { opacity: 0; transform: translateX(-60px); transition-property: opacity, transform; }
+[data-anim="slide-right"].is-in  { opacity: 1; transform: translateX(0); }
+
+/* scale-in */
+[data-anim="scale-in"]           { opacity: 0; transform: scale(.94); transition-property: opacity, transform; }
+[data-anim="scale-in"].is-in     { opacity: 1; transform: scale(1); }
+
+/* mask-wipe (left→right reveal using clip-path) */
+[data-anim="mask-wipe"]          { clip-path: inset(0 100% 0 0); transition-property: clip-path; }
+[data-anim="mask-wipe"].is-in    { clip-path: inset(0 0 0 0); }
+
+/* bar-grow — for vertical bars in graphs */
+[data-anim="bar-grow"]           { transform-origin: bottom; transform: scaleY(0); transition-property: transform; }
+[data-anim="bar-grow"].is-in     { transform: scaleY(1); }
+
+/* range-grow — for horizontal range bars */
+[data-anim="range-grow"]         { transform-origin: left; transform: scaleX(0); transition-property: transform; }
+[data-anim="range-grow"].is-in   { transform: scaleX(1); }
+
+/* counter — JS sets text content; element fades up */
+[data-anim="counter"]            { opacity: 0; transform: translateY(12px); transition-property: opacity, transform; }
+[data-anim="counter"].is-in      { opacity: 1; transform: translateY(0); }
+
+/* draw-path — SVG path stroke-dashoffset draw-on */
+[data-anim="draw-path"]          { stroke-dasharray: 1; stroke-dashoffset: 1; transition-property: stroke-dashoffset; transition-duration: 2200ms; }
+[data-anim="draw-path"].is-in    { stroke-dashoffset: 0; }
+
+
+/* Reduced motion: turn it ALL off */
+@media (prefers-reduced-motion: reduce) {
+  [data-anim] {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}
+
+
+/* ============================================================
+   BUTTONS / LINKS
+============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border-radius: 4px;
+  transition: transform .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-coral { background: var(--warm-coral); color: #fff; }
+.btn-coral:hover { background: #d44a23; }
+.btn-plum  { background: var(--deep-plum); color: #fff; }
+.btn-plum:hover { background: var(--royal-aubergine); }
+.btn-ghost { background: transparent; color: var(--deep-plum); border: 1px solid var(--deep-plum); }
+.btn-ghost:hover { background: var(--deep-plum); color: #fff; }
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--deep-plum);
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+.link-arrow:hover { color: var(--warm-coral); }
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+.site-header {
+  position: fixed; /* fixed so it can slide off-screen on idle */
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: #ffffff;
+  border-bottom: 1px solid var(--rule);
+  transition: transform .35s var(--ease), box-shadow .3s, opacity .3s;
+}
+.site-header.is-scrolled { box-shadow: 0 4px 24px -16px rgba(0,0,0,.18); }
+.site-header.is-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header { transition: opacity .2s; }
+}
+/* Spacer so the fixed header doesn't overlap the first section */
+main { padding-top: var(--header-h); }
+.header-inner {
+  padding: 0 0 0 var(--gutter);   /* left padded; right edge flush so CTA hits viewport edge */
+  display: flex;
+  align-items: stretch;            /* let CTA stretch full height */
+  justify-content: space-between;
+  gap: 32px;
+  height: var(--header-h);
+  max-width: none;
+  margin: 0;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-size: 18px;
+  color: var(--ink);
+  align-self: center;
+}
+.brand-logo {
+  height: 36px;
+  width: auto;
+}
+.brand-mark { color: var(--deep-plum); font-size: 16px; }
+.header-right {
+  display: flex;
+  align-items: stretch;            /* CTA full-height, nav still center-aligned via primary-nav itself */
+  gap: 0;
+  margin-left: auto;
+  height: 100%;
+}
+.primary-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 2.4vw, 40px);
+  padding-right: clamp(20px, 3vw, 48px);
+}
+.primary-nav a {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  position: relative;
+  padding: 4px 0;
+}
+.primary-nav a::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -2px;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s var(--ease);
+}
+.primary-nav a:hover::after { transform: scaleX(1); }
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warm-coral);
+  color: #fff;
+  padding: 0 clamp(28px, 3vw, 56px); /* horizontal only — vertical fills full nav height */
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 0;
+  height: 100%;
+  align-self: stretch;
+  transition: background .25s var(--ease);
+}
+.header-cta:hover { background: #d44a23; }
+
+
+/* ============================================================
+   HERO
+============================================================ */
+.hero {
+  /* Two-layer hero matching the SQS block exactly: full illustration SVG
+     (Frame 2117131439, cord path stripped) as one img, then a separate cord
+     SVG with the same 1440x800 viewBox + same path so it lands exactly where
+     the cord was. JS animates stroke-dashoffset on the cord. */
+  background-color: var(--cloud-neutral);
+  position: relative;
+  min-height: calc(100vh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-illustration {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+.hero-cord-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-cord-layer svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+@media (max-width: 720px) {
+  .hero { background-size: 180% auto; background-position: center bottom; }
+  .hero-cord-layer { display: none; }
+}
+.hero-inner { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: var(--top-pad) var(--gutter); }
+.hero .display {
+  /* "THE POWER OF FREE" all on one line — slightly tighter than other display text */
+  font-size: clamp(44px, 6.4vw, 92px);
+  line-height: 1.0;
+  white-space: nowrap;
+  margin: 16px 0 0;
+}
+.hero .display em {
+  /* Concrette italic accent — coral per Scott. Same font-size as siblings so
+     baselines line up naturally; no manual nudging required. */
+  font-family: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--warm-coral);
+  letter-spacing: -0.01em;
+}
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 40px;
+  justify-content: center;
+}
+.hero-btn {
+  /* Larger, more rectangular buttons matching the Figma hero CTAs */
+  padding: 18px 32px;
+  border-radius: 0;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+}
+.hero-btn:hover { transform: translateY(-1px); }
+.hero .lede { margin: 28px auto 0; }
+@media (max-width: 720px) {
+  .hero .display { white-space: normal; font-size: clamp(40px, 11vw, 64px); }
+}
+
+
+/* ============================================================
+   ABOUT THE REPORT — split (deep-plum / soft-lavender)
+============================================================ */
+.about {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: clamp(560px, 82vh, 780px);
+  padding: 0;
+}
+.about-copy, .about-visual {
+  padding: var(--top-pad) var(--gutter);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.about-copy {
+  background: var(--deep-plum);
+  color: #ffffff;
+  align-items: flex-start;
+}
+.about-copy .eyebrow { color: var(--soft-lavender); margin-bottom: 24px; }
+.about-copy .h-display {
+  /* Sized to fit "FREE COMMUNICATION" (18 chars) on a single line within the
+     left column. Both lines use the same size for visual symmetry. */
+  color: #ffffff;
+  margin: 0 0 24px;
+  max-width: none;
+  line-height: 1.0;
+  font-size: clamp(28px, 3.6vw, 56px);
+  letter-spacing: -0.02em;
+}
+.about-copy .h-display .line { display: block; white-space: nowrap; }
+.about-copy .h-display em {
+  color: var(--warm-coral);
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.about-cta-btn {
+  /* Match the hero buttons exactly: square corners, larger padding, tighter letter-spacing */
+  margin-top: 28px;
+  padding: 18px 32px;
+  border-radius: 0;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+}
+.about-cta-btn:hover { transform: translateY(-1px); }
+.about-copy p { color: rgba(255,255,255,.85); margin: 14px 0; line-height: 1.6; max-width: 52ch; }
+.about-copy .link-arrow { margin-top: 14px; color: #fff; border-bottom-color: rgba(255,255,255,.6); }
+.about-copy .link-arrow:hover { color: var(--warm-coral); }
+.about-visual {
+  background: var(--soft-lavender);
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.about-toc-svg { width: min(420px, 78%); }
+.about-toc-svg svg { width: 100%; height: auto; }
+.report-cta {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(40px, 7vh, 80px);
+  transform: translateX(-50%);
+  z-index: 3;
+}
+.report-cta-circle {
+  width: clamp(160px, 14vw, 200px);
+  height: clamp(160px, 14vw, 200px);
+  border-radius: 50%;
+  background: var(--warm-coral);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(14px, 1.1vw, 17px);
+  line-height: 1.1;
+  text-align: center;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background .3s var(--ease), transform .3s var(--ease);
+  box-shadow: 0 20px 50px -16px rgba(228,87,46,.55);
+}
+.report-cta:hover .report-cta-circle { background: #d44a23; transform: rotate(-6deg) scale(1.04); }
+
+@media (max-width: 900px) {
+  .about { grid-template-columns: 1fr; min-height: 0; }
+  .about-copy, .about-visual { padding: 56px var(--gutter); }
+  .report-cta { position: static; transform: none; margin: 32px auto 0; display: block; }
+}
+
+
+/* ============================================================
+   HERO VIDEO — Vimeo embed with poster + close button
+============================================================ */
+.hero-video-section {
+  /* Fills 100% of viewport width AND fits within the viewport height (minus
+     header) so the lavender title card stays in view without scrolling.
+     Aspect ratio dropped — Vimeo's player handles internal letterboxing if
+     the video's aspect doesn't match the section. */
+  position: relative;
+  background: #1a1a1a;
+  overflow: hidden;
+  width: 100%;
+  height: calc(100vh - var(--header-h));
+}
+.hero-video-ambient {
+  /* Looping muted ambient video that plays in the bg until the user clicks
+     play. Falls back to the static thumbnail (poster attr) on older browsers
+     or while the video is buffering. */
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #2a2a2a;
+}
+.hero-video-section.is-playing .hero-video-ambient { display: none; }
+.hero-video-poster {
+  position: absolute; inset: 0;
+  background: transparent; /* video shows through behind the button */
+  cursor: pointer;
+  border: 0; padding: 0; margin: 0;
+  width: 100%; height: 100%;
+  display: block;
+  z-index: 1;
+}
+/* Centered play button removed — was blocking the ambient video. The play
+   visual now lives inside the title card (bottom-right). The poster button
+   itself still covers the full area so clicking anywhere triggers playback. */
+.hero-video-play { display: none; }
+.hero-video-card {
+  /* Deep-plum card flush bottom-right. Play button on the LEFT, title text on
+     the right. Sized so "A Smile You Can Hear" fits on a single line at
+     desktop. */
+  position: absolute;
+  right: 0; bottom: 0;
+  z-index: 4;
+  background: var(--deep-plum);
+  color: #fff;
+  padding: clamp(24px, 2.4vw, 36px) clamp(28px, 3vw, 48px);
+  width: auto;
+  max-width: 90%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 2.4vw, 36px);
+}
+.hero-video-card-text { flex: 1; min-width: 0; pointer-events: none; }
+.hero-video-card-play {
+  flex-shrink: 0;
+  width: clamp(56px, 5vw, 76px);
+  height: clamp(56px, 5vw, 76px);
+  border-radius: 50%;
+  background: var(--warm-coral); /* coral on plum card */
+  color: #fff;
+  display: grid;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.12s ease, filter 0.12s ease;
+  box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
+}
+.hero-video-card-play svg { width: 36%; height: 36%; transform: translateX(2px); }
+/* Hover ONLY when the play button itself is hovered/focused */
+.hero-video-card-play:hover,
+.hero-video-card-play:focus-visible {
+  filter: brightness(1.08);
+  transform: scale(1.06);
+}
+.hero-video-card h3 {
+  font-family: var(--display);
+  font-size: clamp(22px, 2.2vw, 36px);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 clamp(14px, 2vh, 24px);
+  white-space: nowrap;
+}
+.hero-video-card p {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.4;
+  margin: 0;
+}
+.hero-video-section.is-playing .hero-video-poster,
+.hero-video-section.is-playing .hero-video-card { display: none; }
+.hero-video-section.is-playing .hero-video-frame { display: block; }
+.hero-video-frame {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: 0;
+  z-index: 5;
+}
+.hero-video-close {
+  /* White X on a coral circle, top-right. Only visible while video is playing —
+     clicking returns the section to its initial poster state. Coral chosen so
+     the X reads clearly against any video frame. */
+  display: flex;
+  position: absolute;
+  top: clamp(16px, 2vh, 28px);
+  right: clamp(16px, 2vw, 32px);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--warm-coral);
+  border: 0; cursor: pointer;
+  z-index: 10;
+  align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px -8px rgba(0,0,0,0.45);
+  transition: filter 0.2s, transform 0.2s;
+  opacity: 0;
+  pointer-events: none;
+}
+.hero-video-close:hover { filter: brightness(.92); transform: scale(1.06); }
+.hero-video-close svg { width: 18px; height: 18px; color: #fff; }
+.hero-video-section.is-playing .hero-video-close { opacity: 1; pointer-events: auto; }
+@media (max-width: 720px) {
+  .hero-video-section { aspect-ratio: auto; max-height: none; }
+  .hero-video-section .hero-video-poster { position: relative; aspect-ratio: 16/9; }
+  .hero-video-card { position: relative; right: auto; bottom: auto; width: 100%; padding: 24px; }
+  .hero-video-card h3 { font-size: 28px; }
+}
+
+
+/* ============================================================
+   QUOTES — full-bleed strip, infinite carousel, hover-reveal
+   Pattern ported from squarespace-quotes.html (final SQS version).
+============================================================ */
+.quotes {
+  background: var(--soft-lavender);
+  padding: var(--top-pad) 0 0;
+  overflow: hidden;
+}
+.quotes-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 var(--gutter) clamp(24px, 4vh, 40px);
+}
+.quotes-head .h-display { margin: 0; max-width: 18ch; }
+.quotes-eyebrow { margin-bottom: 14px; }
+.quotes-arrows { display: flex; gap: 8px; }
+.qbtn {
+  width: 64px; height: 64px;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: filter .2s ease, transform .2s ease;
+  padding: 0;
+}
+.qbtn svg { width: 28px; height: 28px; display: block; }
+/* Both arrows on coral now — section bg flipped to lavender, prev arrow's
+   lavender bg disappeared into the section. Coral on lavender reads strongly. */
+.qbtn[data-q-prev]      { background: var(--warm-coral); }
+.qbtn[data-q-prev] svg  { stroke: #fff; }
+.qbtn[data-q-next]      { background: var(--warm-coral); }
+.qbtn[data-q-next] svg  { stroke: #fff; }
+.qbtn:hover  { filter: brightness(.92); }
+.qbtn:active { transform: scale(.96); }
+
+.quotes-strip {
+  display: flex;
+  width: 100%;
+  height: clamp(420px, 56vh, 560px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.quotes-strip::-webkit-scrollbar { display: none; }
+
+.quote-card {
+  flex: 0 0 clamp(260px, 22vw, 340px);
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  scroll-snap-align: start;
+  background: var(--cloud-neutral);
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.quote-card .qc-image,
+.quote-card .qc-quote {
+  position: absolute; inset: 0;
+  transition: opacity .35s ease;
+}
+.quote-card .qc-image {
+  background-size: cover;
+  background-position: center;
+  background-color: var(--deep-plum, #4B0F63);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 24px;
+  z-index: 1;
+}
+.quote-card .qc-tag {
+  background: var(--warm-coral, #E4572E);
+  color: #fff;
+  padding: 8px 14px;
+  font-family: var(--display, "Inter", sans-serif);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  max-width: calc(100% - 24px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quote-card .qc-quote {
+  background: var(--cloud-neutral);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  z-index: 2;
+  overflow-y: auto;
+}
+.quote-card:hover .qc-image,
+.quote-card:focus-visible .qc-image { opacity: 0; }
+.quote-card:hover .qc-quote,
+.quote-card:focus-visible .qc-quote { opacity: 1; }
+
+.qc-text {
+  font-family: var(--accent);
+  font-style: italic;
+  font-size: clamp(14px, 1vw, 17px);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 0;
+}
+.qc-attr-name {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.qc-attr-meta {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  margin: 0;
+}
+@media (max-width: 800px) {
+  .quotes-head { flex-direction: column; align-items: flex-start; }
+  .quote-card { flex: 0 0 75vw; }
+}
+
+
+/* ============================================================
+   FINDINGS — intro + sticky-wrap centerpiece
+============================================================ */
+.findings-intro {
+  position: relative;
+  padding: var(--top-pad) 0 0 var(--gutter); /* no bottom padding so figures hit the section bottom edge */
+  min-height: calc(100vh - var(--header-h));
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: end; /* anchor BOTH columns to the bottom — figures go flush */
+  gap: clamp(32px, 5vw, 80px);
+  overflow: hidden;
+  background: var(--cloud-neutral);
+}
+/* Text column needs to stay visually upper-aligned, not pushed to bottom */
+.findings-intro-inner { align-self: start; padding-top: 0; }
+.findings-intro-inner { position: relative; z-index: 2; max-width: 620px; }
+.findings-intro .eyebrow { margin-bottom: 28px; border: 0; padding: 0; color: var(--deep-plum); font-size: 12px; letter-spacing: 0.18em; }
+.findings-intro .h-display {
+  margin: 0 0 28px;
+  line-height: 0.98;
+  font-size: clamp(48px, 6.4vw, 92px); /* a little bigger now that it's only 2 lines */
+}
+.findings-intro .h-display .line { display: block; }
+/* Line 1 — uppercase Inter 800, black ink */
+.findings-intro .h-display .line-1 {
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+/* Line 2 — Concrette italic, deep plum, single line */
+.findings-intro .h-display .line-2 {
+  color: var(--deep-plum);
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  margin-top: 4px;
+  white-space: nowrap;
+  font-size: clamp(40px, 5vw, 76px); /* slightly smaller than line 1 so "Measurable Impact" fits on one line */
+}
+.findings-intro p {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+  max-width: 48ch;
+}
+.findings-intro-svg {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end; /* anchor to bottom of block, per client */
+  justify-content: flex-end; /* hug the right edge */
+  height: 100%;
+  align-self: stretch; /* fill the column's full height in the grid */
+}
+.findings-intro-svg img,
+.findings-intro-svg svg {
+  width: 100%;
+  max-width: clamp(500px, 58vw, 820px); /* bigger per client */
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 0; /* flush bottom */
+}
+@media (max-width: 900px) {
+  .findings-intro {
+    grid-template-columns: 1fr;
+    padding: var(--top-pad) var(--gutter);
+  }
+  .findings-intro-svg { justify-content: center; align-items: center; }
+  .findings-intro-svg img,
+  .findings-intro-svg svg { max-width: 420px; }
+}
+
+.findings-wrap { position: relative; }
+
+.finding {
+  min-height: calc(100vh - var(--header-h));
+  padding: var(--top-pad) var(--gutter) calc(var(--subnav-h) + var(--top-pad));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  scroll-snap-align: start;
+  position: relative;
+}
+.finding-inner {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.finding-head {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+.finding-num {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--warm-coral);
+}
+.finding-area {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.finding-title { margin-bottom: 24px; }
+
+.finding-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: clamp(32px, 6vw, 80px);
+  align-items: center;
+  margin: 32px 0;
+}
+.row-text p { margin: 0 0 14px; max-width: 60ch; line-height: 1.55; }
+.row-text p:last-child { margin-bottom: 0; }
+
+.stat-card {
+  padding: 32px 36px;
+  background: var(--soft-lavender);
+  color: var(--deep-plum);
+}
+.stat-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+}
+.stat-card p { color: var(--deep-plum); margin: 0; max-width: 36ch; line-height: 1.45; }
+.stat-quote {
+  font-family: var(--accent);
+  font-style: italic;
+  font-size: clamp(20px, 1.6vw, 24px);
+  font-weight: 500;
+  line-height: 1.35;
+}
+.stat-attr {
+  margin-top: 14px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.pull-quote {
+  background: var(--mist-sage);
+  padding: 32px 36px;
+  border-left: 4px solid var(--deep-plum);
+}
+.pull-quote p:first-child {
+  font-family: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(20px, 1.6vw, 24px);
+  line-height: 1.35;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+.pull-quote-attr {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+/* Graphs */
+.graph-card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  padding: 28px;
+}
+.graph-placeholder { display: grid; gap: 18px; }
+.graph-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+.bar-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: 24px;
+  height: 240px;
+}
+.bar {
+  height: var(--h, 50%);
+  background: var(--warm-coral);
+  position: relative;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding-bottom: 14px;
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+}
+.bar-before { background: #f2a081; }
+.bar-after  { background: var(--warm-coral); }
+.bar-label small {
+  display: block;
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.95;
+  margin-top: 2px;
+}
+.bar-cap {
+  position: absolute;
+  bottom: -28px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.range-bar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--deep-plum);
+}
+.range-mid {
+  height: 8px;
+  background: linear-gradient(to right, var(--soft-lavender), var(--warm-coral));
+}
+.range-cap {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Section templates */
+.tpl-cream    { background: var(--cloud-neutral); color: var(--ink); }
+.tpl-plum     { background: var(--deep-plum); color: #fff; }
+.tpl-plum .finding-num { color: var(--soft-lavender); }
+.tpl-plum .finding-area, .tpl-plum .lead-para,
+.tpl-plum .row-text p, .tpl-plum .finding-title { color: #fff; }
+.tpl-plum .stat-card { background: var(--royal-aubergine); color: #fff; }
+.tpl-plum .stat-card p { color: rgba(255,255,255,.92); }
+.tpl-plum .pull-quote { background: rgba(255,255,255,.06); border-left-color: var(--soft-lavender); }
+.tpl-plum .pull-quote p:first-child,
+.tpl-plum .pull-quote-attr { color: rgba(255,255,255,.95); }
+.tpl-plum .graph-card { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.15); }
+.tpl-plum .graph-label, .tpl-plum .range-cap, .tpl-plum .bar-cap { color: rgba(255,255,255,.7); }
+.tpl-plum .range-bar { color: #fff; }
+
+.tpl-sage { background: var(--mist-sage); color: var(--ink); }
+.tpl-sage .finding-num { color: var(--deep-plum); }
+.tpl-sage .stat-card { background: rgba(75,15,99,.10); color: var(--deep-plum); }
+.tpl-sage .pull-quote { background: rgba(255,255,255,.5); }
+
+.tpl-lavender { background: var(--soft-lavender); color: var(--deep-plum); }
+.tpl-lavender .lead-para, .tpl-lavender .row-text p,
+.tpl-lavender .finding-title, .tpl-lavender .finding-area { color: var(--deep-plum); }
+.tpl-lavender .stat-card { background: #fff; }
+.tpl-lavender .pull-quote { background: rgba(255,255,255,.6); border-left-color: var(--warm-coral); }
+
+
+/* ============================================================
+   FINDING 01 — Chart toggle (Prisons / Jails)
+============================================================ */
+.chart-toggle {
+  display: inline-flex;
+  background: rgba(0,0,0,0.15);
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 18px;
+}
+.chart-toggle button {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 999px;
+  color: rgba(255,255,255,0.7);
+  transition: background .25s, color .25s;
+}
+.tpl-cream .chart-toggle, .tpl-sage .chart-toggle, .tpl-lavender .chart-toggle { background: rgba(0,0,0,0.08); }
+.tpl-cream .chart-toggle button, .tpl-sage .chart-toggle button, .tpl-lavender .chart-toggle button { color: var(--ink-soft); }
+.chart-toggle button.is-active { background: var(--warm-coral); color: #fff; }
+
+
+/* ============================================================
+   FINDINGS SUB-NAV (sticky bottom — 3 zones: position / tabs / skip)
+============================================================ */
+.findings-subnav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 40;
+  background: #ffffff;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: var(--subnav-h);
+  box-shadow: 0 -8px 24px -16px rgba(0,0,0,.18);
+  transform: translateY(100%);
+  transition: transform 0.32s var(--ease-out);
+  pointer-events: none;
+  font-family: var(--display);
+}
+.findings-subnav.is-visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .findings-subnav { transition: none; }
+}
+
+/* LEFT zone — plum bg, white text: prev / counter / next */
+.subnav-position {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  background: var(--deep-plum);
+  color: #fff;
+  flex: 0 0 auto;
+  min-width: 178px;
+  justify-content: center;
+  border-right: 1px solid var(--rule);
+}
+.subnav-arrow {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 18px;
+  padding: 0 6px;
+  cursor: pointer;
+  line-height: 1;
+  font-family: inherit;
+  transition: opacity .2s ease;
+}
+.subnav-arrow:hover { opacity: .7; }
+.subnav-arrow:disabled { opacity: .35; cursor: default; }
+.subnav-counter {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  min-width: 96px;
+  text-align: center;
+}
+
+/* MIDDLE zone — scrollable tab strip */
+.subnav-tabs {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.subnav-tabs::-webkit-scrollbar { display: none; }
+.subnav-tab {
+  flex: 1 0 auto;
+  min-width: 0;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 0;
+  border-right: 1px solid var(--rule);
+  transition: background .25s var(--ease), color .25s var(--ease);
+  cursor: pointer;
+}
+.subnav-tab:last-child { border-right: 0; }
+.subnav-tab:hover { background: rgba(214, 180, 252, 0.2); }
+.subnav-tab.is-active { background: var(--soft-lavender); color: var(--deep-plum); }
+
+/* RIGHT zone — coral CTA: persistent Skip to Take Action */
+.subnav-skip {
+  flex: 0 0 auto;
+  padding: 0 22px;
+  background: var(--warm-coral);
+  color: #fff;
+  border: 0;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: filter .25s ease;
+}
+.subnav-skip:hover { filter: brightness(.92); }
+.subnav-skip-arrow { font-size: 14px; display: inline-block; transform: translateY(1px); }
+
+/* Responsive: tighten on narrow screens */
+@media (max-width: 720px) {
+  .subnav-position { min-width: 110px; padding: 0 8px; gap: 2px; }
+  .subnav-counter  { font-size: 10px; min-width: 64px; letter-spacing: 0.1em; }
+  .subnav-skip     { padding: 0 14px; font-size: 10px; letter-spacing: 0.1em; }
+}
+
+
+/* ============================================================
+   ACTION CENTER — handshake hero block
+============================================================ */
+/* Hybrid: figures-only SVG (text stripped via fill-color filtering) at full
+   bleed, anchored to BOTTOM so the hands always sit in view. The SVG is taller
+   than viewport on wide screens, so the heads crop off the top — that's
+   intentional. Live HTML text is overlaid in the upper-middle area; the
+   figures' shoulders/arms intentionally overlap with the text region (Scott
+   approved this — gives the compact "framed by figures" feel). */
+.action-center {
+  position: relative;
+  background: var(--cloud-neutral);
+  width: 100%;
+  height: calc(100vh - var(--header-h));
+  min-height: 560px;
+  overflow: hidden;
+}
+.action-center-figures {
+  position: absolute;
+  bottom: -7vh; /* push figures down so heads are mostly visible at the top */
+  left: 0; right: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.action-center-text {
+  position: absolute;
+  top: 30%; /* drop into the cradle formed by the figures' arms */
+  left: 0; right: 0;
+  z-index: 2;
+  text-align: center;
+  padding: 0 var(--gutter);
+  pointer-events: none;
+}
+.action-center-text > * { pointer-events: auto; }
+.action-center-eyebrow {
+  display: inline-block;
+  margin: 0 0 18px;
+  color: var(--deep-plum);
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.action-center-headline {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(40px, 5.4vw, 84px);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.action-center-headline em {
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--deep-plum);
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+.action-center-body {
+  margin: 24px auto 0;
+  max-width: 44ch;
+  font-family: var(--display);
+  font-size: clamp(14px, 1.05vw, 17px);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+
+/* ============================================================
+   TAKE ACTION
+============================================================ */
+/* ============================================================
+   TAKE ACTION + RESOURCES (new) — beige band, white cards,
+   row-specific hover treatments. Pattern ported from SQS.
+============================================================ */
+.actions-wrap { width: 100%; position: relative; font-family: var(--display); }
+.actions-stack {
+  background: #DED6C1; /* warm wheat */
+  padding: clamp(48px, 7vh, 96px) var(--gutter) clamp(64px, 9vh, 128px);
+}
+.actions-section + .actions-section { margin-top: clamp(48px, 6vh, 96px); }
+.actions-heading {
+  font-family: var(--display);
+  font-size: clamp(36px, 4.4vw, 64px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 28px;
+}
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  background: #ffffff;
+}
+.actions-card {
+  position: relative;
+  padding: clamp(28px, 3vw, 44px) clamp(24px, 2.4vw, 36px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 220px;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+/* Per-row border tinting — subtle separator between cards in each row */
+.actions-section--take .actions-card {
+  border-right: 1.5px solid rgba(75, 15, 99, 0.18); /* plum @ low alpha */
+}
+.actions-section--resources .actions-card {
+  border-right: 1.5px solid rgba(255, 255, 255, 0.18); /* white @ low alpha against plum */
+}
+.actions-card:last-child { border-right: 0; }
+
+/* TAKE ACTION — default = lavender bg + plum text; hover = neutral + ink */
+.actions-section--take .actions-card {
+  background: var(--soft-lavender);
+  color: var(--deep-plum);
+}
+.actions-section--take .actions-card .actions-card-body {
+  color: var(--deep-plum);
+  opacity: 0.78; /* slightly dimmer than title */
+}
+.actions-section--take .actions-card:hover,
+.actions-section--take .actions-card:focus-visible {
+  background: var(--cloud-neutral);
+  color: var(--ink);
+}
+.actions-section--take .actions-card:hover .actions-card-body,
+.actions-section--take .actions-card:focus-visible .actions-card-body {
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+/* RESOURCES — default = plum bg + white text; hover = neutral + ink */
+.actions-section--resources .actions-card {
+  background: var(--deep-plum);
+  color: #fff;
+}
+.actions-section--resources .actions-card .actions-card-body {
+  color: #fff;
+  opacity: 0.85;
+}
+.actions-section--resources .actions-card:hover,
+.actions-section--resources .actions-card:focus-visible {
+  background: var(--cloud-neutral);
+  color: var(--ink);
+}
+.actions-section--resources .actions-card:hover .actions-card-body,
+.actions-section--resources .actions-card:focus-visible .actions-card-body {
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+/* Border between rows on the dividers between cards changes on hover too */
+.actions-section--take .actions-card:hover,
+.actions-section--take .actions-card:focus-visible,
+.actions-section--resources .actions-card:hover,
+.actions-section--resources .actions-card:focus-visible {
+  border-right-color: rgba(34, 34, 34, 0.18);
+}
+
+.actions-card-title {
+  font-family: var(--display);
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+  color: inherit;
+}
+.actions-card-body {
+  font-size: clamp(14px, 1vw, 15px);
+  line-height: 1.55;
+  margin: 0;
+  color: inherit;
+  opacity: 0.85;
+}
+.actions-card-arrow {
+  position: absolute;
+  top: clamp(20px, 2vw, 28px);
+  right: clamp(20px, 2vw, 28px);
+  color: inherit;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.actions-card:hover .actions-card-arrow,
+.actions-card:focus-visible .actions-card-arrow { opacity: 1; }
+/* Note: row-specific hover treatments live earlier in the .actions-* block.
+   Defaults: Take Action = lavender bg + plum text, Resources = plum bg + white text.
+   Hover (both rows): cloud-neutral bg + ink text. */
+@media (max-width: 800px) {
+  .actions-grid { grid-template-columns: 1fr; }
+  .actions-card {
+    border-right: 0;
+    border-bottom: 1.5px solid rgba(34,34,34,0.18);
+  }
+  .actions-card:last-child { border-bottom: 0; }
+}
+
+/* ---------- legacy take-action / resources styles (kept for safety) ---------- */
+.take-action, .resources { background: var(--cloud-neutral); }
+.resources { padding-bottom: clamp(60px, 10vh, 140px); }
+.take-action-intro {
+  padding: var(--top-pad) var(--gutter) clamp(32px, 5vh, 56px);
+  text-align: left;
+  margin: 0;
+}
+.take-action-intro .eyebrow { margin-bottom: 28px; }
+.take-action-intro .h-display { margin: 0 0 24px; }
+.take-action-intro p {
+  font-size: clamp(17px, 1.25vw, 19px);
+  color: var(--ink-soft);
+  margin: 0 auto;
+  max-width: 60ch;
+}
+.take-action-grid-wrap { padding: 0 var(--gutter) var(--top-pad); }
+.take-action-grid-wrap-inner { width: 100%; max-width: 1440px; margin: 0 auto; }
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.action-card {
+  background: var(--cloud-neutral);
+  border-right: 1px solid var(--rule);
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: background .3s var(--ease), color .3s var(--ease);
+  min-height: 320px;
+}
+.action-card:last-child { border-right: 0; }
+.action-card:hover { background: var(--soft-lavender); color: var(--deep-plum); }
+.action-card.is-featured {
+  position: relative;
+  background: var(--deep-plum);
+  color: #fff;
+}
+.action-card.is-featured h3,
+.action-card.is-featured p,
+.action-card.is-featured .link-arrow { color: #fff; }
+.action-card.is-featured p { opacity: 0.8; }
+.action-card.is-featured .link-arrow { border-bottom-color: rgba(255,255,255,0.6); }
+.action-card.is-featured:hover { background: var(--royal-aubergine); color: #fff; }
+.action-card-corner-arrow {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  font-size: 28px;
+  line-height: 1;
+  color: #fff;
+  opacity: 0.95;
+}
+.action-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--warm-coral);
+  letter-spacing: 0.14em;
+}
+.action-card h3 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.action-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: inherit;
+  opacity: 0.85;
+}
+.action-card .link-arrow {
+  margin-top: auto;
+  border-bottom-color: currentColor;
+}
+
+
+/* ============================================================
+   ABOUT THIS PROJECT (Methodology)
+============================================================ */
+/* Methodology section — Live HTML rebuild: 2-column grid on lavender bg, with
+   the hugging-grandma illustration as a separate stripped SVG (text + buttons +
+   kite shapes removed). Everything else is live HTML so font sizes don't blow
+   up at wide viewports. */
+.about-project {
+  position: relative;
+  background: var(--soft-lavender);
+  width: 100%;
+  padding: 40px var(--gutter);
+  overflow: hidden;
+}
+.about-project-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(40px, 5vw, 80px);
+  max-width: 1800px;
+  margin: 0 auto;
+  align-items: start;
+}
+.about-project-left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.about-project-eyebrow {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--deep-plum);
+  margin: 0;
+}
+.about-project-headline {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.about-project-headline .line-1 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(48px, 6vw, 96px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.about-project-headline .line-2 {
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(40px, 5.2vw, 84px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--deep-plum);
+}
+.about-project-illustration {
+  display: block;
+  width: 100%;
+  max-width: 540px;
+  height: auto;
+  margin-top: 8px;
+}
+.about-project-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: clamp(8px, 2vh, 32px);
+}
+.about-project-lead {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(16px, 1.3vw, 20px);
+  line-height: 1.4;
+  color: var(--deep-plum);
+  margin: 0;
+}
+.about-project-lead .accent { color: var(--deep-plum); font-weight: 700; }
+.about-project-lead-secondary {
+  font-family: var(--display);
+  font-size: clamp(14px, 1vw, 16px);
+  line-height: 1.55;
+  color: var(--deep-plum);
+  margin: 0;
+}
+.about-project-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.about-project-cols p {
+  font-family: var(--display);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--deep-plum);
+  margin: 0;
+  opacity: 0.92;
+}
+.about-project-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* CTA stack now sits in flow, no longer overlaying a baked SVG */
+.method-cta-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: clamp(16px, 3vh, 40px);
+  width: 100%;
+  max-width: 480px;
+}
+.method-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.method-cta--light { background: var(--cloud-neutral); color: var(--ink); }
+.method-cta--light:hover { background: #E5E1D8; }
+.method-cta--dark  { background: var(--deep-plum); color: #fff; }
+.method-cta--dark:hover  { background: #3a0a4f; }
+.method-cta-arrow {
+  width: 20px; height: 20px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+@media (max-width: 720px) {
+  .method-cta-wrap {
+    position: static;
+    width: auto;
+    margin: 0 var(--gutter) var(--top-pad);
+  }
+}
+
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.site-footer {
+  background: var(--deep-plum);
+  color: #ffffff;
+  padding: var(--top-pad) var(--gutter) clamp(28px, 4vh, 48px);
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(420px, 60vh, 600px);
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: clamp(24px, 4vw, 80px);
+  align-items: start;
+}
+.footer-brand { display: inline-flex; align-items: center; gap: 8px; }
+.footer-logo {
+  height: 36px;
+  width: auto;
+  /* Same PNG as header but inverted to white for the plum footer.
+     `brightness(0) invert(1)` flattens any color to pure white. */
+  filter: brightness(0) invert(1);
+}
+.footer-mark-fallback { display: inline-flex; align-items: center; gap: 8px; }
+.footer-mark { color: #fff; font-size: 18px; }
+.footer-mark-name {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.footer-col h4 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin: 0 0 14px;
+}
+.footer-col p,
+.footer-col .footer-address {
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  color: #fff;
+  line-height: 1.45;
+  margin: 0;
+}
+.footer-col a {
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  padding-bottom: 1px;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.footer-col a:hover { color: var(--soft-lavender); border-bottom-color: var(--soft-lavender); }
+.footer-social {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.footer-social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--royal-aubergine);
+  color: #fff;
+  border-radius: 4px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.footer-social-icon:hover { background: var(--soft-lavender); color: var(--deep-plum); transform: translateY(-1px); }
+.footer-social-icon svg { width: 18px; height: 18px; }
+.footer-links {
+  margin-top: auto;
+  padding-top: clamp(40px, 8vh, 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.footer-links a {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  transition: color 0.2s ease;
+}
+.footer-links a:hover { color: var(--soft-lavender); }
+.footer-bottom {
+  margin-top: clamp(28px, 4vh, 40px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+@media (max-width: 900px) {
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 32px;
+  }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-social { grid-column: 1 / -1; justify-content: flex-start; }
+}
+@media (max-width: 540px) {
+  .footer-top { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+}
+
+
+/* ============================================================
+   FINDING LAYOUT — Figma-faithful (overrides simpler prototype)
+============================================================ */
+.finding-title em,
+.h-display em,
+.display em {
+  font-family: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  display: inline-block;
+}
+.finding-title { display: block; line-height: 1.0; }
+.finding-title .line { display: block; }
+
+/* Two-row composition: title-row, content-row, bottom-row */
+.f-grid-top, .f-grid-mid, .f-grid-bot {
+  display: grid;
+  gap: clamp(20px, 3vw, 40px);
+  margin: clamp(20px, 3vw, 40px) 0;
+}
+.f-grid-top { grid-template-columns: 1.1fr 1fr; align-items: start; }
+.f-grid-mid { grid-template-columns: 1fr 1fr; align-items: stretch; }
+.f-grid-bot { grid-template-columns: 1fr 1fr; align-items: stretch; }
+
+/* Featured callout in top-right (the BIG colored stat or illustration block) */
+.f-feature {
+  position: relative;
+  min-height: clamp(280px, 36vw, 460px);
+  padding: clamp(28px, 3vw, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  --notch-size: clamp(48px, 6vw, 96px);
+}
+.f-feature.notch-tr {
+  clip-path: polygon(0 0, calc(100% - var(--notch-size)) 0, 100% var(--notch-size), 100% 100%, 0 100%);
+}
+.f-feature.notch-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--notch-size) 100%, 0 calc(100% - var(--notch-size)));
+}
+.f-feature .f-feature-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(56px, 7vw, 104px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin: 0 0 18px;
+}
+.f-feature .f-feature-num em {
+  font-family: var(--display);
+  font-style: normal;
+  font-weight: 800;
+}
+.f-feature p {
+  font-size: clamp(13px, 1vw, 15px);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 38ch;
+  opacity: 0.92;
+}
+.f-feature.has-illust { padding: 0; }
+.f-feature.has-illust img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Stat pair (two side-by-side colored blocks with notch + big number) */
+.stat-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat-block {
+  position: relative;
+  padding: clamp(20px, 2.4vw, 32px);
+  --notch-size: clamp(36px, 4vw, 56px);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.stat-block.notch-tr {
+  clip-path: polygon(0 0, calc(100% - var(--notch-size)) 0, 100% var(--notch-size), 100% 100%, 0 100%);
+}
+.stat-block.notch-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--notch-size) 100%, 0 calc(100% - var(--notch-size)));
+}
+.stat-block .stat-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.stat-block .stat-label {
+  font-size: clamp(12px, 0.9vw, 13px);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin: 14px 0 0;
+}
+
+/* Subhead inside finding (e.g. "LOVE WITHOUT LIMITS") */
+.f-subhead {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(28px, 3.2vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0 0 18px;
+}
+.f-body p { margin: 0 0 14px; max-width: 56ch; line-height: 1.55; font-size: clamp(14px, 1vw, 16px); }
+.f-eyebrow {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  opacity: 0.85;
+}
+.f-stats-eyebrow {
+  display: block;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+  opacity: 0.85;
+}
+
+/* Pull-quote block with quote-mark glyph */
+.pq-block {
+  position: relative;
+  padding: clamp(40px, 4vw, 64px) clamp(24px, 2.4vw, 36px) clamp(24px, 2.4vw, 36px);
+  --notch-size: clamp(36px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 280px;
+}
+.pq-block.notch-tr {
+  clip-path: polygon(0 0, calc(100% - var(--notch-size)) 0, 100% var(--notch-size), 100% 100%, 0 100%);
+}
+.pq-block::before {
+  content: "\201C";
+  position: absolute;
+  top: 4px;
+  left: clamp(24px, 2.4vw, 36px);
+  font-family: var(--accent), "Georgia", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(64px, 7vw, 96px);
+  line-height: 1;
+  opacity: 0.95;
+}
+.pq-block-text {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.4;
+  margin: 0 0 16px;
+}
+.pq-block-attr {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  margin: 0;
+  opacity: 0.85;
+}
+
+/* Video thumbnail */
+.video-thumb-block {
+  position: relative;
+  aspect-ratio: 4/5;
+  background: #2a2a2a;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  overflow: hidden;
+  min-height: 280px;
+}
+.video-thumb-block .vt-play {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  color: var(--deep-plum);
+  display: grid; place-items: center;
+  font-size: 18px;
+  z-index: 2;
+  padding-left: 4px;
+}
+.video-thumb-block .vt-cap {
+  position: absolute;
+  bottom: 0; left: 0; right: auto;
+  padding: 12px 18px;
+  background: var(--warm-coral);
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  z-index: 2;
+  max-width: 80%;
+}
+
+/* Color utility */
+.bg-coral    { background: var(--warm-coral);     color: #fff; }
+.bg-lime     { background: var(--acid-lime);      color: #fff; }
+.bg-plum     { background: var(--deep-plum);      color: #fff; }
+.bg-aubergine{ background: var(--royal-aubergine);color: #fff; }
+.bg-lavender { background: var(--soft-lavender);  color: var(--deep-plum); }
+.bg-sage     { background: var(--mist-sage);      color: var(--ink); }
+
+/* Dark template adjustments */
+.tpl-plum .pq-block.bg-coral, .tpl-plum .pq-block.bg-lavender { color: var(--deep-plum); }
+.tpl-plum .pq-block.bg-coral { color: #fff; }
+
+@media (max-width: 900px) {
+  .f-grid-top, .f-grid-mid, .f-grid-bot { grid-template-columns: 1fr; }
+  .stat-pair { grid-template-columns: 1fr 1fr; }
+  .f-feature { min-height: 280px; }
+  .video-thumb-block { aspect-ratio: 16/10; min-height: 0; }
+}
+
+
+/* ============================================================
+   GLOBAL RESPONSIVE
+============================================================ */
+@media (max-width: 900px) {
+  .header-right { gap: 20px; }
+  .primary-nav { display: none; }
+  .finding-row { grid-template-columns: 1fr; }
+  .action-grid { grid-template-columns: 1fr; }
+  .action-card { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .quotes-head { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header class="site-header" data-header>
+  <div class="header-inner">
+    <a href="#top" class="brand" aria-label="Worth Rises home">
+      <img src="assets/illustrations/worth-rises-logo.png" alt="Worth Rises" class="brand-logo"
+           onerror="this.style.display='none'; var f=document.getElementById('brand-fallback'); if(f) f.style.display='inline-flex';" />
+      <span id="brand-fallback" style="display:none; align-items:center; gap:8px;">
+        <span class="brand-mark">▲</span><span class="brand-name">WORTH RISES</span>
+      </span>
+    </a>
+    <div class="header-right">
+      <nav class="primary-nav" aria-label="Primary">
+        <a href="#aboutreport">About the Report</a>
+        <a href="#findings">Key Findings</a>
+        <a href="#actions">Take Action</a>
+      </nav>
+      <a href="#aboutreport" class="header-cta">Read the Report</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero" aria-label="Hero">
+  <!-- Layer 1: full hero illustration SVG (Frame 2117131439 from Figma) with
+       the cord path stripped out so the only cord visible is the animated one. -->
+  <div class="hero-illustration" aria-hidden="true">
+    <img src="assets/hero/hero-illustration.svg" alt="" />
+  </div>
+
+  <!-- Layer 2: cord SVG. Same 1440x800 viewBox as the illustration and same
+       path that was stripped, so the animated cord lands exactly where the
+       cord would have been in the full illustration. -->
+  <div class="hero-cord-layer" aria-hidden="true">
+    <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path id="hero-cord"
+            d="M167.5 434C189.797 430.445 271.781 486.238 303.042 533.929C356.64 615.694 331.054 698.475 275.032 674.605C233.025 656.707 223.627 491.321 288.5 482C392.488 467.058 373.5 622.5 483.037 696.29C591.473 769.338 687.527 666.066 764.5 667C841.473 667.934 910.882 707.27 1024.43 696.333C1165.08 682.787 1149.85 409.624 1301.5 368"
+            stroke="#E4572E" stroke-width="8" stroke-miterlimit="8.20551" stroke-linecap="round" />
+    </svg>
+  </div>
+
+  <div class="hero-inner">
+    <span class="eyebrow eyebrow-plum" data-anim="fade-up">Critical Connections</span>
+    <h1 class="display" data-anim="fade-up" data-anim-delay="100">The <em>Power</em> of Free</h1>
+    <p class="lede" data-anim="fade-up" data-anim-delay="200">How free communication in prisons and jails is transforming lives, strengthening families, and reshaping reentry. A necessary, achievable, and transformative lifeline.</p>
+    <div class="hero-ctas" data-anim="fade-up" data-anim-delay="300">
+      <a href="#aboutreport" class="btn btn-coral hero-btn">Read the Report</a>
+      <a href="#hero-video" class="btn btn-plum hero-btn">Watch the Story</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ABOUT THE REPORT — split (deep-plum / soft-lavender)
+============================================================ -->
+<section id="aboutreport" class="about" aria-label="About the Report">
+  <div class="about-copy">
+    <span class="eyebrow eyebrow-plum" data-anim="fade-up">About the Report</span>
+    <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">
+      <span class="line">FREE COMMUNICATION</span>
+      <span class="line"><em>Changes Everything</em></span>
+    </h2>
+    <p data-anim="fade-up" data-anim-delay="200">Correctional telecom is a $1.5 billion industry built on charging incarcerated people and their families exorbitant rates to stay connected. When families can't afford to call, communication gets rationed — conversations cut short, contact limited to urgent matters, relationships fracture or never form. That isolation doesn't stay inside the walls. It weakens the ties that matter most to rehabilitation, reentry, and public safety.</p>
+    <p data-anim="fade-up" data-anim-delay="300">The national Connecting Families campaign is making communication in prisons and jails entirely free across the country. This report is the first to document the results — and the evidence is clear: when the cost barrier is removed, connection increases, relationships strengthen, and families are better able to navigate incarceration together toward a promising free future that makes us all safer.</p>
+    <a href="#" class="btn btn-coral about-cta-btn" data-anim="fade-up" data-anim-delay="400">Read the Report</a>
+  </div>
+  <div class="about-visual" aria-hidden="true">
+    <!-- Placeholder — designer is creating a 3-stat callout illustration.
+         Drop the new asset into assets/illustrations/about-report-stats.{svg,png}
+         and add an <img> referencing it inside this div. Lavender background stays. -->
+  </div>
+</section>
+
+
+<!-- ============================================================
+     HERO VIDEO — Vimeo embed
+============================================================ -->
+<section class="hero-video-section" id="hero-video" aria-label="A Smile You Can Hear — documentary film">
+  <!-- Ambient looping video behind the play button — autoplays muted on load -->
+  <video class="hero-video-ambient" autoplay muted loop playsinline preload="auto"
+         poster="assets/hero/hero-video-thumb.jpg" aria-hidden="true">
+    <source src="assets/hero/ambient.mp4" type="video/mp4">
+  </video>
+  <button class="hero-video-poster" type="button"
+          aria-label="Play the documentary film"
+          onclick="this.closest('.hero-video-section').classList.add('is-playing'); var f=this.closest('.hero-video-section').querySelector('.hero-video-frame'); f.src=f.dataset.src;"></button>
+  <div class="hero-video-card">
+    <button class="hero-video-card-play" type="button"
+            aria-label="Play the documentary film"
+            onclick="this.closest('.hero-video-section').classList.add('is-playing'); var f=this.closest('.hero-video-section').querySelector('.hero-video-frame'); f.src=f.dataset.src;">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M7 5.14v13.72c0 .79.87 1.27 1.54.84l10.78-6.86a1 1 0 0 0 0-1.68L8.54 4.3C7.87 3.87 7 4.35 7 5.14z"/>
+      </svg>
+    </button>
+    <div class="hero-video-card-text">
+      <h3>A Smile You Can Hear</h3>
+      <p>Watch what free<br>communication makes possible</p>
+    </div>
+  </div>
+  <iframe class="hero-video-frame"
+          data-src="https://player.vimeo.com/video/1186772181?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+          title="A Smile You Can Hear"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen></iframe>
+  <button class="hero-video-close" type="button" aria-label="Close video"
+          onclick="var s=this.closest('.hero-video-section'); s.classList.remove('is-playing'); var f=s.querySelector('.hero-video-frame'); f.src='';">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+</section>
+
+
+<!-- ============================================================
+     QUOTES — 12 cards (6 photos/illustrations first, 6 placeholders after)
+============================================================ -->
+<section class="quotes" aria-label="Voices from the people most affected">
+  <div class="quotes-head">
+    <div>
+      <span class="eyebrow eyebrow-plum quotes-eyebrow" data-anim="fade-up">Testimonials</span>
+      <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">More Than Just<br><em>A Phone Call</em></h2>
+    </div>
+    <div class="quotes-arrows">
+      <button class="qbtn" data-q-prev type="button" aria-label="Previous quote">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M19 12H5M5 12L11 6M5 12L11 18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="qbtn" data-q-next type="button" aria-label="Next quote">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div id="qStrip" class="quotes-strip" data-quotes>
+
+    <!-- 1. Michael (photo) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Michael, formerly incarcerated, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-michael.jpg');">
+        <span class="qc-tag">Michael &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;To have free calls now &mdash; it&rsquo;s more than what I think people realize. It&rsquo;s our lifeline to the world. Our lifeline to our families.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Michael</p>
+          <p class="qc-attr-meta">Formerly incarcerated, New York</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 2. Saul (illustration) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Saul, currently incarcerated, California">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-saul.png');">
+        <span class="qc-tag">Saul &middot; California</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;Today, I talk to my mom every day. I call her like three times a day. I read to her, because it&rsquo;s hard for her to read. And we pray together.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Saul</p>
+          <p class="qc-attr-meta">Currently incarcerated, California</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 3. Felix (photo) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Felix, prison counselor, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-felix.jpg');">
+        <span class="qc-tag">Felix &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;As a counselor, I give them as much support as I possibly can. But I&rsquo;m not their family. I&rsquo;m not their friend. They still have a guard up against me. Being able to talk to their family, they&rsquo;re able to get guidance that they wouldn&rsquo;t really want to take from me.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Felix</p>
+          <p class="qc-attr-meta">Prison counselor, New York</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 4. Angel (photo) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Angel, wife, California">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-angel.jpg');">
+        <span class="qc-tag">Angel &middot; California</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;My husband has a daughter. She&rsquo;s 11 years old, and she is autistic. Not being able to call every single day, his calls with her would be sporadic. But now they talk every day. They&rsquo;re able to spend an hour on the phone each night. He reads to her, and she&rsquo;ll read to him. She is being so vocal since she&rsquo;s been able to speak to her dad.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Angel</p>
+          <p class="qc-attr-meta">Wife, California</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 5. Tricia (illustration) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Tricia, sister, federal">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-tricia.png');">
+        <span class="qc-tag">Tricia &middot; Federal</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;He doesn&rsquo;t like burdening people. So, I remember the first [free] phone call, him being so excited like, &lsquo;okay, now we can talk about anything you want, and when we hang up, I can just call you back.&rsquo;&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Tricia</p>
+          <p class="qc-attr-meta">Sister, Federal</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 6. Sgt. Mitchell (photo) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Sergeant Mitchell, corrections sergeant, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-mitchell.jpg');">
+        <span class="qc-tag">Sgt. Mitchell &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;Their interactions with [officers] become more positive and constructive instead of negative. They have things to look forward to. They go back to their cells, get on the phone, speak to their friends and loved ones, talk about their day, and get advice and counseling over those phone calls.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Sgt. Mitchell</p>
+          <p class="qc-attr-meta">Corrections sergeant, New York</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 7. Marc (photo) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Marc, formerly incarcerated, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-marc.jpg');">
+        <span class="qc-tag">Marc &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;I got to sit on the phone and do homework with my daughter, which was huge &mdash; just kind of sit there and allow her time to think through the problems and not worry about it costing per minute.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Marc</p>
+          <p class="qc-attr-meta">Formerly incarcerated, New York</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 8. Shelene (illustration) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Shelene, mother, Minnesota">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-shelene.png');">
+        <span class="qc-tag">Shelene &middot; Minnesota</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;I don&rsquo;t have the same resentments towards just communicating with him, which had nothing to do with communicating with him, but the fact that they&rsquo;re taking my money and they&rsquo;re robbing me was the feeling, just so that I can speak to my son. I don&rsquo;t feel any of those things anymore, and it&rsquo;s a far cry different.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Shelene</p>
+          <p class="qc-attr-meta">Mother, Minnesota</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 9. Dwayne (photo) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Dwayne, currently incarcerated, Connecticut">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-dwayne.jpg');">
+        <span class="qc-tag">Dwayne &middot; Connecticut</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;I [hadn&rsquo;t] heard from my daughter in over 10 years when I got a letter with a phone number. [Then] when I heard her voice, it killed me. I told her I love her, and that I&rsquo;m going to keep in contact with her. I talk to her every day.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Dwayne</p>
+          <p class="qc-attr-meta">Currently incarcerated, Connecticut</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 10. Nia (photo) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Nia, wife, Massachusetts">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-nia.jpg');">
+        <span class="qc-tag">Nia &middot; Massachusetts</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;When the calls became free, it wasn&rsquo;t just a relief for me. It meant that my son could talk to his dad without me worrying about how much it was costing or how many minutes were left. That changed everything for us.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Nia</p>
+          <p class="qc-attr-meta">Wife, Massachusetts</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 11. Jasmeel (illustration) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Jasmeel, currently incarcerated, California">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-jasmeel.png');">
+        <span class="qc-tag">Jasmeel &middot; California</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;These conversations create a pathway for empathy and healing and just a healthy relationship with my family and actually just hope for a future when I get out, knowing that I have people that I can go to. Without these [free] phone calls, that would not have been possible.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Jasmeel</p>
+          <p class="qc-attr-meta">Currently incarcerated, California</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 12. Ransey (photo) -->
+    <a class="quote-card" data-quote href="#" tabindex="0" aria-label="Quote from Ransey, daughter, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-ransey.jpg');">
+        <span class="qc-tag">Ransey &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;The time on the phone is like church.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Ransey</p>
+          <p class="qc-attr-meta">Daughter, New York</p>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FINDINGS INTRO
+============================================================ -->
+<section id="findings" class="findings-intro" aria-label="Key Findings">
+  <div class="findings-intro-inner">
+    <span class="eyebrow eyebrow-plum" data-anim="fade-up">Key Findings</span>
+    <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">
+      <span class="line line-1">8 Areas of</span>
+      <span class="line line-2"><em>Measurable Impact</em></span>
+    </h2>
+    <p data-anim="fade-up" data-anim-delay="200">Drawing on data and interviews across multiple jurisdictions, eight areas of meaningful, measurable change emerged — for incarcerated people, their families, corrections staff, and the broader public.</p>
+  </div>
+  <div class="findings-intro-svg" data-anim="scale-in" aria-hidden="true">
+    <!-- Three-figures illustration only (no surrounding layout). Per client:
+         smaller so the title fits on two lines. -->
+    <img src="assets/illustrations/Group 1261156534 (2).png" alt="" />
+  </div>
+</section>
+
+
+<!-- ============================================================
+     8 FINDINGS — sticky-wrap centerpiece
+     - Each .finding is animatable
+     - Bars, stat numbers, range bars, pull quotes have data-anim hooks
+============================================================ -->
+<div class="findings-wrap" data-findings-wrap>
+
+  <!-- FINDING 01 — Increased Connection (deep plum bg) -->
+  <article id="finding-01" class="finding tpl-plum" data-finding="0" data-area="Connection">
+    <div class="finding-inner">
+      <div class="f-grid-top">
+        <div>
+          <p class="f-eyebrow" data-anim="fade-up">Finding 1</p>
+          <h3 class="finding-title" data-anim="fade-up" data-anim-delay="100">
+            <span class="line">INCREASED</span>
+            <span class="line"><em>Connection</em></span>
+          </h3>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="200" style="margin-top: 24px;">Today, over 330,000 incarcerated people have access to fully free phone calls, and in some cases video calls and electronic messaging too, thanks to free communication policies in their jurisdictions. When the cost barrier to connection was removed, communication increased immediately, dramatically, and durably.</p>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="250">These policies have enabled nearly 600 million additional calls and 6.4 billion additional call minutes between incarcerated people and their loved ones — that's millions more "I love yous" and billions more minutes of laughter, love, and hope.</p>
+        </div>
+        <aside class="f-feature bg-lavender notch-bl" data-anim="slide-left" data-anim-delay="200">
+          <div>
+            <p class="f-feature-num"><span data-anim="counter" data-counter-end="6.4" data-counter-decimals="1" data-counter-suffix="">6.4</span> BILLION</p>
+            <p>additional minutes of connection</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="f-grid-mid">
+        <div>
+          <span class="f-stats-eyebrow" data-anim="fade-up">Call minutes per person in prisons</span>
+          <div class="chart-toggle" role="tablist" aria-label="Show data for prisons or jails" data-anim="fade-up" data-anim-delay="100">
+            <button id="ftog-prisons" class="is-active" type="button" role="tab" aria-selected="true">In Prisons</button>
+            <button id="ftog-jails"   type="button" role="tab" aria-selected="false">In Jails</button>
+          </div>
+          <div class="stat-pair" data-chart="prisons" style="margin-top:18px;">
+            <div class="stat-block bg-aubergine notch-tr" data-anim="bar-grow">
+              <p class="stat-num"><span data-bar-value>25</span></p>
+              <p class="stat-label">Before free calls</p>
+            </div>
+            <div class="stat-block bg-lime notch-tr" data-anim="bar-grow" data-anim-delay="200">
+              <p class="stat-num"><span data-bar-value>45</span></p>
+              <p class="stat-label">After free calls<br><strong style="font-size:14px;letter-spacing:0;text-transform:none;">+80%</strong></p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="f-subhead" data-anim="fade-up">Love without limits</h4>
+          <div class="f-body">
+            <p data-anim="fade-up">What had once been rationed and rushed became abundant and consistent. In prisons, average daily usage increased from 25 to 45 minutes per person. In jails, the jump was even steeper — from 27 to 57 minutes, reflecting the urgent needs of people recently incarcerated and those awaiting trial.</p>
+            <p data-anim="fade-up" data-anim-delay="100">But this isn't just about quantity, it's also about quality. Without the constant stress of cost, conversations moved from brief, transactional agendas to sustained, relational connection. People were thoughtfully checking in on one another, doing homework with their children, watching movies with their spouses, and just being present for life's ups and downs — all without a clock running. The minutes matter, but what happens inside them matters more.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-grid-bot">
+        <div class="video-thumb-block" data-anim="scale-in" style="background-image:url('assets/quotes/quote-michael.jpg');" role="button" tabindex="0" aria-label="Play: I love yous">
+          <span class="vt-play">▶</span>
+          <span class="vt-cap">More "I love yous"</span>
+        </div>
+        <div class="pq-block bg-lavender notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"We have seen a significant increase in call activity, demonstrating that when financial barriers are removed, individuals in our care make greater use of opportunities to stay connected."</p>
+          <p class="pq-block-attr">— Commissioner Dan Martuscello III, New York</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 02 — Financial Relief (cream bg) -->
+  <article id="finding-02" class="finding tpl-cream" data-finding="1" data-area="Financial Relief">
+    <div class="finding-inner">
+      <div class="f-grid-top">
+        <div>
+          <p class="f-eyebrow" data-anim="fade-up">Finding 2</p>
+          <h3 class="finding-title" data-anim="fade-up" data-anim-delay="100">
+            <span class="line">FINANCIAL</span>
+            <span class="line"><em>Relief</em></span>
+          </h3>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="200" style="margin-top: 24px;">For decades, correctional telecom providers have charged incarcerated people and their families exorbitant rates to stay in touch. Given the remarkably low wages, if any, paid to incarcerated people, it is often families on the outside who bear this cost — households with limited financial means already destabilized by the incarceration of a family member. One in three families goes into debt trying to stay connected, and 87% of those carrying the financial burden are women.</p>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="250">The financial burden also carries immense emotional weight. Incarcerated people described a persistent sense of embarrassment and shame in asking family to pay for calls. When free communication policies were implemented, a weight was lifted on both sides of the wall.</p>
+        </div>
+        <aside class="f-feature bg-plum notch-bl" data-anim="slide-left" data-anim-delay="200">
+          <div>
+            <p class="f-feature-num"><span data-anim="counter" data-counter-end="622" data-counter-prefix="$" data-counter-suffix="">$622</span> MIL</p>
+            <p>saved by families to date — with 73% flowing to Black and brown families, who have borne this cost disproportionately.</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="f-grid-mid">
+        <div>
+          <span class="f-stats-eyebrow" data-anim="fade-up">Annual savings per incarcerated loved one in prisons</span>
+          <div class="stat-pair">
+            <div class="stat-block bg-coral notch-tr" data-anim="bar-grow">
+              <p class="stat-num"><span data-anim="counter" data-counter-end="70" data-counter-suffix="%">70%</span></p>
+              <p class="stat-label">prison savings</p>
+            </div>
+            <div class="stat-block bg-lavender notch-tr" data-anim="bar-grow" data-anim-delay="200">
+              <p class="stat-num"><span data-anim="counter" data-counter-end="82" data-counter-suffix="%">82%</span></p>
+              <p class="stat-label">jail savings</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="f-subhead" data-anim="fade-up">Groceries, rent, and room to breathe</h4>
+          <div class="f-body">
+            <p data-anim="fade-up">Savings for families with loved ones in prison ranged from $172 to $1,801 per year, depending on previous per-minute rates. They also accrued substantial value from the increase in free call time, which ranged from $244 to $2,927 per year. An outsized share of those savings flowed to the communities disproportionately impacted by incarceration — 70% of prison savings and 82% of jail savings went to Black and brown families. That new financial capacity did not sit idle — families used it to cover important expenses, reduce debt, and invest in their futures.</p>
+            <p data-anim="fade-up" data-anim-delay="100">Notably, the cost of communication also fell dramatically when the cost burden was shifted off of families to agencies — a direct reflection of the perverse incentives and overcharging that have dominated the industry.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-grid-bot">
+        <div class="video-thumb-block" data-anim="scale-in" role="button" tabindex="0" aria-label="Play: A weight lifted">
+          <span class="vt-play">▶</span>
+          <span class="vt-cap">A weight's been lifted</span>
+        </div>
+        <div class="pq-block bg-lime notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"We have been able to take that money and put it into a down payment for a mortgage. We've already saved $10,000 to put towards our future life together."</p>
+          <p class="pq-block-attr">— Brashani, Wife of an incarcerated man, Massachusetts</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 03 — Stronger Family & Community Relationships (deep plum bg) -->
+  <article id="finding-03" class="finding tpl-plum" data-finding="2" data-area="Family & Community">
+    <div class="finding-inner">
+      <div class="f-grid-top">
+        <div>
+          <p class="f-eyebrow" data-anim="fade-up">Finding 3</p>
+          <h3 class="finding-title" data-anim="fade-up" data-anim-delay="100">
+            <span class="line">STRONGER</span>
+            <span class="line">FAMILY &amp;</span>
+            <span class="line">COMMUNITY</span>
+            <span class="line"><em>Relationships</em></span>
+          </h3>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="200" style="margin-top: 24px;">Before the shift to free communication, incarcerated people and their families would go days, weeks, months, and even years between calls. Conversations were rationed around cost and limited to the most urgent matters. Communication was constrained and transactional, often focused on logistics or immediate needs rather than meaningful connection. But when the cost of communication was removed, that dynamic shifted.</p>
+        </div>
+        <aside class="f-feature has-illust" data-anim="slide-left" data-anim-delay="200">
+          <img src="assets/illustrations/finding-illust/cropped/finding-03-stronger-relationships.png" alt="Family hugging illustration" />
+        </aside>
+      </div>
+
+      <div class="f-grid-mid">
+        <div>
+          <span class="f-stats-eyebrow" data-anim="fade-up">Share of people who said free calls helped build or repair relationships — the most common theme identified in interviews</span>
+          <div class="stat-pair">
+            <div class="stat-block bg-lime notch-tr" data-anim="bar-grow">
+              <p class="stat-num"><span data-anim="counter" data-counter-end="82" data-counter-suffix="%">82%</span></p>
+              <p class="stat-label">family members</p>
+            </div>
+            <div class="stat-block bg-coral notch-tr" data-anim="bar-grow" data-anim-delay="200">
+              <p class="stat-num"><span data-anim="counter" data-counter-end="93" data-counter-suffix="%">93%</span></p>
+              <p class="stat-label">incarcerated people</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="f-subhead" data-anim="fade-up">Support, both ways</h4>
+          <div class="f-body">
+            <p data-anim="fade-up">Without the financial stressor of paying for calls, communication centered on strengthening or repairing relationships. Incarcerated people and their loved ones expressed needing each other, rooting relationships in reciprocity that ensured support and accountability flowed both ways. And in doing so, this connection created a renewed sense of belonging and hope for the future. With more time and fewer constraints, families returned to the roles and rhythms of everyday life.</p>
+            <p data-anim="fade-up" data-anim-delay="100">These connections don't just sustain people through incarceration. Maintaining, and even expanding, social ties is critical for incarcerated people and their successful rehabilitation and reentry. They preserve the relationships that make hope, healing, and rehabilitation possible — and they become the foundation on which successful reentry is built.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-grid-bot">
+        <div class="video-thumb-block" data-anim="scale-in" style="background-image:url('assets/findings-photos/photo-finding-03.jpg'); background-position: center 30%;" role="button" tabindex="0" aria-label="Play: Mutual Support">
+          <span class="vt-play">▶</span>
+          <span class="vt-cap">"Mutual support"</span>
+        </div>
+        <div class="pq-block bg-lavender notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"I didn't feel like I'm looking at the time [and need] to hurry up and get through everything that I want to share within a 20-minute phone call. They can speak, and I can actually hear my family, loved ones, or friends vent about issues that they're having. I could literally just listen to them."</p>
+          <p class="pq-block-attr">— Hamza, Formerly incarcerated, Massachusetts</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 04 — Parenting & Child Development (lavender bg) -->
+  <article id="finding-04" class="finding tpl-lavender" data-finding="3" data-area="Parenting">
+    <div class="finding-inner">
+      <div class="f-grid-top">
+        <div>
+          <p class="f-eyebrow" data-anim="fade-up">Finding 4</p>
+          <h3 class="finding-title" data-anim="fade-up" data-anim-delay="100">
+            <span class="line">PARENTING</span>
+            <span class="line">&amp; CHILD</span>
+            <span class="line"><em>Development</em></span>
+          </h3>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="200" style="margin-top: 24px;">Nearly half of people in prison are parents to minor children, with 18% of those children four years old or younger. For incarcerated parents, connecting with their children over the phone is one of the primary ways they parent while separated. But the high cost of calls has long made that connection difficult to sustain at the levels necessary for child rearing. Parents are often forced to consider whether to spend their families' limited resources on staying involved in their children's lives or on other needs for their care and upbringing. The consistency that builds trust is the first to go.</p>
+        </div>
+        <aside class="f-feature has-illust" data-anim="slide-left" data-anim-delay="200">
+          <img src="assets/illustrations/finding-illust/cropped/finding-04-strengthened-parenting.png" alt="Mother and child illustration" />
+        </aside>
+      </div>
+
+      <div class="f-grid-mid">
+        <div class="pq-block bg-plum notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"You can't force a child to say what's going on in 30 minutes. But you can hear if your child is going through something by the tone of their voice. With free phone calls, if she has something going on, she can talk to me."</p>
+          <p class="pq-block-attr">— Natavia, Currently Incarcerated, New York</p>
+        </div>
+        <div>
+          <h4 class="f-subhead" data-anim="fade-up">For the next generation</h4>
+          <div class="f-body">
+            <p data-anim="fade-up">Free communication restored that consistency. Parents describe children running to the phone, eagerly anticipating daily calls, opening up in ways that intermittent, rationed conversations never allowed. For one family, daily calls between a father and his autistic daughter produced a concrete developmental change: she started speaking more, becoming vocal in ways she had never been before.</p>
+            <p data-anim="fade-up" data-anim-delay="100">Stronger parent-child relationships can help mitigate the harm of parental incarceration and improve outcomes for millions of impacted children — and the generations that follow. By enabling consistent parental engagement and supporting child development, free communication policies strengthen family stability and generational mobility.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-grid-bot">
+        <div class="video-thumb-block" data-anim="scale-in" style="background-image:url('assets/quotes/quote-michael.jpg');" role="button" tabindex="0" aria-label="Play: Raised my daughter over the phone">
+          <span class="vt-play">▶</span>
+          <span class="vt-cap">"I raised my daughter over the phone"</span>
+        </div>
+        <div class="pq-block bg-coral notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"When I say I raised my daughter over the phone, I mean it in the literal sense. Ninety-five percent of our engagement was over the phone — reading books to her, helping her with her homework, and praying with her."</p>
+          <p class="pq-block-attr">— Michael, Formerly Incarcerated, New York</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 05 — Improved Mental & Physical Health (deep plum bg) -->
+  <article id="finding-05" class="finding tpl-plum" data-finding="4" data-area="Mental Health">
+    <div class="finding-inner">
+      <div class="f-grid-top">
+        <div>
+          <p class="f-eyebrow" data-anim="fade-up">Finding 5</p>
+          <h3 class="finding-title" data-anim="fade-up" data-anim-delay="100">
+            <span class="line">IMPROVED</span>
+            <span class="line">MENTAL &amp;</span>
+            <span class="line">PHYSICAL</span>
+            <span class="line"><em>Health</em></span>
+          </h3>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="200" style="margin-top: 24px;">Prisons and jails are isolating by design. Incarceration cuts people off from their families and communities, leaving many feeling abandoned, worthless, and hopeless. These emotions erode the mental health of incarcerated people as well as their loved ones, who suffer real loss when they are removed from the home. Phone calls are a literal lifeline — and when they became free, people used them.</p>
+        </div>
+        <aside class="f-feature has-illust" data-anim="slide-left" data-anim-delay="200">
+          <img src="assets/illustrations/finding-illust/cropped/finding-05-mental-health.png" alt="Hand and cord illustration" />
+        </aside>
+      </div>
+
+      <div class="f-grid-mid">
+        <div>
+          <span class="f-stats-eyebrow" data-anim="fade-up">Described improvements in stress, emotional stability, or overall wellbeing once calls became free</span>
+          <div class="stat-pair">
+            <div class="stat-block bg-coral notch-tr" data-anim="bar-grow">
+              <p class="stat-num"><span data-anim="counter" data-counter-end="77" data-counter-suffix="%">77%</span></p>
+              <p class="stat-label">family members</p>
+            </div>
+            <div class="stat-block bg-lavender notch-tr" data-anim="bar-grow" data-anim-delay="200">
+              <p class="stat-num"><span data-anim="counter" data-counter-end="76" data-counter-suffix="%">76%</span></p>
+              <p class="stat-label">incarcerated people</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="f-subhead" data-anim="fade-up">Hope is on the line</h4>
+          <div class="f-body">
+            <p data-anim="fade-up">With free communication, families were able to stay present in one another's lives, share emotional support, and move through daily challenges together rather than apart. Calls eased loneliness and depression for incarcerated people, bringing back the sense of belonging incarceration often strips away and restoring the hope needed to keep going. These individual improvements in mental health rippled outward — a calmer person is a safer person. And for their loved ones on the outside, that same connection relieved worry and mitigated loss.</p>
+            <p data-anim="fade-up" data-anim-delay="100">Access to free communication also helped incarcerated people get urgent medical attention. Unable to call 911 or access emergency medical help, incarcerated people must rely on correctional officers to receive medical attention. When such efforts prove unsuccessful, incarcerated people could communicate urgent health needs to loved ones who could advocate for them by calling the facility and escalating their medical concerns.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-grid-bot">
+        <div class="video-thumb-block" data-anim="scale-in" role="button" tabindex="0" aria-label="Play: Connection as medicine">
+          <span class="vt-play">▶</span>
+          <span class="vt-cap">"Connection as medicine"</span>
+        </div>
+        <div class="pq-block bg-lavender notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"Without the free phone calls, all your connections are cut off. You are literally isolated from everything. You get a sense of hope when you can still interact with people on the outside and see there's people out there that care about you."</p>
+          <p class="pq-block-attr">— Robert, Formerly Incarcerated, California</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 06 — Less Violence & Operational Disruption (cream bg) -->
+  <article id="finding-06" class="finding tpl-cream" data-finding="5" data-area="Safety">
+    <div class="finding-inner">
+      <div class="f-grid-top">
+        <div>
+          <p class="f-eyebrow" data-anim="fade-up">Finding 6</p>
+          <h3 class="finding-title" data-anim="fade-up" data-anim-delay="100">
+            <span class="line">LESS</span>
+            <span class="line">VIOLENCE &amp;</span>
+            <span class="line"><em>Operational</em></span>
+            <span class="line"><em>Disruption</em></span>
+          </h3>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="200" style="margin-top: 24px;">Phones have long been one of the most volatile pressure points inside correctional facilities — where incarcerated people get good news and bad news that can change their day or their life. Artificial scarcity created by high call costs, limited infrastructure, and restrictive access meant that phones were a consistent source of tension. Ultimately, emotionally charged conversations were often cut short, leaving people to carry unresolved stress back into shared living spaces, which expectedly created broader environmental issues.</p>
+        </div>
+        <aside class="f-feature bg-lavender notch-bl" data-anim="slide-left" data-anim-delay="200">
+          <div>
+            <p class="f-feature-num"><span data-anim="counter" data-counter-end="100" data-counter-suffix="%">100%</span></p>
+            <p>of corrections staff recommended free communication as a security tool that reduced tensions and makes their jobs easier.</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="f-grid-mid">
+        <aside class="f-feature has-illust" data-anim="slide-right">
+          <img src="assets/illustrations/finding-illust/cropped/finding-06-safer-facilities.png" alt="Person on phone illustration" />
+        </aside>
+        <div>
+          <h4 class="f-subhead" data-anim="fade-up">Calmer and safer facilities</h4>
+          <div class="f-body">
+            <p data-anim="fade-up">Free communication removed the scarcity that drove conflict, especially when implemented over personal tablets. Incarcerated people no longer had to compete for limited phone time or worry about when they would next be able to speak with loved ones. The prison environment had less tension, fewer conflicts, and more emotional stability. Overall, facilities became calmer, making both incarcerated people and corrections staff safer.</p>
+            <p data-anim="fade-up" data-anim-delay="100">With fewer conflicts and increased support from loved ones in navigating emotionally charged situations, there was a noticeable decrease in disciplinary infractions. These infractions often carry serious consequences that can affect a person's eligibility for early release, including parole. Thus, this shift not only improved daily life within facilities but also potentially enabled some incarcerated people to go home sooner.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-grid-bot">
+        <div class="video-thumb-block" data-anim="scale-in" style="background-image:url('assets/quotes/quote-mitchell.jpg');" role="button" tabindex="0" aria-label="Play: Win-win on both sides">
+          <span class="vt-play">▶</span>
+          <span class="vt-cap">"If they're having a good day, we're having a good day"</span>
+        </div>
+        <div class="pq-block bg-coral notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"I would go for it. It's going to be an enhancement for the incarcerated population and an enhancement for the security and civilian staff. It's a win-win on both sides."</p>
+          <p class="pq-block-attr">— Sergeant Mitchell, New York</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 07 — Rehabilitation (deep plum bg) -->
+  <article id="finding-07" class="finding tpl-plum" data-finding="6" data-area="Rehabilitation">
+    <div class="finding-inner">
+      <div class="f-grid-top">
+        <div>
+          <p class="f-eyebrow" data-anim="fade-up">Finding 7</p>
+          <h3 class="finding-title" data-anim="fade-up" data-anim-delay="100">
+            <span class="line">REHABILITATION</span>
+          </h3>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="200" style="margin-top: 24px;">For many incarcerated people, staying connected to loved ones is not just about maintaining relationships — it is a catalyst for personal growth. Staying in touch allows people to remain connected to who they are as parents, partners, and members of their communities, rather than becoming defined solely by their time inside. This sense of identity and responsibility is motivating — when people feel connected to those who care about them and can see fruitful lives post incarceration, they are more likely to invest in their own growth and wellbeing.</p>
+        </div>
+        <aside class="f-feature has-illust" data-anim="slide-left" data-anim-delay="200">
+          <img src="assets/illustrations/finding-illust/cropped/finding-07-rehabilitation.png" alt="Two figures embracing illustration" />
+        </aside>
+      </div>
+
+      <div class="f-grid-mid">
+        <div class="pq-block bg-coral notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"I see different individuals [when] they connect with their sons or their daughters or their wife. They're exercising more, getting involved in groups, going to church. Why? They want to become better men because they're making these connections. I can see their attitudes — their moves — have changed. And I can see life, I can see the energy, I can see excitement. I can see the desire to do something different."</p>
+          <p class="pq-block-attr">— Saul, Currently Incarcerated, California</p>
+        </div>
+        <div>
+          <h4 class="f-subhead" data-anim="fade-up">Staying on track</h4>
+          <div class="f-body">
+            <p data-anim="fade-up">Regular communication with loved ones strengthens rehabilitation efforts by helping incarcerated people stay grounded in relationships that encourage self-improvement, accountability, and stability. When access is consistent, these connections become an ongoing source of motivation to participate in rehabilitative programs and avoid disciplinary infractions, both of which also influence early release decisions.</p>
+            <p data-anim="fade-up" data-anim-delay="100">In helping incarcerated people maintain identity, connection, and a sense of responsibility to others, free communication supports rehabilitation not by replacing formal programs, but by strengthening the social foundations that make those programs effective. In this way, these connections are not separate from rehabilitation, but part of it, perhaps even the root of it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-grid-bot">
+        <div class="video-thumb-block" data-anim="scale-in" style="background-image:url('assets/quotes/quote-saul.png');" role="button" tabindex="0" aria-label="Play: Hope has a phone number">
+          <span class="vt-play">▶</span>
+          <span class="vt-cap">"Hope has a phone number"</span>
+        </div>
+        <div class="pq-block bg-lavender notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"Conversations create a pathway for empathy and healing — and actually, just hope for a future when I get out. Without these phone calls, that would not have been possible. They were vital for my healing, for my sobriety, for my growth, and for my ability to do the positive things I'm doing now in prison — because I have a belief that there are people out there who care for me, who love me, and who I am responsible for."</p>
+          <p class="pq-block-attr">— Jasmeel, Currently Incarcerated, California</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 08 — Reentry Planning & Success (lavender bg) -->
+  <article id="finding-08" class="finding tpl-lavender" data-finding="7" data-area="Reentry">
+    <div class="finding-inner">
+      <div class="f-grid-top">
+        <div>
+          <p class="f-eyebrow" data-anim="fade-up">Finding 8</p>
+          <h3 class="finding-title" data-anim="fade-up" data-anim-delay="100">
+            <span class="line">REENTRY</span>
+            <span class="line">PLANNING &amp;</span>
+            <span class="line"><em>Success</em></span>
+          </h3>
+          <p class="f-body" data-anim="fade-up" data-anim-delay="200" style="margin-top: 24px;">Reentry can be daunting. Many incarcerated people are released without housing, employment, or the community support they need to help them navigate freedom — feeding high recidivism rates that undermine public safety. But research has repeatedly shown that having strong and consistent community ties is among the most important factors in reentry success. These ties increase the likelihood of securing housing, landing employment, and finding stability. Ultimately, the same connections that motivate rehabilitation make reentry possible — they become the foundation on which successful return is built.</p>
+        </div>
+        <aside class="f-feature has-illust" data-anim="slide-left" data-anim-delay="200">
+          <img src="assets/illustrations/finding-illust/cropped/finding-08-reduced-recidivism.png" alt="Hand writing letter illustration" />
+        </aside>
+      </div>
+
+      <div class="f-grid-mid">
+        <div class="pq-block bg-plum notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"It was because of free phone calls that I was able to call the organization that ended up connecting me with the university. Within a month I'm being hired in this amazing job!"</p>
+          <p class="pq-block-attr">— Elizabeth, Formerly Incarcerated, California</p>
+        </div>
+        <div>
+          <h4 class="f-subhead" data-anim="fade-up">Safer communities</h4>
+          <div class="f-body">
+            <p data-anim="fade-up">Free communication allows incarcerated people to plan for life after release while still inside, coordinating housing, employment, education, and treatment with the support of loved ones before the prison door opens. The bonds built through consistent connection during incarceration become the social infrastructure that makes reintegration possible.</p>
+            <p data-anim="fade-up" data-anim-delay="100">Access to free communication did not just give incarcerated people the means to plan for their freedom, but also to fight for it — participating in their own defense, preparing for parole hearings, or creating required release plans. For some, it meant coming home sooner.</p>
+            <p data-anim="fade-up" data-anim-delay="200">Successful reentry is not just a personal outcome — it is a public one. When people return home with stable housing, employment, and strong support networks, communities are safer and public systems are less burdened. Free communication is an investment in our communities that reaps returns.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="f-grid-bot">
+        <div class="video-thumb-block" data-anim="scale-in" role="button" tabindex="0" aria-label="Play: The calls that come before freedom">
+          <span class="vt-play">▶</span>
+          <span class="vt-cap">"The calls that come before freedom"</span>
+        </div>
+        <div class="pq-block bg-lime notch-tr" data-anim="slide-right">
+          <p class="pq-block-text">"I was able to call social services, call transitional housing, call the school, call the Rock program. I got out in December, and in January, I was in school. All of that was possible because we didn't have to pay for the phone."</p>
+          <p class="pq-block-attr">— Donald, Formerly Incarcerated, California</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<!-- Fixed bottom sub-nav (lives outside findings-wrap so it can appear earlier — as user enters Findings Intro). Slides up when in findings region; slides down otherwise. 3 zones: plum prev/counter/next | scrollable tabs | coral skip CTA. -->
+<nav class="findings-subnav" data-subnav aria-label="8 Areas of Measurable Impact" aria-hidden="true">
+  <div class="subnav-position">
+    <button class="subnav-arrow" data-subnav-prev type="button" aria-label="Previous finding">&larr;</button>
+    <span class="subnav-counter">Finding <span data-subnav-current>1</span> / 8</span>
+    <button class="subnav-arrow" data-subnav-next type="button" aria-label="Next finding">&rarr;</button>
+  </div>
+  <div class="subnav-tabs">
+    <button class="subnav-tab is-active" data-go="0">Connection</button>
+    <button class="subnav-tab" data-go="1">Financial</button>
+    <button class="subnav-tab" data-go="2">Families</button>
+    <button class="subnav-tab" data-go="3">Parenting</button>
+    <button class="subnav-tab" data-go="4">Health</button>
+    <button class="subnav-tab" data-go="5">Safety</button>
+    <button class="subnav-tab" data-go="6">Rehabilitation</button>
+    <button class="subnav-tab" data-go="7">Reentry</button>
+  </div>
+  <button class="subnav-skip" data-subnav-skip type="button" aria-label="Skip past findings to Take Action section">
+    Skip to Take Action <span class="subnav-skip-arrow">&darr;</span>
+  </button>
+</nav>
+
+
+<!-- ============================================================
+     ACTION CENTER (Hero block) — Communication is a Lifeline
+============================================================ -->
+<section id="actions" class="action-center" aria-label="Action Center — Communication is a Lifeline">
+  <!-- Figures-only SVG (text stripped) at full bleed -->
+  <img class="action-center-figures" src="assets/illustrations/action-handshake-figures.svg" alt="" aria-hidden="true" data-anim="fade-up" />
+  <!-- Live HTML text overlay -->
+  <div class="action-center-text">
+    <span class="action-center-eyebrow" data-anim="fade-up">Action Center</span>
+    <h2 class="action-center-headline" data-anim="fade-up" data-anim-delay="100">
+      COMMUNICATION<br>IS A <em>Lifeline</em>
+    </h2>
+    <p class="action-center-body" data-anim="fade-up" data-anim-delay="200">The evidence is clear &mdash; and it demands action. Here's how you can help make free communication in prisons and jails the standard everywhere.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TAKE ACTION + RESOURCES — single beige band, 2 rows of 3 cards
+     - Take Action cards: white default, soft-lavender hover
+     - Resources cards 1-2: white default, deep-plum hover
+     - Ultimate Campaign Guide (card 3): pre-filled plum, arrow always shown
+     #actions remains on the preceding Action Center hero so the sub-nav
+     "Skip to Take Action" CTA still lands users at the entry of this region.
+============================================================ -->
+<section class="actions-wrap" aria-labelledby="actions-heading">
+  <div class="actions-stack">
+
+    <!-- TAKE ACTION -->
+    <div class="actions-section actions-section--take">
+      <h2 id="actions-heading" class="actions-heading" data-anim="fade-up">Take Action</h2>
+      <div class="actions-grid">
+        <a href="#" class="actions-card" data-anim="fade-up">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Read &amp; Share the Report</h3>
+          <p class="actions-card-body">Download the full report and share it with anyone who needs to see what's possible — and what is actively being withheld where these policies haven't yet been adopted.</p>
+        </a>
+        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="100">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Contact Your Legislators</h3>
+          <p class="actions-card-body">Free prison and jails communication is advancing state by state and county by county. Tell your elected officials it's time to act.</p>
+        </a>
+        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="200">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Support the Movement</h3>
+          <p class="actions-card-body">Worth Rises is working to end the correctional telecom industry's exploitation of incarcerated people and their families. Support our work.</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="actions-section actions-section--resources">
+      <h2 class="actions-heading" data-anim="fade-up">Resources</h2>
+      <div class="actions-grid">
+        <a href="#" class="actions-card" data-anim="fade-up">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Report Fact Sheet</h3>
+          <p class="actions-card-body">Key findings from Critical Connections: The Power of Free across 8 areas of measurable impact.</p>
+        </a>
+        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="100">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Implementation Guide</h3>
+          <p class="actions-card-body">A practical guide for agencies, legislators, and advocates designing, procuring, and rolling out free communication in prisons and jails.</p>
+        </a>
+        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="200">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Ultimate Campaign Guide</h3>
+          <p class="actions-card-body">A step-by-step guide for advocates, organizers, and campaigns working to win free communication in their state or county.</p>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ABOUT THIS PROJECT (Methodology)
+============================================================ -->
+<section id="aboutproject" class="about-project" aria-label="About This Project">
+  <div class="about-project-grid">
+    <!-- LEFT: eyebrow + headline + illustration -->
+    <div class="about-project-left">
+      <p class="about-project-eyebrow" data-anim="fade-up">Contributions</p>
+      <h2 class="about-project-headline" data-anim="fade-up" data-anim-delay="100">
+        <span class="line-1">About This</span>
+        <span class="line-2">Report</span>
+      </h2>
+      <img class="about-project-illustration" src="assets/illustrations/methodology-illustration.svg"
+           alt="" aria-hidden="true" data-anim="fade-up" data-anim-delay="200" />
+    </div>
+    <!-- RIGHT: lead + body cols + CTA stack -->
+    <div class="about-project-right">
+      <p class="about-project-lead" data-anim="fade-up" data-anim-delay="150">
+        <span class="accent">The Power of Free Communication</span> in Prisons and Jails is a project of <span class="accent">Worth Rises</span>, a non-profit dedicated to dismantling the prison industry and ending the exploitation of those it touches. Since 2018, Worth Rises has led the national Connecting Families campaign aimed at making communication in prisons and jails free.
+      </p>
+      <div class="about-project-cols" data-anim="fade-up" data-anim-delay="200">
+        <p>This report was made possible by the contributions of directly impacted communities — the incarcerated and formerly incarcerated people and their family members whose experiences with correctional communication are centered, and the correctional staff who offered their perspectives on how free communication policies shape facilities. We thank them for their participation.</p>
+        <p>Worth Rises is also grateful to the hundreds of national, state, and local partners, policymakers, and donors whose collaboration and support made this report — and the campaigns behind it — possible. We also thank the many people who contributed research, writing, editing, and design at every stage of this project.</p>
+      </div>
+      <div class="method-cta-wrap" data-anim="fade-up" data-anim-delay="250">
+        <a href="https://worthrises.org/" target="_blank" rel="noopener" class="method-cta method-cta--light">
+          Worth Rises
+          <span class="method-cta-arrow" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:20px;height:20px;">
+              <path d="M5 15L15 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M7 5H15V13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </a>
+        <a href="https://worthrises.org/connecting-families" target="_blank" rel="noopener" class="method-cta method-cta--dark">
+          Connecting Families
+          <span class="method-cta-arrow" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:20px;height:20px;">
+              <path d="M5 15L15 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M7 5H15V13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="site-footer" aria-label="Site footer">
+  <div class="footer-top">
+    <a href="https://worthrises.org" class="footer-brand" aria-label="Worth Rises">
+      <img src="assets/illustrations/worth-rises-logo.png" class="footer-logo" alt="Worth Rises"
+           onerror="this.style.display='none'; var f=document.getElementById('footer-brand-fallback'); if(f) f.style.display='inline-flex';" />
+      <span id="footer-brand-fallback" class="footer-mark-fallback" style="display:none; align-items:center; gap:8px;">
+        <span class="footer-mark">▲</span><span class="footer-mark-name">WORTH RISES</span>
+      </span>
+    </a>
+    <div class="footer-col">
+      <h4>Address</h4>
+      <address class="footer-address">85 Delancey St,<br>2nd Floor<br>New York, NY 10002</address>
+    </div>
+    <div class="footer-col">
+      <h4>Email</h4>
+      <p><a href="mailto:info@worthrises.org">info@worthrises.org</a></p>
+    </div>
+    <div class="footer-social" aria-label="Worth Rises on social media">
+      <a href="https://twitter.com/WorthRises" target="_blank" rel="noopener" aria-label="X (Twitter)" class="footer-social-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/worthrises/" target="_blank" rel="noopener" aria-label="Instagram" class="footer-social-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+      </a>
+      <a href="https://facebook.com/worthrises" target="_blank" rel="noopener" aria-label="Facebook" class="footer-social-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12Z"/></svg>
+      </a>
+      <a href="https://linkedin.com/company/worthrises" target="_blank" rel="noopener" aria-label="LinkedIn" class="footer-social-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20.452 20.452h-3.554v-5.569c0-1.328-.026-3.039-1.852-3.039-1.853 0-2.136 1.446-2.136 2.94v5.668H9.355V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.371-1.85 3.601 0 4.267 2.371 4.267 5.455v6.286ZM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125Zm1.78 13.019H3.555V9h3.562v11.452ZM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0Z"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="footer-links">
+    <a href="https://worthrises.org/jobs" target="_blank" rel="noopener">Open Positions</a>
+    <a href="mailto:info@worthrises.org">Contact Us</a>
+    <a href="https://worthrises.org/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Worth Rises.</span>
+    <span>All rights reserved.</span>
+  </div>
+</footer>
+
+
+<!-- ============================================================
+     INTERACTIVITY
+============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Header scroll state + auto-hide on idle ----------
+     Per client: nav stays visible while at the very top of the page; once
+     scrolled past the top, nav auto-hides after a short idle period and
+     reappears on any scroll or when the mouse moves near the top edge. */
+  var header = document.querySelector('[data-header]');
+  var hideTimer = null;
+  var HIDE_DELAY_MS = 1800;
+  function atTop() { return window.scrollY <= 4; }
+  function showHeader() {
+    if (!header) return;
+    header.classList.remove('is-hidden');
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    if (atTop()) return; // never hide while at the top of the page
+    hideTimer = setTimeout(function () {
+      header.classList.add('is-hidden');
+    }, HIDE_DELAY_MS);
+  }
+  function onScroll() {
+    if (!header) return;
+    header.classList.toggle('is-scrolled', window.scrollY > 8);
+    showHeader();
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  document.addEventListener('mousemove', function (e) {
+    if (e.clientY < 80) showHeader();
+  }, { passive: true });
+  onScroll();
+
+  /* ---------- ANIMATION SYSTEM ----------
+     IntersectionObserver watches every [data-anim] element.
+     When in view, adds .is-in. JS-driven primitives (counter, bar-grow)
+     get extra wiring in animateEnter().
+  ---------- */
+  var prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setAnimVars(el) {
+    var delay = parseInt(el.getAttribute('data-anim-delay'), 10) || 0;
+    var dur   = parseInt(el.getAttribute('data-anim-duration'), 10) || 0;
+    if (delay) el.style.setProperty('--delay', delay + 'ms');
+    if (dur)   el.style.setProperty('--d',     dur   + 'ms');
+  }
+
+  function animateCounter(el) {
+    var end       = parseFloat(el.getAttribute('data-counter-end'));
+    var prefix    = el.getAttribute('data-counter-prefix')   || '';
+    var suffix    = el.getAttribute('data-counter-suffix')   || '';
+    var decimals  = parseInt(el.getAttribute('data-counter-decimals'), 10) || 0;
+    var fmt       = el.getAttribute('data-counter-format')   || '';
+    var dur       = parseInt(el.getAttribute('data-anim-duration'), 10) || 1400;
+    var start     = performance.now();
+    if (isNaN(end)) return;
+    function frame(t) {
+      var p = Math.min(1, (t - start) / dur);
+      // ease-out cubic
+      var eased = 1 - Math.pow(1 - p, 3);
+      var val = end * eased;
+      var formatted;
+      if (fmt === 'comma') {
+        formatted = Math.round(val).toLocaleString();
+      } else {
+        formatted = val.toFixed(decimals);
+      }
+      el.textContent = prefix + formatted + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function animateEnter(el) {
+    el.classList.add('is-in');
+    var kind = el.getAttribute('data-anim');
+    if (kind === 'counter' && !el.dataset.counterDone) {
+      el.dataset.counterDone = '1';
+      // Start counter slightly after the fade-up so the user sees the motion
+      var counterDelay = (parseInt(el.getAttribute('data-anim-delay'), 10) || 0) + 150;
+      setTimeout(function () { animateCounter(el); }, counterDelay);
+    }
+  }
+
+  var animObserver;
+  if ('IntersectionObserver' in window && !prefersReduce) {
+    animObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateEnter(entry.target);
+          animObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  }
+
+  document.querySelectorAll('[data-anim]').forEach(function (el) {
+    setAnimVars(el);
+    if (animObserver) {
+      animObserver.observe(el);
+    } else {
+      // No observer → just reveal immediately (also catches reduced-motion)
+      animateEnter(el);
+    }
+  });
+
+  // Safety net: anything still hidden after 4 sec gets revealed
+  setTimeout(function () {
+    document.querySelectorAll('[data-anim]:not(.is-in)').forEach(function (el) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 200) animateEnter(el);
+    });
+  }, 4000);
+
+  /* ---------- Quotes infinite carousel ----------
+     Pattern ported from squarespace-quotes.html. Clones the original card set
+     once before and once after, parks scroll at the start of the middle (real)
+     set, and silently shifts back into the middle when the user crosses into
+     a clone region. Result: arrows / scroll can be used indefinitely without
+     visually popping back to the start. */
+  var strip = document.querySelector('[data-quotes]');
+  if (strip) {
+    var originalCards = Array.prototype.slice.call(strip.children);
+    var nOrig = originalCards.length;
+
+    function cloneSet() {
+      return originalCards.map(function (c) {
+        var clone = c.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.setAttribute('tabindex', '-1');
+        return clone;
+      });
+    }
+    var beforeClones = cloneSet();
+    var afterClones  = cloneSet();
+    beforeClones.reverse().forEach(function (c) { strip.insertBefore(c, strip.firstChild); });
+    afterClones.forEach(function (c) { strip.appendChild(c); });
+
+    function getCardWidth() {
+      return strip.children[0].getBoundingClientRect().width;
+    }
+    function getMiddleStart() {
+      return getCardWidth() * nOrig;
+    }
+
+    // Park at the start of the middle (real) set after layout settles.
+    setTimeout(function () { strip.scrollLeft = getMiddleStart(); }, 50);
+
+    // Silent wrap when crossing into the clone regions.
+    var wrapping = false;
+    strip.addEventListener('scroll', function () {
+      if (wrapping) return;
+      var setWidth   = getCardWidth() * nOrig;
+      var middleStart = setWidth;
+      var middleEnd   = setWidth * 2;
+      if (strip.scrollLeft < middleStart - getCardWidth() * 0.5) {
+        wrapping = true;
+        strip.scrollLeft += setWidth;
+        requestAnimationFrame(function () { wrapping = false; });
+      } else if (strip.scrollLeft > middleEnd - getCardWidth() * 0.5) {
+        wrapping = true;
+        strip.scrollLeft -= setWidth;
+        requestAnimationFrame(function () { wrapping = false; });
+      }
+    }, { passive: true });
+
+    // Suppress href="#" jump-to-top when a card is clicked/tapped.
+    strip.addEventListener('click', function (e) {
+      var card = e.target.closest('.quote-card');
+      if (card) e.preventDefault();
+    });
+
+    var prevBtn = document.querySelector('[data-q-prev]');
+    var nextBtn = document.querySelector('[data-q-next]');
+    if (prevBtn) prevBtn.addEventListener('click', function () {
+      strip.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+    });
+    if (nextBtn) nextBtn.addEventListener('click', function () {
+      strip.scrollBy({ left:  getCardWidth(), behavior: 'smooth' });
+    });
+  }
+
+  /* ---------- Findings sub-nav: click-to-scroll + scroll-position-based active highlight ---------- */
+  var subnav = document.querySelector('[data-subnav]');
+  var findings = Array.prototype.slice.call(document.querySelectorAll('.finding'));
+  if (subnav && findings.length) {
+    var tabs = Array.prototype.slice.call(subnav.querySelectorAll('[data-go]'));
+    var tabsWrap   = subnav.querySelector('.subnav-tabs');
+    var prevArrow  = subnav.querySelector('[data-subnav-prev]');
+    var nextArrow  = subnav.querySelector('[data-subnav-next]');
+    var counterEl  = subnav.querySelector('[data-subnav-current]');
+    var skipBtn    = subnav.querySelector('[data-subnav-skip]');
+
+    function setActiveTab(idx) {
+      tabs.forEach(function (t, i) { t.classList.toggle('is-active', i === idx); });
+      // Auto-scroll the tabs strip so the active tab stays visible if overflowing
+      var activeTab = tabs[idx];
+      if (activeTab && tabsWrap && tabsWrap.scrollWidth > tabsWrap.clientWidth) {
+        var navRect = tabsWrap.getBoundingClientRect();
+        var tabRect = activeTab.getBoundingClientRect();
+        if (tabRect.left < navRect.left || tabRect.right > navRect.right) {
+          activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      }
+      // Counter + prev/next disabled state
+      if (counterEl) counterEl.textContent = (idx + 1);
+      if (prevArrow) prevArrow.disabled = (idx <= 0);
+      if (nextArrow) nextArrow.disabled = (idx >= tabs.length - 1);
+    }
+
+    function scrollToFinding(idx) {
+      idx = Math.max(0, Math.min(tabs.length - 1, idx));
+      var target = findings[idx];
+      if (!target) return;
+      var headerEl = document.querySelector('.site-header');
+      var off = headerEl ? headerEl.offsetHeight : 72;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    function currentActiveIdx() {
+      for (var i = 0; i < tabs.length; i++) {
+        if (tabs[i].classList.contains('is-active')) return i;
+      }
+      return 0;
+    }
+
+    if (prevArrow) prevArrow.addEventListener('click', function () {
+      scrollToFinding(currentActiveIdx() - 1);
+    });
+    if (nextArrow) nextArrow.addEventListener('click', function () {
+      scrollToFinding(currentActiveIdx() + 1);
+    });
+    if (skipBtn) skipBtn.addEventListener('click', function () {
+      var target = document.getElementById('actions')
+                || document.getElementById('aboutproject')
+                || document.getElementById('take-action');
+      if (!target) return;
+      var headerEl = document.querySelector('.site-header');
+      var off = headerEl ? headerEl.offsetHeight : 72;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+
+    /* Active tab tracking via scroll position. The trigger line sits ~80% down the
+       viewport so the active tab flips the *moment* the next finding's top edge
+       (and its headline immediately below) starts entering view from the bottom —
+       matches "shift the moment I see the start of the next section". */
+    var findingsIntro = document.getElementById('findings');
+    var lastFinding = findings[findings.length - 1];
+
+    function updateActiveTabFromScroll() {
+      var triggerLine = window.innerHeight * 0.8;
+      var bestIdx = 0;
+      // Iterate top-down; track the last (= most recent) finding whose top has
+      // crossed below the trigger line. Findings are stacked, so we can break
+      // as soon as we see one still below the trigger.
+      for (var i = 0; i < findings.length; i++) {
+        var top = findings[i].getBoundingClientRect().top;
+        if (top <= triggerLine) {
+          bestIdx = i;
+        } else {
+          break;
+        }
+      }
+      setActiveTab(bestIdx);
+    }
+
+    /* Sub-nav slides up when user enters Findings Intro and stays visible through the
+       last finding. Slides down (off-screen) otherwise. */
+    function updateSubnavVisibility() {
+      if (!findingsIntro || !lastFinding) return;
+      var introTop = findingsIntro.getBoundingClientRect().top;
+      var lastBottom = lastFinding.getBoundingClientRect().bottom;
+      var headerEl = document.querySelector('.site-header');
+      var headerH = headerEl ? headerEl.offsetHeight : 72;
+      // Show as soon as findings-intro starts entering the viewport (top < 85% of viewport).
+      // Hide once the last finding has fully scrolled above the header.
+      var entered = introTop < window.innerHeight * 0.85;
+      var stillInside = lastBottom > headerH + 50;
+      var visible = entered && stillInside;
+      subnav.classList.toggle('is-visible', visible);
+      subnav.setAttribute('aria-hidden', visible ? 'false' : 'true');
+    }
+
+    // Click-to-jump
+    tabs.forEach(function (tab, idx) {
+      tab.addEventListener('click', function () {
+        var target = findings[idx];
+        if (!target) return;
+        var headerH = document.querySelector('.site-header');
+        var off = headerH ? headerH.offsetHeight : 72;
+        var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      });
+    });
+
+    // Track on every scroll (passive). Throttle with requestAnimationFrame.
+    var subnavTicking = false;
+    function onSubnavScroll() {
+      if (subnavTicking) return;
+      subnavTicking = true;
+      requestAnimationFrame(function () {
+        updateSubnavVisibility();
+        updateActiveTabFromScroll();
+        subnavTicking = false;
+      });
+    }
+    window.addEventListener('scroll', onSubnavScroll, { passive: true });
+    window.addEventListener('resize', onSubnavScroll, { passive: true });
+    // Initial sync
+    updateSubnavVisibility();
+    updateActiveTabFromScroll();
+  }
+
+  /* ---------- Finding 01: Prisons / Jails chart toggle ----------
+     Updates the two stat-block numbers AND the +pct in the after-block label.
+     Canonical numbers: prisons 25→45 (+80%); jails 27→57 (+111%).
+  ---------- */
+  var btnP = document.getElementById('ftog-prisons');
+  var btnJ = document.getElementById('ftog-jails');
+  if (btnP && btnJ) {
+    var dataset = {
+      prisons: { eyebrow: 'Call minutes per person in prisons', before: 25, after: 45, pct: '+80%' },
+      jails:   { eyebrow: 'Call minutes per person in jails',   before: 27, after: 57, pct: '+111%' }
+    };
+    function setChart(which) {
+      var d = dataset[which];
+      var graph = document.querySelector('[data-chart]');
+      if (!graph) return;
+      graph.setAttribute('data-chart', which);
+      // Update the eyebrow text above the chart toggle
+      var eyebrowEl = graph.parentNode.querySelector('.f-stats-eyebrow');
+      if (eyebrowEl) eyebrowEl.textContent = d.eyebrow;
+      // Update the two stat-block numbers
+      var blocks = graph.querySelectorAll('.stat-block');
+      if (blocks.length >= 2) {
+        var beforeNum = blocks[0].querySelector('[data-bar-value]');
+        var afterNum  = blocks[1].querySelector('[data-bar-value]');
+        if (beforeNum) beforeNum.textContent = d.before;
+        if (afterNum)  afterNum.textContent  = d.after;
+        // Update the +pct strong inside the after-block label
+        var pctEl = blocks[1].querySelector('.stat-label strong');
+        if (pctEl) pctEl.textContent = d.pct;
+      }
+      btnP.classList.toggle('is-active', which === 'prisons');
+      btnJ.classList.toggle('is-active', which === 'jails');
+      btnP.setAttribute('aria-selected', which === 'prisons');
+      btnJ.setAttribute('aria-selected', which === 'jails');
+    }
+    btnP.addEventListener('click', function () { setChart('prisons'); });
+    btnJ.addEventListener('click', function () { setChart('jails'); });
+  }
+
+  /* ---------- Hero cord draw-on (getTotalLength approach) ----------
+     pathLength="1" + stroke-dasharray:1 wasn't reliably honored across
+     browsers (the cord rendered as a static line). Using getTotalLength()
+     bypasses that quirk — works in all browsers. Two nested rAFs paint the
+     hidden state before the transition kicks in. */
+  var heroCord = document.getElementById('hero-cord');
+  if (heroCord) {
+    var len;
+    try { len = heroCord.getTotalLength(); } catch (e) { len = 3000; }
+    if (!len || isNaN(len)) len = 3000;
+    heroCord.style.strokeDasharray  = len;
+    heroCord.style.strokeDashoffset = len;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        heroCord.style.transition = 'stroke-dashoffset 2400ms cubic-bezier(0.22, 1, 0.36, 1) 400ms';
+        heroCord.style.strokeDashoffset = '0';
+      });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

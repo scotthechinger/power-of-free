@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Backups (we keep these locally; don't push)
+*.bak
+*.bak-*
+*.svg.bak*
+*.png.bak*
+*.html.bak*
+
+# Intermediate / working asset folders (not used by index.html)
+assets/findings/Findings-new margins-4.30/
+assets/findings/Smaller illustrations 4.30 1028am/
+assets/findings/Final flush svg  /
+assets/findings/full-svg/
+finding 4/
+New Folder With Items/
+finding 1*detailed*svgs/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node (in case any tooling gets added later)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log

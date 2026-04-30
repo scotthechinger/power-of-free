@@ -1,0 +1,4356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The Power of Free — Critical Connections</title>
+<meta name="description" content="How free communication in prisons and jails is transforming lives, strengthening families, and reshaping reentry." />
+
+<!-- ============================================================
+     POWER OF FREE — Standalone backup site
+     - Single-file HTML / CSS / JS (no build, no dependencies)
+     - Animation system via [data-anim] + IntersectionObserver
+     - To trigger any animation on any element:
+         <div data-anim="fade-up">          → fade in + rise
+         <div data-anim="slide-left">       → slide in from right
+         <div data-anim="slide-right">      → slide in from left
+         <div data-anim="scale-in">         → grow from 95%
+         <div data-anim="mask-wipe">        → reveal left→right
+         <div data-anim="bar-grow">         → height: 0 → final
+         <div data-anim="counter" data-counter-end="73"> → number rolls up
+         data-anim-delay="200"  → stagger ms
+         data-anim-duration="900" → override default
+     - Adding a new primitive: add @keyframes + .anim--name + an entry
+       in animateEnter() if it needs JS (counter, bar-grow).
+============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   FONTS
+============================================================ */
+@font-face {
+  font-family: 'ConcretteXL';
+  src: url('https://static1.squarespace.com/static/69e1203d112d1a457a907074/t/69f0555522b0f60778021aba/1777358166235/ConcretteXL-MediumItalic.woff2') format('woff2'),
+       url('https://static1.squarespace.com/static/69e1203d112d1a457a907074/t/69f0555526608a246e28a2c6/1777358166576/ConcretteXL-MediumItalic.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ============================================================
+   DESIGN TOKENS
+============================================================ */
+:root {
+  /* Brand palette */
+  --cloud-neutral:   #F0EEE9;
+  --deep-plum:       #4B0F63;
+  --royal-aubergine: #5C1A7A;
+  --soft-lavender:   #D6B4FC;
+  --warm-coral:      #E4572E;
+  --mist-sage:       #C8D2B3;
+  --acid-lime:       #8FBF3D;
+  --ink:             #32302F;
+  --ink-soft:        #5a544f;
+  --rule:            rgba(34, 34, 34, 0.10);
+
+  /* Type */
+  --display: "Inter Display", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sans:    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --accent:  "ConcretteXL", "Fraunces", Georgia, serif;
+
+  /* Layout */
+  --gutter:      clamp(20px, 5vw, 71px);    /* side margin to text on either side */
+  --gutter-edge: clamp(20px, 1.5vw, 28px);  /* tighter for edge-bleeding sections (header, footer logos) */
+  --top-pad:     clamp(96px, 16vh, 151px);  /* top padding for sections — targets 151 from top edge to first text/eyebrow */
+  --header-h:    72px;
+  --subnav-h:    60px;
+
+  /* Motion */
+  --ease:      cubic-bezier(.2,.7,.2,1);
+  --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+  --anim-dur:  900ms;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+/* Anchor scroll target — leave room for the sticky header so #aboutreport,
+   #findings, #actions, #aboutproject, #hero-video all land flush with section top
+   instead of being half-hidden under the nav bar. */
+:target,
+section[id] { scroll-margin-top: var(--header-h); }
+[id="hero-video"], [id="aboutreport"], [id="aboutproject"], [id="findings"], [id="actions"] { scroll-margin-top: var(--header-h); }
+body {
+  font-family: var(--display);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--cloud-neutral);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "cv11";
+}
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+
+
+/* ============================================================
+   TYPOGRAPHY
+============================================================ */
+.display, .display-sub, .h-display, .finding-title {
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.10;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--ink);
+}
+.display      { font-size: clamp(64px, 9vw, 132px); line-height: 1.0; }
+.display-sub  { font-size: clamp(22px, 2.4vw, 32px); font-weight: 600; line-height: 1.2; margin-top: 12px; letter-spacing: 0.02em; text-transform: none; color: var(--ink-soft); }
+.h-display    { font-size: clamp(40px, 5.4vw, 72px); }
+.h-display em { font-style: italic; font-family: var(--accent); font-weight: 500; color: var(--warm-coral); letter-spacing: -0.01em; }
+.finding-title{ font-size: clamp(36px, 5vw, 64px); }
+
+.lede {
+  font-size: clamp(16px, 1.2vw, 18px);
+  max-width: 56ch;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+.lead-para {
+  font-family: var(--display);
+  font-size: clamp(17px, 1.2vw, 19px);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--ink);
+}
+.eyebrow-plum  { color: var(--deep-plum); }
+.eyebrow-light { color: #fff; }
+
+
+/* ============================================================
+   ANIMATION SYSTEM
+   - Each primitive sets initial state on the element.
+   - `.is-in` triggers the transition to the resting state.
+   - Delays/durations come from inline custom properties set by JS.
+============================================================ */
+[data-anim] {
+  --d: var(--anim-dur);
+  --delay: 0ms;
+  transition-duration: var(--d);
+  transition-delay: var(--delay);
+  transition-timing-function: var(--ease-out);
+  will-change: transform, opacity;
+}
+
+/* fade-up */
+[data-anim="fade-up"]            { opacity: 0; transform: translateY(40px); transition-property: opacity, transform; }
+/* Finding base SVGs are huge visual masses — give them a more graceful entrance:
+   slightly larger Y translate, longer duration, and a subtle scale so they feel
+   like they "rise" into place rather than snap. */
+.f1-base[data-anim="fade-up"],
+.f2-base[data-anim="fade-up"],
+.f3-base[data-anim="fade-up"],
+.f4-base[data-anim="fade-up"],
+.f5-base[data-anim="fade-up"],
+.f6-base[data-anim="fade-up"],
+.f7-base[data-anim="fade-up"],
+.f8-base[data-anim="fade-up"] {
+  opacity: 0;
+  transform: translateY(60px) scale(.985);
+  transition-duration: 1400ms;
+  transition-property: opacity, transform;
+}
+.f1-base[data-anim="fade-up"].is-in,
+.f2-base[data-anim="fade-up"].is-in,
+.f3-base[data-anim="fade-up"].is-in,
+.f4-base[data-anim="fade-up"].is-in,
+.f5-base[data-anim="fade-up"].is-in,
+.f6-base[data-anim="fade-up"].is-in,
+.f7-base[data-anim="fade-up"].is-in,
+.f8-base[data-anim="fade-up"].is-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+[data-anim="fade-up"].is-in      { opacity: 1; transform: translateY(0); }
+
+/* slide-left (enters from right) */
+[data-anim="slide-left"]         { opacity: 0; transform: translateX(60px); transition-property: opacity, transform; }
+[data-anim="slide-left"].is-in   { opacity: 1; transform: translateX(0); }
+
+/* slide-right (enters from left) */
+[data-anim="slide-right"]        { opacity: 0; transform: translateX(-60px); transition-property: opacity, transform; }
+[data-anim="slide-right"].is-in  { opacity: 1; transform: translateX(0); }
+
+/* scale-in */
+[data-anim="scale-in"]           { opacity: 0; transform: scale(.94); transition-property: opacity, transform; }
+[data-anim="scale-in"].is-in     { opacity: 1; transform: scale(1); }
+
+/* mask-wipe (left→right reveal using clip-path) */
+[data-anim="mask-wipe"]          { clip-path: inset(0 100% 0 0); transition-property: clip-path; }
+[data-anim="mask-wipe"].is-in    { clip-path: inset(0 0 0 0); }
+
+/* bar-grow — for vertical bars in graphs */
+[data-anim="bar-grow"]           { transform-origin: bottom; transform: scaleY(0); transition-property: transform; }
+[data-anim="bar-grow"].is-in     { transform: scaleY(1); }
+
+/* range-grow — for horizontal range bars */
+[data-anim="range-grow"]         { transform-origin: left; transform: scaleX(0); transition-property: transform; }
+[data-anim="range-grow"].is-in   { transform: scaleX(1); }
+
+/* counter — JS sets text content; element fades up */
+[data-anim="counter"]            { opacity: 0; transform: translateY(12px); transition-property: opacity, transform; }
+[data-anim="counter"].is-in      { opacity: 1; transform: translateY(0); }
+
+/* draw-path — SVG path stroke-dashoffset draw-on */
+[data-anim="draw-path"]          { stroke-dasharray: 1; stroke-dashoffset: 1; transition-property: stroke-dashoffset; transition-duration: 2200ms; }
+[data-anim="draw-path"].is-in    { stroke-dashoffset: 0; }
+
+
+/* Reduced motion: turn it ALL off */
+@media (prefers-reduced-motion: reduce) {
+  [data-anim] {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}
+
+
+/* ============================================================
+   BUTTONS / LINKS
+============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border-radius: 4px;
+  transition: transform .25s var(--ease), background .25s var(--ease), color .25s var(--ease);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-coral { background: var(--warm-coral); color: #fff; }
+.btn-coral:hover { background: #d44a23; }
+.btn-plum  { background: var(--deep-plum); color: #fff; }
+.btn-plum:hover { background: var(--royal-aubergine); }
+.btn-ghost { background: transparent; color: var(--deep-plum); border: 1px solid var(--deep-plum); }
+.btn-ghost:hover { background: var(--deep-plum); color: #fff; }
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--deep-plum);
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+.link-arrow:hover { color: var(--warm-coral); }
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: #ffffff;
+  border-bottom: 1px solid var(--rule);
+  transition: background .25s ease, border-color .25s ease, box-shadow .3s;
+}
+.site-header.is-scrolled { box-shadow: 0 4px 24px -16px rgba(0,0,0,.18); }
+/* Transparent state: applied when user has scrolled away from top.
+   Hovering the header restores the white bg so the nav is fully readable
+   when the user is about to interact with it. */
+.site-header.is-transparent {
+  background: rgba(255, 255, 255, 0);
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+/* Transparent state: hide logo, transparent CTA. Text color flips based on
+   which section is currently in view — body.nav-on-dark = white text,
+   body.nav-on-light = dark text. JS sets the body class via IntersectionObserver. */
+.site-header.is-transparent .brand {
+  opacity: 0;
+  visibility: hidden;
+}
+.site-header.is-transparent .header-cta {
+  background: transparent;
+}
+/* Default fallback — dark text */
+.site-header.is-transparent .primary-nav a,
+.site-header.is-transparent .header-cta {
+  color: var(--ink);
+}
+/* Dark-bg section in view → light text. Scoped to NOT apply when the user
+   is hovering or focusing the header so the hover state can override. */
+body.nav-on-dark .site-header.is-transparent:not(:hover):not(:focus-within) .primary-nav a,
+body.nav-on-dark .site-header.is-transparent:not(:hover):not(:focus-within) .header-cta {
+  color: #ffffff;
+}
+/* Light-bg section in view → dark text (already the default, but explicit) */
+body.nav-on-light .site-header.is-transparent:not(:hover):not(:focus-within) .primary-nav a,
+body.nav-on-light .site-header.is-transparent:not(:hover):not(:focus-within) .header-cta {
+  color: var(--ink);
+}
+/* Hover restores everything to opaque-white state */
+.site-header.is-transparent:hover,
+.site-header.is-transparent:focus-within {
+  background: #ffffff;
+  border-bottom-color: var(--rule);
+  box-shadow: 0 4px 24px -16px rgba(0,0,0,.18);
+}
+.site-header.is-transparent:hover .brand,
+.site-header.is-transparent:focus-within .brand {
+  opacity: 1;
+  visibility: visible;
+}
+.site-header.is-transparent:hover .primary-nav a,
+.site-header.is-transparent:focus-within .primary-nav a {
+  color: var(--ink);
+}
+.site-header.is-transparent:hover .header-cta,
+.site-header.is-transparent:focus-within .header-cta {
+  background: var(--warm-coral);
+  color: #ffffff;
+}
+.brand, .primary-nav a, .header-cta {
+  transition: opacity .25s ease, color .25s ease, background .25s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header { transition: background .15s; }
+}
+/* Spacer so the fixed header doesn't overlap the first section */
+main { padding-top: var(--header-h); }
+.header-inner {
+  padding: 0 0 0 var(--gutter);   /* left padded; right edge flush so CTA hits viewport edge */
+  display: flex;
+  align-items: stretch;            /* let CTA stretch full height */
+  justify-content: space-between;
+  gap: 32px;
+  height: var(--header-h);
+  max-width: none;
+  margin: 0;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-size: 18px;
+  color: var(--ink);
+  align-self: center;
+}
+.brand-logo {
+  height: 36px;
+  width: auto;
+}
+.brand-mark { color: var(--deep-plum); font-size: 16px; }
+.header-right {
+  display: flex;
+  align-items: stretch;            /* CTA full-height, nav still center-aligned via primary-nav itself */
+  gap: 0;
+  margin-left: auto;
+  height: 100%;
+}
+.primary-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 2.4vw, 40px);
+  padding-right: clamp(20px, 3vw, 48px);
+}
+.primary-nav a {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  position: relative;
+  padding: 4px 0;
+}
+.primary-nav a::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -2px;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s var(--ease);
+}
+.primary-nav a:hover::after { transform: scaleX(1); }
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warm-coral);
+  color: #fff;
+  padding: 0 clamp(28px, 3vw, 56px); /* horizontal only — vertical fills full nav height */
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 0;
+  height: 100%;
+  align-self: stretch;
+  transition: background .25s var(--ease);
+}
+.header-cta:hover { background: #d44a23; }
+
+
+/* ============================================================
+   HERO
+============================================================ */
+.hero {
+  /* Two-layer hero matching the SQS block exactly: full illustration SVG
+     (Frame 2117131439, cord path stripped) as one img, then a separate cord
+     SVG with the same 1440x800 viewBox + same path so it lands exactly where
+     the cord was. JS animates stroke-dashoffset on the cord. */
+  background-color: var(--cloud-neutral);
+  position: relative;
+  min-height: calc(100vh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-illustration {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+.hero-cord-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-cord-layer svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+@media (max-width: 720px) {
+  .hero { background-size: 180% auto; background-position: center bottom; }
+  .hero-cord-layer { display: none; }
+}
+.hero-inner { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: var(--top-pad) var(--gutter); }
+.hero .display {
+  /* "THE POWER OF FREE" all on one line — slightly tighter than other display text */
+  font-size: clamp(44px, 6.4vw, 92px);
+  line-height: 1.0;
+  white-space: nowrap;
+  margin: 16px 0 0;
+}
+.hero .display em {
+  /* Concrette italic accent — coral per Scott. Same font-size as siblings so
+     baselines line up naturally; no manual nudging required. */
+  font-family: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--warm-coral);
+  letter-spacing: -0.01em;
+}
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 40px;
+  justify-content: center;
+}
+.hero-btn {
+  /* Larger, more rectangular buttons matching the Figma hero CTAs */
+  padding: 18px 32px;
+  border-radius: 0;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+}
+.hero-btn:hover { transform: translateY(-1px); }
+.hero .lede { margin: 28px auto 0; }
+@media (max-width: 720px) {
+  .hero .display { white-space: normal; font-size: clamp(40px, 11vw, 64px); }
+}
+
+
+/* ============================================================
+   ABOUT THE REPORT — split (deep-plum / soft-lavender)
+============================================================ */
+.about {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Tightened so the whole block fits in viewport without scrolling */
+  min-height: clamp(440px, 64vh, 640px);
+  padding: 0;
+}
+.about-copy {
+  /* Reduced vertical padding (was var(--top-pad) ≈ 16vh each side, now ~6vh).
+     Right padding bumped up so the body text wraps well before the
+     centered circular CTA button — gives the text breathing room. */
+  padding: clamp(40px, 6vh, 72px) clamp(72px, 8.5vw, 130px) clamp(40px, 6vh, 72px) var(--gutter);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.about-visual {
+  /* Per Figma: 28px L/R, 35px T/B padding around the illustration so the
+     lavender bg shows around it (not edge-to-edge). */
+  padding: 35px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.about-copy {
+  background: var(--deep-plum);
+  color: #ffffff;
+  align-items: flex-start;
+}
+.about-copy .eyebrow { color: var(--soft-lavender); margin-bottom: 24px; }
+.about-copy .h-display {
+  /* Sized to fit "FREE COMMUNICATION" (18 chars) on a single line within the
+     left column. Both lines use the same size for visual symmetry.
+     Slightly tightened to help the whole block fit in viewport. */
+  color: #ffffff;
+  margin: 0 0 20px;
+  max-width: none;
+  line-height: 1.0;
+  font-size: clamp(26px, 3.1vw, 48px);
+  letter-spacing: -0.02em;
+}
+.about-copy .h-display .line { display: block; white-space: nowrap; }
+.about-copy .h-display em {
+  color: var(--warm-coral);
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.about-cta-btn {
+  /* Match the hero buttons exactly: square corners, larger padding, tighter letter-spacing */
+  margin-top: 28px;
+  padding: 18px 32px;
+  border-radius: 0;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+}
+.about-cta-btn:hover { transform: translateY(-1px); }
+.about-copy p { color: rgba(255,255,255,.85); margin: 14px 0; line-height: 1.6; max-width: 62ch; }
+.about-copy .link-arrow { margin-top: 14px; color: #fff; border-bottom-color: rgba(255,255,255,.6); }
+.about-copy .link-arrow:hover { color: var(--warm-coral); }
+.about-visual {
+  background: var(--soft-lavender);
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.about-visual-svg {
+  display: block;
+  /* SVG capped at 90% of the (already-padded) lavender content area so it
+     reads smaller within the column — like dragging a Keynote handle in.
+     Aspect ratio preserved; extra lavender breathes around all four sides. */
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+}
+
+/* ============================================================
+   ABOUT THE REPORT — circular CTA button
+   Replaces the old rectangle button. Positioned absolutely so it
+   straddles the column divider, centered horizontally, near the
+   section bottom. Frees up vertical space in the left column so
+   the eyebrow + headline naturally drop further down via the
+   existing center justification.
+============================================================ */
+.about-cta-circle {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(48px, 7vh, 96px);
+  transform: translateX(-50%);
+  width: clamp(108px, 10.5vw, 150px);
+  height: clamp(108px, 10.5vw, 150px);
+  border-radius: 50%;
+  background: var(--warm-coral);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  z-index: 5;
+  box-shadow: 0 10px 28px -10px rgba(0,0,0,.25);
+  transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+}
+.about-cta-circle:hover {
+  /* Preserve the centering translateX(-50%) on hover too */
+  transform: translateX(-50%) translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 14px 32px -10px rgba(0,0,0,.32);
+}
+.about-cta-arrow {
+  width: clamp(20px, 1.6vw, 26px);
+  height: clamp(20px, 1.6vw, 26px);
+  display: block;
+  color: #ffffff;
+}
+.about-cta-circle-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: clamp(11px, .95vw, 14px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.18;
+  color: inherit;
+}
+.about-toc-svg { width: min(420px, 78%); }
+.about-toc-svg svg { width: 100%; height: auto; }
+.report-cta {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(40px, 7vh, 80px);
+  transform: translateX(-50%);
+  z-index: 3;
+}
+.report-cta-circle {
+  width: clamp(160px, 14vw, 200px);
+  height: clamp(160px, 14vw, 200px);
+  border-radius: 50%;
+  background: var(--warm-coral);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(14px, 1.1vw, 17px);
+  line-height: 1.1;
+  text-align: center;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background .3s var(--ease), transform .3s var(--ease);
+  box-shadow: 0 20px 50px -16px rgba(228,87,46,.55);
+}
+.report-cta:hover .report-cta-circle { background: #d44a23; transform: rotate(-6deg) scale(1.04); }
+
+@media (max-width: 900px) {
+  .about { grid-template-columns: 1fr; min-height: 0; }
+  .about-copy, .about-visual { padding: 56px var(--gutter); }
+  .report-cta { position: static; transform: none; margin: 32px auto 0; display: block; }
+}
+
+
+/* ============================================================
+   HERO VIDEO — Vimeo embed with poster + close button
+============================================================ */
+.hero-video-section {
+  /* Fills 100% of viewport width AND fits within the viewport height (minus
+     header) so the lavender title card stays in view without scrolling.
+     Aspect ratio dropped — Vimeo's player handles internal letterboxing if
+     the video's aspect doesn't match the section. */
+  position: relative;
+  background: #1a1a1a;
+  overflow: hidden;
+  width: 100%;
+  height: calc(100vh - var(--header-h));
+}
+.hero-video-ambient {
+  /* Looping muted ambient video that plays in the bg until the user clicks
+     play. Falls back to the static thumbnail (poster attr) on older browsers
+     or while the video is buffering. */
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #2a2a2a;
+}
+.hero-video-section.is-playing .hero-video-ambient { display: none; }
+.hero-video-poster {
+  position: absolute; inset: 0;
+  background: transparent; /* video shows through behind the button */
+  cursor: pointer;
+  border: 0; padding: 0; margin: 0;
+  width: 100%; height: 100%;
+  display: block;
+  z-index: 1;
+}
+/* Centered play button removed — was blocking the ambient video. The play
+   visual now lives inside the title card (bottom-right). The poster button
+   itself still covers the full area so clicking anywhere triggers playback. */
+.hero-video-play { display: none; }
+.hero-video-card {
+  /* Deep-plum card flush bottom-right. Play button on the LEFT, title text on
+     the right. Sized so "A Smile You Can Hear" fits on a single line at
+     desktop. */
+  position: absolute;
+  right: 0; bottom: 0;
+  z-index: 4;
+  background: var(--deep-plum);
+  color: #fff;
+  padding: clamp(24px, 2.4vw, 36px) clamp(28px, 3vw, 48px);
+  width: auto;
+  max-width: 90%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 2.4vw, 36px);
+}
+/* Fly-in title card — independent of the global [data-anim] system.
+   We observe a small invisible sentinel at the same position as the card
+   (the card itself has translateX(110%) which shifts its bounding box
+   off-screen so observing it directly never triggers). When the sentinel
+   crosses into view, JS adds .is-in to the card. */
+.hero-video-card-sentinel {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: 80px; height: 80px;
+  pointer-events: none;
+  visibility: hidden;
+  z-index: 0;
+}
+.hero-video-card-flyin {
+  transform: translateX(110%);
+  opacity: 0;
+  transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .5s ease;
+  will-change: transform, opacity;
+}
+.hero-video-card-flyin.is-in {
+  transform: translateX(0);
+  opacity: 1;
+}
+.hero-video-card-text { flex: 1; min-width: 0; pointer-events: none; }
+.hero-video-card-play {
+  flex-shrink: 0;
+  width: clamp(56px, 5vw, 76px);
+  height: clamp(56px, 5vw, 76px);
+  border-radius: 50%;
+  background: var(--warm-coral); /* coral on plum card */
+  color: #fff;
+  display: grid;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.12s ease, filter 0.12s ease;
+  box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
+}
+.hero-video-card-play svg { width: 36%; height: 36%; transform: translateX(2px); }
+/* Hover ONLY when the play button itself is hovered/focused */
+.hero-video-card-play:hover,
+.hero-video-card-play:focus-visible {
+  filter: brightness(1.08);
+  transform: scale(1.06);
+}
+.hero-video-card h3 {
+  font-family: var(--display);
+  font-size: clamp(22px, 2.2vw, 36px);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 clamp(14px, 2vh, 24px);
+  white-space: nowrap;
+}
+.hero-video-card p {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.4;
+  margin: 0;
+}
+.hero-video-section.is-playing .hero-video-poster,
+.hero-video-section.is-playing .hero-video-card { display: none; }
+.hero-video-section.is-playing .hero-video-frame { display: block; }
+.hero-video-frame {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: 0;
+  z-index: 5;
+}
+.hero-video-close {
+  /* White X on a coral circle, top-right. Only visible while video is playing —
+     clicking returns the section to its initial poster state. Coral chosen so
+     the X reads clearly against any video frame. */
+  display: flex;
+  position: absolute;
+  top: clamp(16px, 2vh, 28px);
+  right: clamp(16px, 2vw, 32px);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--warm-coral);
+  border: 0; cursor: pointer;
+  z-index: 10;
+  align-items: center; justify-content: center;
+  box-shadow: 0 8px 24px -8px rgba(0,0,0,0.45);
+  transition: filter 0.2s, transform 0.2s;
+  opacity: 0;
+  pointer-events: none;
+}
+.hero-video-close:hover { filter: brightness(.92); transform: scale(1.06); }
+.hero-video-close svg { width: 18px; height: 18px; color: #fff; }
+.hero-video-section.is-playing .hero-video-close { opacity: 1; pointer-events: auto; }
+@media (max-width: 720px) {
+  .hero-video-section { aspect-ratio: auto; max-height: none; }
+  .hero-video-section .hero-video-poster { position: relative; aspect-ratio: 16/9; }
+  .hero-video-card { position: relative; right: auto; bottom: auto; width: 100%; padding: 24px; }
+  .hero-video-card h3 { font-size: 28px; }
+}
+
+
+/* ============================================================
+   QUOTES — full-bleed strip, infinite carousel, hover-reveal
+   Pattern ported from squarespace-quotes.html (final SQS version).
+============================================================ */
+.quotes {
+  background: var(--soft-lavender);
+  padding: var(--top-pad) 0 0;
+  overflow: hidden;
+}
+.quotes-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 var(--gutter) clamp(24px, 4vh, 40px);
+}
+.quotes-head .h-display { margin: 0; max-width: 18ch; }
+.quotes-eyebrow { margin-bottom: 14px; }
+.quotes-arrows { display: flex; gap: 8px; }
+.qbtn {
+  width: 64px; height: 64px;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: filter .2s ease, transform .2s ease;
+  padding: 0;
+}
+.qbtn svg { width: 28px; height: 28px; display: block; }
+/* Both arrows on coral now — section bg flipped to lavender, prev arrow's
+   lavender bg disappeared into the section. Coral on lavender reads strongly. */
+.qbtn[data-q-prev]      { background: var(--warm-coral); }
+.qbtn[data-q-prev] svg  { stroke: #fff; }
+.qbtn[data-q-next]      { background: var(--warm-coral); }
+.qbtn[data-q-next] svg  { stroke: #fff; }
+.qbtn:hover  { filter: brightness(.92); }
+.qbtn:active { transform: scale(.96); }
+
+.quotes-strip {
+  display: flex;
+  width: 100%;
+  height: clamp(420px, 56vh, 560px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.quotes-strip::-webkit-scrollbar { display: none; }
+
+.quote-card {
+  flex: 0 0 clamp(260px, 22vw, 340px);
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  scroll-snap-align: start;
+  background: var(--cloud-neutral);
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.quote-card .qc-image,
+.quote-card .qc-quote {
+  position: absolute; inset: 0;
+  transition: opacity .35s ease;
+}
+.quote-card .qc-image {
+  background-size: cover;
+  background-position: center;
+  background-color: var(--deep-plum, #4B0F63);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 24px;
+  z-index: 1;
+}
+.quote-card .qc-tag {
+  background: var(--warm-coral, #E4572E);
+  color: #fff;
+  padding: 8px 14px;
+  font-family: var(--display, "Inter", sans-serif);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  max-width: calc(100% - 24px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quote-card .qc-quote {
+  background: var(--cloud-neutral);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  z-index: 2;
+  overflow-y: auto;
+}
+.quote-card:hover .qc-image,
+.quote-card:focus-visible .qc-image { opacity: 0; }
+.quote-card:hover .qc-quote,
+.quote-card:focus-visible .qc-quote { opacity: 1; }
+
+.qc-text {
+  font-family: var(--accent);
+  font-style: italic;
+  font-size: clamp(14px, 1vw, 17px);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 0;
+}
+.qc-attr-name {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.qc-attr-meta {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  margin: 0;
+}
+@media (max-width: 800px) {
+  .quotes-head { flex-direction: column; align-items: flex-start; }
+  .quote-card { flex: 0 0 75vw; }
+}
+
+
+/* ============================================================
+   FINDINGS — intro + sticky-wrap centerpiece
+============================================================ */
+.findings-intro {
+  position: relative;
+  padding: var(--top-pad) 0 0 var(--gutter); /* no bottom padding so figures hit the section bottom edge */
+  min-height: calc(100vh - var(--header-h));
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: end; /* anchor BOTH columns to the bottom — figures go flush */
+  gap: clamp(32px, 5vw, 80px);
+  overflow: hidden;
+  background: var(--cloud-neutral);
+}
+/* Text column needs to stay visually upper-aligned, not pushed to bottom */
+.findings-intro-inner { align-self: start; padding-top: 0; }
+.findings-intro-inner { position: relative; z-index: 2; max-width: 620px; }
+.findings-intro .eyebrow { margin-bottom: 28px; border: 0; padding: 0; color: var(--deep-plum); font-size: 12px; letter-spacing: 0.18em; }
+.findings-intro .h-display {
+  margin: 0 0 28px;
+  line-height: 0.98;
+  font-size: clamp(48px, 6.4vw, 92px); /* a little bigger now that it's only 2 lines */
+}
+.findings-intro .h-display .line { display: block; }
+/* Line 1 — uppercase Inter 800, black ink */
+.findings-intro .h-display .line-1 {
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+/* Line 2 — Concrette italic, deep plum, single line */
+.findings-intro .h-display .line-2 {
+  color: var(--deep-plum);
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  margin-top: 4px;
+  white-space: nowrap;
+  font-size: clamp(40px, 5vw, 76px); /* slightly smaller than line 1 so "Measurable Impact" fits on one line */
+}
+.findings-intro p {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+  max-width: 48ch;
+}
+.findings-intro-svg {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end; /* anchor to bottom of block, per client */
+  justify-content: flex-end; /* hug the right edge */
+  height: 100%;
+  align-self: stretch; /* fill the column's full height in the grid */
+}
+.findings-intro-svg img,
+.findings-intro-svg svg {
+  width: 100%;
+  max-width: clamp(500px, 58vw, 820px); /* bigger per client */
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 0; /* flush bottom */
+}
+@media (max-width: 900px) {
+  .findings-intro {
+    grid-template-columns: 1fr;
+    padding: var(--top-pad) var(--gutter);
+  }
+  .findings-intro-svg { justify-content: center; align-items: center; }
+  .findings-intro-svg img,
+  .findings-intro-svg svg { max-width: 420px; }
+}
+
+.findings-wrap { position: relative; }
+
+.finding {
+  min-height: calc(100vh - var(--header-h));
+  padding: var(--top-pad) var(--gutter) calc(var(--subnav-h) + var(--top-pad));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  scroll-snap-align: start;
+  position: relative;
+}
+.finding-inner {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.finding-head {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+.finding-num {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--warm-coral);
+}
+.finding-area {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.finding-title { margin-bottom: 24px; }
+
+.finding-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: clamp(32px, 6vw, 80px);
+  align-items: center;
+  margin: 32px 0;
+}
+.row-text p { margin: 0 0 14px; max-width: 60ch; line-height: 1.55; }
+.row-text p:last-child { margin-bottom: 0; }
+
+.stat-card {
+  padding: 32px 36px;
+  background: var(--soft-lavender);
+  color: var(--deep-plum);
+}
+.stat-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(48px, 6vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+}
+.stat-card p { color: var(--deep-plum); margin: 0; max-width: 36ch; line-height: 1.45; }
+.stat-quote {
+  font-family: var(--accent);
+  font-style: italic;
+  font-size: clamp(20px, 1.6vw, 24px);
+  font-weight: 500;
+  line-height: 1.35;
+}
+.stat-attr {
+  margin-top: 14px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.pull-quote {
+  background: var(--mist-sage);
+  padding: 32px 36px;
+  border-left: 4px solid var(--deep-plum);
+}
+.pull-quote p:first-child {
+  font-family: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(20px, 1.6vw, 24px);
+  line-height: 1.35;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+.pull-quote-attr {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+/* Graphs */
+.graph-card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  padding: 28px;
+}
+.graph-placeholder { display: grid; gap: 18px; }
+.graph-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+.bar-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: 24px;
+  height: 240px;
+}
+.bar {
+  height: var(--h, 50%);
+  background: var(--warm-coral);
+  position: relative;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  padding-bottom: 14px;
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+}
+.bar-before { background: #f2a081; }
+.bar-after  { background: var(--warm-coral); }
+.bar-label small {
+  display: block;
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.95;
+  margin-top: 2px;
+}
+.bar-cap {
+  position: absolute;
+  bottom: -28px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.range-bar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--deep-plum);
+}
+.range-mid {
+  height: 8px;
+  background: linear-gradient(to right, var(--soft-lavender), var(--warm-coral));
+}
+.range-cap {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Section templates */
+.tpl-cream    { background: var(--cloud-neutral); color: var(--ink); }
+.tpl-plum     { background: var(--deep-plum); color: #fff; }
+.tpl-plum .finding-num { color: var(--soft-lavender); }
+.tpl-plum .finding-area, .tpl-plum .lead-para,
+.tpl-plum .row-text p, .tpl-plum .finding-title { color: #fff; }
+.tpl-plum .stat-card { background: var(--royal-aubergine); color: #fff; }
+.tpl-plum .stat-card p { color: rgba(255,255,255,.92); }
+.tpl-plum .pull-quote { background: rgba(255,255,255,.06); border-left-color: var(--soft-lavender); }
+.tpl-plum .pull-quote p:first-child,
+.tpl-plum .pull-quote-attr { color: rgba(255,255,255,.95); }
+.tpl-plum .graph-card { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.15); }
+.tpl-plum .graph-label, .tpl-plum .range-cap, .tpl-plum .bar-cap { color: rgba(255,255,255,.7); }
+.tpl-plum .range-bar { color: #fff; }
+
+.tpl-sage { background: var(--mist-sage); color: var(--ink); }
+.tpl-sage .finding-num { color: var(--deep-plum); }
+.tpl-sage .stat-card { background: rgba(75,15,99,.10); color: var(--deep-plum); }
+.tpl-sage .pull-quote { background: rgba(255,255,255,.5); }
+
+.tpl-lavender { background: var(--soft-lavender); color: var(--deep-plum); }
+.tpl-lavender .lead-para, .tpl-lavender .row-text p,
+.tpl-lavender .finding-title, .tpl-lavender .finding-area { color: var(--deep-plum); }
+.tpl-lavender .stat-card { background: #fff; }
+.tpl-lavender .pull-quote { background: rgba(255,255,255,.6); border-left-color: var(--warm-coral); }
+
+
+/* ============================================================
+   FINDING 01 — Chart toggle (Prisons / Jails)
+============================================================ */
+.chart-toggle {
+  display: inline-flex;
+  background: rgba(0,0,0,0.15);
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 18px;
+}
+.chart-toggle button {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 999px;
+  color: rgba(255,255,255,0.7);
+  transition: background .25s, color .25s;
+}
+.tpl-cream .chart-toggle, .tpl-sage .chart-toggle, .tpl-lavender .chart-toggle { background: rgba(0,0,0,0.08); }
+.tpl-cream .chart-toggle button, .tpl-sage .chart-toggle button, .tpl-lavender .chart-toggle button { color: var(--ink-soft); }
+.chart-toggle button.is-active { background: var(--warm-coral); color: #fff; }
+
+
+/* ============================================================
+   FINDINGS SUB-NAV (sticky bottom — 3 zones: position / tabs / skip)
+============================================================ */
+.findings-subnav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 40;
+  background: #ffffff;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: var(--subnav-h);
+  box-shadow: 0 -8px 24px -16px rgba(0,0,0,.18);
+  transform: translateY(100%);
+  transition: transform 0.32s var(--ease-out);
+  pointer-events: none;
+  font-family: var(--display);
+}
+.findings-subnav.is-visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .findings-subnav { transition: none; }
+}
+
+/* LEFT zone — plum bg, white text: prev / counter / next */
+.subnav-position {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  background: var(--deep-plum);
+  color: #fff;
+  flex: 0 0 auto;
+  min-width: 178px;
+  justify-content: center;
+  border-right: 1px solid var(--rule);
+}
+.subnav-arrow {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 18px;
+  padding: 0 6px;
+  cursor: pointer;
+  line-height: 1;
+  font-family: inherit;
+  transition: opacity .2s ease;
+}
+.subnav-arrow:hover { opacity: .7; }
+.subnav-arrow:disabled { opacity: .35; cursor: default; }
+.subnav-counter {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  min-width: 96px;
+  text-align: center;
+}
+
+/* MIDDLE zone — scrollable tab strip */
+.subnav-tabs {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.subnav-tabs::-webkit-scrollbar { display: none; }
+.subnav-tab {
+  flex: 1 0 auto;
+  min-width: 0;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 0;
+  border-right: 1px solid var(--rule);
+  transition: background .25s var(--ease), color .25s var(--ease);
+  cursor: pointer;
+}
+.subnav-tab:last-child { border-right: 0; }
+.subnav-tab:hover { background: rgba(214, 180, 252, 0.2); }
+.subnav-tab.is-active { background: var(--soft-lavender); color: var(--deep-plum); }
+
+/* RIGHT zone — coral CTA: persistent Skip to Take Action */
+.subnav-skip {
+  flex: 0 0 auto;
+  padding: 0 22px;
+  background: var(--warm-coral);
+  color: #fff;
+  border: 0;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: filter .25s ease;
+}
+.subnav-skip:hover { filter: brightness(.92); }
+.subnav-skip-arrow { font-size: 14px; display: inline-block; transform: translateY(1px); }
+
+/* Responsive: tighten on narrow screens */
+@media (max-width: 720px) {
+  .subnav-position { min-width: 110px; padding: 0 8px; gap: 2px; }
+  .subnav-counter  { font-size: 10px; min-width: 64px; letter-spacing: 0.1em; }
+  .subnav-skip     { padding: 0 14px; font-size: 10px; letter-spacing: 0.1em; }
+}
+
+
+/* ============================================================
+   ACTION CENTER — handshake hero block
+============================================================ */
+/* Hybrid: figures-only SVG (text stripped via fill-color filtering) at full
+   bleed, anchored to BOTTOM so the hands always sit in view. The SVG is taller
+   than viewport on wide screens, so the heads crop off the top — that's
+   intentional. Live HTML text is overlaid in the upper-middle area; the
+   figures' shoulders/arms intentionally overlap with the text region (Scott
+   approved this — gives the compact "framed by figures" feel). */
+.action-center {
+  position: relative;
+  background: var(--cloud-neutral);
+  width: 100%;
+  height: calc(100vh - var(--header-h));
+  min-height: 560px;
+  overflow: hidden;
+}
+.action-center-figures {
+  position: absolute;
+  bottom: -7vh; /* push figures down so heads are mostly visible at the top */
+  left: 0; right: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.action-center-text {
+  position: absolute;
+  top: 30%; /* drop into the cradle formed by the figures' arms */
+  left: 0; right: 0;
+  z-index: 2;
+  text-align: center;
+  padding: 0 var(--gutter);
+  pointer-events: none;
+}
+.action-center-text > * { pointer-events: auto; }
+.action-center-eyebrow {
+  display: inline-block;
+  margin: 0 0 18px;
+  color: var(--deep-plum);
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.action-center-headline {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(40px, 5.4vw, 84px);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.action-center-headline em {
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--deep-plum);
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+.action-center-body {
+  margin: 24px auto 0;
+  max-width: 44ch;
+  font-family: var(--display);
+  font-size: clamp(14px, 1.05vw, 17px);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+
+/* ============================================================
+   TAKE ACTION
+============================================================ */
+/* ============================================================
+   TAKE ACTION + RESOURCES (new) — beige band, white cards,
+   row-specific hover treatments. Pattern ported from SQS.
+============================================================ */
+.actions-wrap { width: 100%; position: relative; font-family: var(--display); }
+.actions-stack {
+  background: #DED6C1; /* warm wheat */
+  padding: clamp(48px, 7vh, 96px) var(--gutter) clamp(64px, 9vh, 128px);
+}
+.actions-section + .actions-section { margin-top: clamp(48px, 6vh, 96px); }
+.actions-heading {
+  font-family: var(--display);
+  font-size: clamp(36px, 4.4vw, 64px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 28px;
+}
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  background: #ffffff;
+}
+.actions-card {
+  position: relative;
+  padding: clamp(28px, 3vw, 44px) clamp(24px, 2.4vw, 36px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 220px;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+/* Per-row border tinting — subtle separator between cards in each row */
+.actions-section--take .actions-card {
+  border-right: 1.5px solid rgba(75, 15, 99, 0.18); /* plum @ low alpha */
+}
+.actions-section--resources .actions-card {
+  border-right: 1.5px solid rgba(255, 255, 255, 0.18); /* white @ low alpha against plum */
+}
+.actions-card:last-child { border-right: 0; }
+
+/* TAKE ACTION — default = lavender bg + plum text; hover = neutral + ink */
+.actions-section--take .actions-card {
+  background: var(--soft-lavender);
+  color: var(--deep-plum);
+}
+.actions-section--take .actions-card .actions-card-body {
+  color: var(--deep-plum);
+  opacity: 0.78; /* slightly dimmer than title */
+}
+.actions-section--take .actions-card:hover,
+.actions-section--take .actions-card:focus-visible {
+  background: var(--cloud-neutral);
+  color: var(--ink);
+}
+.actions-section--take .actions-card:hover .actions-card-body,
+.actions-section--take .actions-card:focus-visible .actions-card-body {
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+/* RESOURCES — default = plum bg + white text; hover = neutral + ink */
+.actions-section--resources .actions-card {
+  background: var(--deep-plum);
+  color: #fff;
+}
+.actions-section--resources .actions-card .actions-card-body {
+  color: #fff;
+  opacity: 0.85;
+}
+.actions-section--resources .actions-card:hover,
+.actions-section--resources .actions-card:focus-visible {
+  background: var(--cloud-neutral);
+  color: var(--ink);
+}
+.actions-section--resources .actions-card:hover .actions-card-body,
+.actions-section--resources .actions-card:focus-visible .actions-card-body {
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+/* Border between rows on the dividers between cards changes on hover too */
+.actions-section--take .actions-card:hover,
+.actions-section--take .actions-card:focus-visible,
+.actions-section--resources .actions-card:hover,
+.actions-section--resources .actions-card:focus-visible {
+  border-right-color: rgba(34, 34, 34, 0.18);
+}
+
+.actions-card-title {
+  font-family: var(--display);
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+  color: inherit;
+}
+.actions-card-body {
+  font-size: clamp(14px, 1vw, 15px);
+  line-height: 1.55;
+  margin: 0;
+  color: inherit;
+  opacity: 0.85;
+}
+.actions-card-arrow {
+  position: absolute;
+  top: clamp(20px, 2vw, 28px);
+  right: clamp(20px, 2vw, 28px);
+  color: inherit;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.actions-card:hover .actions-card-arrow,
+.actions-card:focus-visible .actions-card-arrow { opacity: 1; }
+/* Note: row-specific hover treatments live earlier in the .actions-* block.
+   Defaults: Take Action = lavender bg + plum text, Resources = plum bg + white text.
+   Hover (both rows): cloud-neutral bg + ink text. */
+@media (max-width: 800px) {
+  .actions-grid { grid-template-columns: 1fr; }
+  .actions-card {
+    border-right: 0;
+    border-bottom: 1.5px solid rgba(34,34,34,0.18);
+  }
+  .actions-card:last-child { border-bottom: 0; }
+}
+
+/* ---------- legacy take-action / resources styles (kept for safety) ---------- */
+.take-action, .resources { background: var(--cloud-neutral); }
+.resources { padding-bottom: clamp(60px, 10vh, 140px); }
+.take-action-intro {
+  padding: var(--top-pad) var(--gutter) clamp(32px, 5vh, 56px);
+  text-align: left;
+  margin: 0;
+}
+.take-action-intro .eyebrow { margin-bottom: 28px; }
+.take-action-intro .h-display { margin: 0 0 24px; }
+.take-action-intro p {
+  font-size: clamp(17px, 1.25vw, 19px);
+  color: var(--ink-soft);
+  margin: 0 auto;
+  max-width: 60ch;
+}
+.take-action-grid-wrap { padding: 0 var(--gutter) var(--top-pad); }
+.take-action-grid-wrap-inner { width: 100%; max-width: 1440px; margin: 0 auto; }
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.action-card {
+  background: var(--cloud-neutral);
+  border-right: 1px solid var(--rule);
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: background .3s var(--ease), color .3s var(--ease);
+  min-height: 320px;
+}
+.action-card:last-child { border-right: 0; }
+.action-card:hover { background: var(--soft-lavender); color: var(--deep-plum); }
+.action-card.is-featured {
+  position: relative;
+  background: var(--deep-plum);
+  color: #fff;
+}
+.action-card.is-featured h3,
+.action-card.is-featured p,
+.action-card.is-featured .link-arrow { color: #fff; }
+.action-card.is-featured p { opacity: 0.8; }
+.action-card.is-featured .link-arrow { border-bottom-color: rgba(255,255,255,0.6); }
+.action-card.is-featured:hover { background: var(--royal-aubergine); color: #fff; }
+.action-card-corner-arrow {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  font-size: 28px;
+  line-height: 1;
+  color: #fff;
+  opacity: 0.95;
+}
+.action-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--warm-coral);
+  letter-spacing: 0.14em;
+}
+.action-card h3 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.action-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: inherit;
+  opacity: 0.85;
+}
+.action-card .link-arrow {
+  margin-top: auto;
+  border-bottom-color: currentColor;
+}
+
+
+/* ============================================================
+   ABOUT THIS PROJECT (Methodology)
+============================================================ */
+/* Methodology v3 — locked PNG block (Scott: don't change anything in it).
+   Main block PNG (2559×1788) is the visual base. Hugging-grandma PNG
+   (873×1446) layers in the bottom-left at fixed percentages. */
+.about-project.meth-locked {
+  position: relative;
+  background: var(--soft-lavender);
+  width: 100%;
+  padding: 40px var(--gutter);
+  overflow: hidden;
+}
+.meth-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 1273px;
+  margin: 0 auto;
+  /* New final methodology SVG: 1440×1093 */
+  aspect-ratio: 1440 / 1093;
+}
+.meth-base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+.meth-figure {
+  position: absolute;
+  /* Bottom-left of the block, sized to hug the bottom of "Report" headline */
+  left: 5%;
+  bottom: 0;
+  width: 30%;
+  height: auto;
+  display: block;
+}
+
+/* Legacy methodology rebuild rules — kept for reference but no longer used */
+.about-project {
+  position: relative;
+  background: var(--soft-lavender);
+  width: 100%;
+  padding: 40px var(--gutter);
+  overflow: hidden;
+}
+.about-project-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(40px, 5vw, 80px);
+  max-width: 1800px;
+  margin: 0 auto;
+  align-items: start;
+}
+.about-project-left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.about-project-eyebrow {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--deep-plum);
+  margin: 0;
+}
+.about-project-headline {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.about-project-headline .line-1 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(48px, 6vw, 96px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.about-project-headline .line-2 {
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(40px, 5.2vw, 84px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--deep-plum);
+}
+.about-project-illustration {
+  display: block;
+  width: 100%;
+  max-width: 540px;
+  height: auto;
+  margin-top: 8px;
+}
+.about-project-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: clamp(8px, 2vh, 32px);
+}
+.about-project-lead {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(16px, 1.3vw, 20px);
+  line-height: 1.4;
+  color: var(--deep-plum);
+  margin: 0;
+}
+.about-project-lead .accent { color: var(--deep-plum); font-weight: 700; }
+.about-project-lead-secondary {
+  font-family: var(--display);
+  font-size: clamp(14px, 1vw, 16px);
+  line-height: 1.55;
+  color: var(--deep-plum);
+  margin: 0;
+}
+.about-project-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.about-project-cols p {
+  font-family: var(--display);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--deep-plum);
+  margin: 0;
+  opacity: 0.92;
+}
+.about-project-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* CTA stack now sits in flow, no longer overlaying a baked SVG */
+.method-cta-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: clamp(16px, 3vh, 40px);
+  width: 100%;
+  max-width: 480px;
+}
+.method-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.method-cta--light { background: var(--cloud-neutral); color: var(--ink); }
+.method-cta--light:hover { background: #E5E1D8; }
+.method-cta--dark  { background: var(--deep-plum); color: #fff; }
+.method-cta--dark:hover  { background: #3a0a4f; }
+.method-cta-arrow {
+  width: 20px; height: 20px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+@media (max-width: 720px) {
+  .method-cta-wrap {
+    position: static;
+    width: auto;
+    margin: 0 var(--gutter) var(--top-pad);
+  }
+}
+
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.site-footer {
+  background: var(--deep-plum);
+  color: #ffffff;
+  padding: clamp(72px, 11vh, 132px) var(--gutter) clamp(56px, 8vh, 96px);
+  position: relative;
+}
+/* Thin coral accent line at the top of the footer to mark the brand */
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: clamp(80px, 8vw, 140px);
+  height: 4px;
+  background: var(--warm-coral);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ===== LEFT — signup ===== */
+.footer-signup {
+  max-width: 580px;
+}
+.footer-signup-label {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(22px, 2.4vw, 36px);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  margin: 0 0 clamp(24px, 3.5vh, 40px);
+  color: #ffffff;
+}
+.footer-signup-label em {
+  font-family: var(--accent);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--soft-lavender);
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+.footer-signup-form {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  max-width: 540px;
+}
+.footer-signup-input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  border-bottom: 1.5px solid rgba(255,255,255,0.45);
+  color: #ffffff;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 500;
+  padding: 14px 4px;
+  outline: none;
+  transition: border-color .25s ease;
+}
+.footer-signup-input::placeholder { color: rgba(255,255,255,0.5); }
+.footer-signup-input:focus { border-bottom-color: var(--warm-coral); }
+.footer-signup-btn {
+  flex-shrink: 0;
+  background: var(--warm-coral);
+  color: #ffffff;
+  border: 0;
+  padding: 14px clamp(24px, 2.8vw, 36px);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter .2s ease, transform .2s ease;
+  align-self: stretch;
+  border-radius: 0;
+}
+.footer-signup-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.footer-signup-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* ===== RIGHT — meta ===== */
+.footer-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(14px, 2.2vh, 22px);
+  text-align: right;
+}
+.footer-copyright {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin: 0;
+}
+.footer-email {
+  color: #ffffff;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(16px, 1.4vw, 20px);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.4);
+  padding-bottom: 2px;
+  transition: color .2s ease, border-color .2s ease;
+}
+.footer-email:hover { color: var(--warm-coral); border-bottom-color: var(--warm-coral); }
+.footer-social {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.footer-social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1.5px solid rgba(255,255,255,0.28);
+  border-radius: 50%;
+  color: #ffffff;
+  background: transparent;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
+}
+.footer-social-icon:hover {
+  background: var(--warm-coral);
+  border-color: var(--warm-coral);
+  transform: translateY(-2px);
+}
+.footer-social-icon svg { width: 16px; height: 16px; display: block; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .footer-grid { grid-template-columns: 1fr; gap: 48px; }
+  .footer-meta { align-items: flex-start; text-align: left; }
+  .footer-signup-form { flex-direction: column; gap: 16px; }
+  .footer-signup-btn { align-self: flex-start; }
+}
+
+
+/* ============================================================
+   FINDING LAYOUT — Figma-faithful (overrides simpler prototype)
+============================================================ */
+.finding-title em,
+.h-display em,
+.display em {
+  font-family: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  display: inline-block;
+}
+.finding-title { display: block; line-height: 1.0; }
+.finding-title .line { display: block; }
+
+/* Two-row composition: title-row, content-row, bottom-row */
+.f-grid-top, .f-grid-mid, .f-grid-bot {
+  display: grid;
+  gap: clamp(20px, 3vw, 40px);
+  margin: clamp(20px, 3vw, 40px) 0;
+}
+.f-grid-top { grid-template-columns: 1.1fr 1fr; align-items: start; }
+.f-grid-mid { grid-template-columns: 1fr 1fr; align-items: stretch; }
+.f-grid-bot { grid-template-columns: 1fr 1fr; align-items: stretch; }
+
+/* Featured callout in top-right (the BIG colored stat or illustration block) */
+.f-feature {
+  position: relative;
+  min-height: clamp(280px, 36vw, 460px);
+  padding: clamp(28px, 3vw, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  --notch-size: clamp(48px, 6vw, 96px);
+}
+.f-feature.notch-tr {
+  clip-path: polygon(0 0, calc(100% - var(--notch-size)) 0, 100% var(--notch-size), 100% 100%, 0 100%);
+}
+.f-feature.notch-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--notch-size) 100%, 0 calc(100% - var(--notch-size)));
+}
+.f-feature .f-feature-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(56px, 7vw, 104px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin: 0 0 18px;
+}
+.f-feature .f-feature-num em {
+  font-family: var(--display);
+  font-style: normal;
+  font-weight: 800;
+}
+.f-feature p {
+  font-size: clamp(13px, 1vw, 15px);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 38ch;
+  opacity: 0.92;
+}
+.f-feature.has-illust { padding: 0; }
+.f-feature.has-illust img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Stat pair (two side-by-side colored blocks with notch + big number) */
+.stat-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat-block {
+  position: relative;
+  padding: clamp(20px, 2.4vw, 32px);
+  --notch-size: clamp(36px, 4vw, 56px);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.stat-block.notch-tr {
+  clip-path: polygon(0 0, calc(100% - var(--notch-size)) 0, 100% var(--notch-size), 100% 100%, 0 100%);
+}
+.stat-block.notch-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, var(--notch-size) 100%, 0 calc(100% - var(--notch-size)));
+}
+.stat-block .stat-num {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.stat-block .stat-label {
+  font-size: clamp(12px, 0.9vw, 13px);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin: 14px 0 0;
+}
+
+/* Subhead inside finding (e.g. "LOVE WITHOUT LIMITS") */
+.f-subhead {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(28px, 3.2vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0 0 18px;
+}
+.f-body p { margin: 0 0 14px; max-width: 56ch; line-height: 1.55; font-size: clamp(14px, 1vw, 16px); }
+.f-eyebrow {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  opacity: 0.85;
+}
+.f-stats-eyebrow {
+  display: block;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+  opacity: 0.85;
+}
+
+/* Pull-quote block with quote-mark glyph */
+.pq-block {
+  position: relative;
+  padding: clamp(40px, 4vw, 64px) clamp(24px, 2.4vw, 36px) clamp(24px, 2.4vw, 36px);
+  --notch-size: clamp(36px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 280px;
+}
+.pq-block.notch-tr {
+  clip-path: polygon(0 0, calc(100% - var(--notch-size)) 0, 100% var(--notch-size), 100% 100%, 0 100%);
+}
+.pq-block::before {
+  content: "\201C";
+  position: absolute;
+  top: 4px;
+  left: clamp(24px, 2.4vw, 36px);
+  font-family: var(--accent), "Georgia", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(64px, 7vw, 96px);
+  line-height: 1;
+  opacity: 0.95;
+}
+.pq-block-text {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.4;
+  margin: 0 0 16px;
+}
+.pq-block-attr {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  margin: 0;
+  opacity: 0.85;
+}
+
+/* Video thumbnail */
+.video-thumb-block {
+  position: relative;
+  aspect-ratio: 4/5;
+  background: #2a2a2a;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  overflow: hidden;
+  min-height: 280px;
+}
+.video-thumb-block .vt-play {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  color: var(--deep-plum);
+  display: grid; place-items: center;
+  font-size: 18px;
+  z-index: 2;
+  padding-left: 4px;
+}
+.video-thumb-block .vt-cap {
+  position: absolute;
+  bottom: 0; left: 0; right: auto;
+  padding: 12px 18px;
+  background: var(--warm-coral);
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  z-index: 2;
+  max-width: 80%;
+}
+
+/* ============================================================
+   FINDING 01 v2 — Locked Figma PNG base + invisible click-overlay toggle.
+   The PNG is the single source of truth (Bianca's pixel-perfect Figma).
+   Two transparent buttons sit on top of the radio dots; clicking swaps the
+   PNG src to the alternate state. data-debug="1" on .f1-wrap shows pink/blue
+   debug rectangles for tuning the click positions visually.
+============================================================ */
+.finding.f1-locked {
+  /* Section bg fills the full viewport with the PNG's plum so cream/page bg
+     doesn't show through on wide viewports. PNG itself stays capped at 1440. */
+  background: var(--deep-plum);
+  padding: 0;
+  min-height: 0;
+  scroll-snap-align: start;
+}
+.f1-wrap {
+  position: relative;
+  width: 100%;
+  display: block;
+  /* Smaller-illustration SVG: 1440×2324 (both PRISONS and JAILS).
+     No max-width — SVG stretches to viewport so bg + bottom strip go edge to edge.
+     Negative margin-bottom hides the ~80px of empty space designed below the
+     bottom strip — next section pulls up over it. (-80/1440 = -5.56vw) */
+  aspect-ratio: 1440 / 2324;
+  margin: 0 0 -5.56vw 0;
+}
+.f1-base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+/* No-text version of the top-right block — masks just the baked "6.4 BILLION"
+   in the full SVG so the animated number can fly into a clean canvas.
+   Frame 2117131490 is 650×655. In a 1440-wide wrap that's 45% wide.
+   Top-right block sits at right ~5% / top ~7-8% of the section. */
+.f1-block-mask {
+  position: absolute;
+  top: 7%;
+  right: 4%;
+  width: 45%;
+  height: auto;
+  z-index: 2;
+  display: block;
+  pointer-events: none;
+}
+/* Video click overlay — sits invisible over the baked thumbnail in the
+   locked SVG. Smaller-illust F1: photo at (0, 1468) 720×776 in 1440×2324
+   → X 0-50%, Y 63.17-96.56%. */
+.f-video-click {
+  position: absolute;
+  top: 63.17%;
+  left: 0;
+  width: 50%;
+  height: 33.39%;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 5;
+}
+.f-video-player {
+  position: absolute;
+  top: 63.17%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 33.39%;
+  background: #000;
+  z-index: 20;
+  display: none;
+}
+.f-video-player.is-open { display: block; }
+.f-video-frame {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+  display: block;
+}
+.f-video-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--warm-coral);
+  border: 0;
+  cursor: pointer;
+  z-index: 21;
+  display: grid; place-items: center;
+  box-shadow: 0 8px 24px -8px rgba(0,0,0,0.45);
+  transition: filter .2s, transform .2s;
+}
+.f-video-close:hover { filter: brightness(.92); transform: scale(1.06); }
+.f-video-close svg { width: 18px; height: 18px; color: #fff; }
+
+/* Animated 6.4 BILLION at NATIVE proportional size: 390×193 → 27.08% wide.
+   Position computed: 24px right of box left edge (760+24=784), 34px above
+   subtitle top (subtitle Y=394, number height 193). */
+/* Stage wrapper for animated number SVGs (F1/F2/F6).
+   Stage carries the absolute positioning; img + counter sit inside. */
+.f-num-stage {
+  position: absolute;
+  display: block;
+  z-index: 3;
+  pointer-events: none;
+  line-height: 0;
+}
+.f-num-stage > .f-num-svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity .35s ease, transform .8s ease, filter .9s ease, clip-path 1s cubic-bezier(.7,0,.3,1);
+}
+.f-num-stage > .f-num-counter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-style: normal;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  opacity: 1;
+}
+/* Per-finding counter color */
+.f1-num-stage > .f-num-counter { color: #4B0F63; }       /* plum */
+.f2-num-stage > .f-num-counter { color: #ffffff; }       /* white */
+.f6-num-stage > .f-num-counter { color: #4B0F63; }       /* plum */
+
+/* === Reveal styles (set by data-num-style on the stage) === */
+
+/* count-up: counter shows + ticks while SVG is hidden, then swap at end */
+.f-num-stage[data-num-style="count-up"]              > .f-num-svg     { opacity: 0; }
+.f-num-stage[data-num-style="count-up"].is-num-done  > .f-num-svg     { opacity: 1; }
+.f-num-stage[data-num-style="count-up"].is-num-done  > .f-num-counter { opacity: 0; }
+
+/* count-up-keep: counter only, SVG stays hidden forever */
+.f-num-stage[data-num-style="count-up-keep"]         > .f-num-svg     { opacity: 0 !important; }
+
+/* scale-pop: SVG punches in with overshoot */
+.f-num-stage[data-num-style="scale-pop"]             > .f-num-svg     { transform: scale(.4); opacity: 0; transition: transform .8s cubic-bezier(.34,1.56,.64,1), opacity .35s ease; }
+.f-num-stage[data-num-style="scale-pop"].is-num-in   > .f-num-svg     { transform: scale(1);  opacity: 1; }
+.f-num-stage[data-num-style="scale-pop"]             > .f-num-counter { opacity: 0; }
+
+/* blur-in: SVG sharpens into focus */
+.f-num-stage[data-num-style="blur-in"]               > .f-num-svg     { filter: blur(24px); opacity: 0; transition: filter .9s ease, opacity .5s ease; }
+.f-num-stage[data-num-style="blur-in"].is-num-in     > .f-num-svg     { filter: blur(0); opacity: 1; }
+.f-num-stage[data-num-style="blur-in"]               > .f-num-counter { opacity: 0; }
+
+/* mask-wipe: SVG reveals left → right */
+.f-num-stage[data-num-style="mask-wipe"]             > .f-num-svg     { clip-path: inset(0 100% 0 0); }
+.f-num-stage[data-num-style="mask-wipe"].is-num-in   > .f-num-svg     { clip-path: inset(0 0 0 0); }
+.f-num-stage[data-num-style="mask-wipe"]             > .f-num-counter { opacity: 0; }
+
+/* slide-left: classic — slides in from right */
+.f-num-stage[data-num-style="slide-left"]            > .f-num-svg     { transform: translateX(60px); opacity: 0; transition: transform .8s ease, opacity .5s ease; }
+.f-num-stage[data-num-style="slide-left"].is-num-in  > .f-num-svg     { transform: translateX(0); opacity: 1; }
+.f-num-stage[data-num-style="slide-left"]            > .f-num-counter { opacity: 0; }
+
+/* OLD .fX-number rules retained below for any image still using them. */
+.f1-number,
+.f1-num-stage {
+  /* Position: box now at (720, 120) in the new 70px-margin SVG, was (760, 120). */
+  position: absolute;
+  /* Smaller-illust SVG: box at (746, 151). Actual subtitle Y=398, 18px inset.
+     Number SVG native 319×158. Spec: 40px above subtitle, aligned left with it. */
+  top: 8.61%;   /* (398 - 40 - 158) / 2324 */
+  left: 53.06%; /* (746 + 18) / 1440 */
+  width: 22.15%; /* 319 / 1440 */
+  height: auto;
+  z-index: 3;
+  display: block;
+  pointer-events: none;
+}
+
+/* ============================================================
+   FINDING 02 v2 — Locked SVG base + animated $622 MIL number fly-in
+============================================================ */
+.finding.f2-locked {
+  background: var(--cloud-neutral);
+  padding: 0;
+  min-height: 0;
+  scroll-snap-align: start;
+}
+.f2-wrap {
+  position: relative;
+  width: 100%;
+  display: block;
+  /* Smaller-illustration SVG natural is 1440×3213, but the bottom 813px is
+     a stray duplicate of the top + 80 empty. We CROP via wrap aspect 1440/2400
+     + overflow hidden + img with natural aspect anchored top. Wrap visually
+     ends right at the bottom strip — F3 follows naturally with no overlap. */
+  aspect-ratio: 1440 / 2400;
+  overflow: hidden;
+  margin: 0;
+}
+.f2-base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* cover + object-position:top so the SVG keeps its natural 1440/3213 aspect,
+     anchors to top of the cropped 1440/2400 wrap, and the bottom duplicate
+     overflows out of overflow:hidden. */
+  object-fit: cover;
+  object-position: top;
+}
+/* No-text top-right block masks the baked "$622 MIL" */
+.f2-block-mask {
+  position: absolute;
+  top: 7%;
+  right: 4%;
+  width: 45%;
+  height: auto;
+  z-index: 2;
+  display: block;
+  pointer-events: none;
+}
+/* Animated $622 MIL at NATIVE proportional size: 463×104 → 32.15% of 1440 wrap.
+   Position computed: 24px right of box left edge (760+24=784), 34px above
+   subtitle top (subtitle Y=300, number height 104). */
+.f2-number,
+.f2-num-stage {
+  position: absolute;
+  /* Smaller-illust SVG: box at (750, 170). Actual subtitle Y=343, 30px inset.
+     Number SVG native 379×85. Spec: 40px above subtitle, aligned left with it.
+     Wrap is now cropped to 1440/2400 (down from 3213) — recompute pcts accordingly. */
+  top: 9.08%;   /* (343 - 40 - 85) / 2400 */
+  left: 54.17%; /* (750 + 30) / 1440 */
+  width: 26.32%; /* 379 / 1440 */
+  height: auto;
+  z-index: 3;
+  display: block;
+  pointer-events: none;
+}
+/* ============================================================
+   FINDING 6 — locked SVG + animated 100% number
+   Box at translate(760, 120) 650×671. Subtitle top Y=308.
+   Number native 280×83. Spec: 23 from side, 28 from top.
+   ============================================================ */
+.finding.f6-locked {
+  background: var(--cloud-neutral);
+  padding: 0;
+  min-height: 0;
+  scroll-snap-align: start;
+}
+.f6-wrap {
+  position: relative;
+  width: 100%;
+  display: block;
+  /* Edge-to-edge: no max-width so SVG stretches with the viewport.
+     Negative margin-bottom hides the ~80px of empty space designed below. */
+  aspect-ratio: 1440 / 2543;
+  margin: 0 0 -5.56vw 0;
+}
+.f6-base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+.f6-number,
+.f6-num-stage {
+  position: absolute;
+  /* Box at (720, 120). Actual subtitle Y=349, 30px inset.
+     Number SVG native 229×68. Spec: 40px above subtitle, aligned left with it. */
+  top: 9.48%;   /* (349 - 40 - 68) / 2543 */
+  left: 52.08%; /* (720 + 30) / 1440 */
+  width: 15.90%; /* 229 / 1440 */
+  height: auto;
+  z-index: 3;
+  display: block;
+  pointer-events: none;
+}
+
+/* ============================================================
+   F3, F4, F5, F7, F8 — Final-flush locked SVG layouts
+   Same pattern as F6: full-bleed locked SVG + video click overlay.
+   Aspect ratios pulled from each SVG's natural dimensions.
+   ============================================================ */
+.finding.f3-locked, .finding.f4-locked, .finding.f5-locked,
+.finding.f7-locked, .finding.f8-locked {
+  padding: 0;
+  min-height: 0;
+  scroll-snap-align: start;
+}
+/* Per-finding article bg — matches each SVG's primary upper-section color so
+   any sub-pixel rounding gap on the sides blends seamlessly. With no
+   max-width on .fX-wrap the SVG already fills the viewport, but this is a
+   defensive fallback. */
+.finding.f3-locked { background: var(--deep-plum); }      /* F3: plum */
+.finding.f4-locked { background: var(--soft-lavender); }  /* F4: lavender */
+.finding.f5-locked { background: var(--deep-plum); }      /* F5: plum */
+.finding.f7-locked { background: var(--deep-plum); }      /* F7: plum */
+.finding.f8-locked { background: var(--soft-lavender); }  /* F8: lavender */
+.f3-wrap, .f4-wrap, .f5-wrap, .f7-wrap, .f8-wrap {
+  position: relative;
+  width: 100%;
+  display: block;
+  /* Edge-to-edge: no max-width so each SVG stretches with the viewport.
+     Negative margin-bottom hides the ~80px of empty space designed below. */
+  margin: 0 0 -5.56vw 0;
+}
+.f3-wrap { aspect-ratio: 1440 / 2467; }   /* smaller-illust update (was 2493) */
+.f4-wrap { aspect-ratio: 1440 / 2341; }
+.f5-wrap { aspect-ratio: 1440 / 2444; }   /* smaller-illust update (was 2508) */
+.f7-wrap { aspect-ratio: 1440 / 2398; }   /* smaller-illust update (was 2496) */
+.f8-wrap { aspect-ratio: 1440 / 2416; }   /* smaller-illust update (same dims) */
+
+/* F7 has extra empty plum space at the bottom of its SVG beyond the
+   standard 80px crop — bump the negative margin so F8 pulls up further. */
+.f7-wrap { margin: 0 0 -12vw 0; }
+
+/* Right-margin patch for F5 + F8 — 130px wide (130/1440 = 9.03vw). Bottom
+   strip is excluded so the video + quote stay edge-to-edge as designed. */
+.f5-wrap::after,
+.f8-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 9.03vw;
+  pointer-events: none;
+  z-index: 2;
+}
+.f5-wrap::after {
+  bottom: 36.70%; /* stops at top of bottom strip (63.30%) */
+  background: var(--deep-plum);
+}
+.f8-wrap::after {
+  bottom: 35.43%; /* stops at top of bottom strip (64.57%) */
+  background: var(--soft-lavender);
+}
+
+/* F2 duplicate is now cropped at the wrap level via aspect-ratio + overflow,
+   so no pseudo-element mask is needed. */
+
+.f3-base, .f4-base, .f5-base, .f7-base, .f8-base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* ============================================================
+   Per-finding video click + player overrides.
+   Base .f-video-click / .f-video-player rules carry F1's default
+   (top 64.79%, height 31.88%). Each finding's wrap overrides via
+   higher specificity. Calibrate by toggling data-debug="1" on the
+   wrap div (highlights click zones in pink).
+   ============================================================ */
+/* Video click positions — extracted from each smaller-illust SVG's photo rect. */
+.f2-wrap .f-video-click,
+.f2-wrap .f-video-player { top: 67.67%; height: 32.33%; } /* wrap cropped to 1440/2400 */
+.f2-wrap .f-video-click  { left: 0; width: 50%; }
+
+.f3-wrap .f-video-click,
+.f3-wrap .f-video-player { top: 65.30%; height: 31.46%; }
+.f3-wrap .f-video-click  { left: 0; width: 50%; }
+
+.f4-wrap .f-video-click,
+.f4-wrap .f-video-player { top: 63.43%; height: 33.15%; }
+.f4-wrap .f-video-click  { left: 0; width: 50%; }
+
+.f5-wrap .f-video-click,
+.f5-wrap .f-video-player { top: 63.30%; height: 31.75%; } /* smaller-illust */
+.f5-wrap .f-video-click  { left: 0; width: 50%; }
+
+.f6-wrap .f-video-click,
+.f6-wrap .f-video-player { top: 66.34%; height: 30.52%; }
+.f6-wrap .f-video-click  { left: 0; width: 50%; }
+
+.f7-wrap .f-video-click,
+.f7-wrap .f-video-player { top: 63.72%; height: 35.49%; }
+.f7-wrap .f-video-click  { left: 0; width: 50%; }
+
+.f8-wrap .f-video-click,
+.f8-wrap .f-video-player { top: 64.57%; height: 32.12%; } /* F8 prior version */
+.f8-wrap .f-video-click  { left: 0; width: 50%; }
+
+/* Debug zones for click target calibration */
+.f2-wrap[data-debug="1"] .f-video-click,
+.f3-wrap[data-debug="1"] .f-video-click,
+.f4-wrap[data-debug="1"] .f-video-click,
+.f5-wrap[data-debug="1"] .f-video-click,
+.f6-wrap[data-debug="1"] .f-video-click,
+.f7-wrap[data-debug="1"] .f-video-click,
+.f8-wrap[data-debug="1"] .f-video-click {
+  background: rgba(255, 0, 128, 0.35);
+  outline: 2px dashed #f0f;
+}
+
+.f1-tog {
+  position: absolute;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 0;
+  color: transparent;
+  z-index: 5;
+}
+/* Click-zone positions — recalibrated for smaller-illust SVG (1440×2324).
+   Toggle dots now at cy=852 (prisons) / cy=884 (jails), cx=78. */
+.f1-tog-prisons { top: 35.89%; left: 4.4%; width: 10.4%; height: 1.5%; }
+.f1-tog-jails   { top: 37.26%; left: 4.4%; width: 10.4%; height: 1.5%; }
+
+/* ----- Top-right block overlay (covers the baked block in the PNG) ----- */
+/* Position values derived from the F1 PNG layout. The baked top-right block
+   in the prisons.png is at roughly Y=10%-38%, X=51%-96%. Tune these if the
+   overlay drifts on different viewport widths. */
+.f1-block-overlay {
+  position: absolute;
+  top: 7.5%;
+  left: 51%;
+  width: 47%;
+  height: 23.5%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden; /* keeps the slide-in text from spilling out before/after */
+}
+.f1-block-bg,
+.f1-block-decor,
+.f1-block-figure,
+.f1-block-text {
+  position: absolute;
+  display: block;
+}
+.f1-block-bg {
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
+.f1-block-decor {
+  top: 28%; left: -3%;
+  width: 42%; height: auto;
+  z-index: 2;
+}
+.f1-block-figure {
+  bottom: 0; right: 0;
+  width: 78%; height: auto;
+  z-index: 3;
+}
+.f1-block-text {
+  top: 12%; left: 8%;
+  width: 60%; height: auto;
+  z-index: 4;
+}
+/* Debug coloring — pink for prisons, blue for jails so they're easy to tell apart */
+.f1-wrap[data-debug="1"] .f1-tog-prisons {
+  outline: 2px dashed #ff0066 !important;
+  background: rgba(255, 0, 102, 0.18) !important;
+}
+.f1-wrap[data-debug="1"] .f1-tog-jails {
+  outline: 2px dashed #00aaff !important;
+  background: rgba(0, 170, 255, 0.18) !important;
+}
+
+/* Color utility */
+.bg-coral    { background: var(--warm-coral);     color: #fff; }
+.bg-lime     { background: var(--acid-lime);      color: #fff; }
+.bg-plum     { background: var(--deep-plum);      color: #fff; }
+.bg-aubergine{ background: var(--royal-aubergine);color: #fff; }
+.bg-lavender { background: var(--soft-lavender);  color: var(--deep-plum); }
+.bg-sage     { background: var(--mist-sage);      color: var(--ink); }
+
+/* Dark template adjustments */
+.tpl-plum .pq-block.bg-coral, .tpl-plum .pq-block.bg-lavender { color: var(--deep-plum); }
+.tpl-plum .pq-block.bg-coral { color: #fff; }
+
+@media (max-width: 900px) {
+  .f-grid-top, .f-grid-mid, .f-grid-bot { grid-template-columns: 1fr; }
+  .stat-pair { grid-template-columns: 1fr 1fr; }
+  .f-feature { min-height: 280px; }
+  .video-thumb-block { aspect-ratio: 16/10; min-height: 0; }
+}
+
+
+/* ============================================================
+   GLOBAL RESPONSIVE
+============================================================ */
+@media (max-width: 900px) {
+  .header-right { gap: 20px; }
+  .primary-nav { display: none; }
+  .finding-row { grid-template-columns: 1fr; }
+  .action-grid { grid-template-columns: 1fr; }
+  .action-card { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .quotes-head { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     MOBILE-ONLY SHELL — fully isolated from desktop layout.
+     Renders ONLY at viewport <= 767px. Hides every other body
+     direct-child via @media block. Tap-target % positions refer
+     to natural dimensions of mobile-homepage-full.png (804×27318).
+     Toggle window.M_DEBUG = true in DevTools to highlight zones.
+============================================================ -->
+<style id="m-shell-styles">
+  /* Desktop: shell completely hidden, no impact on layout. */
+  #m-shell { display: none; }
+
+  @media (max-width: 767px) {
+    /* Hide every other top-level body child on mobile. */
+    body > *:not(#m-shell):not(script):not(style):not(#m-shell-styles) {
+      display: none !important;
+    }
+    html, body { margin: 0; padding: 0; background: #fff; overflow-x: hidden; }
+    body { padding-top: 0; }
+
+    #m-shell { display: block; position: relative; }
+
+    /* ---------- Top bar ---------- */
+    .m-topbar {
+      position: fixed; inset: 0 0 auto 0; height: 56px;
+      background: #fff; border-bottom: 1px solid rgba(0,0,0,.06);
+      z-index: 60;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px;
+    }
+    .m-brand {
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; color: #000;
+    }
+    .m-brand-logo { width: 28px; height: 28px; display: block; }
+    .m-brand-text {
+      font-family: 'Inter', sans-serif; font-weight: 800; font-size: 13px;
+      letter-spacing: .04em; text-transform: uppercase; color: #000;
+    }
+    .m-burger {
+      width: 44px; height: 44px; border: 0; background: transparent;
+      padding: 0; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px;
+    }
+    .m-burger span {
+      display: block; width: 22px; height: 2px; background: #000; border-radius: 1px;
+    }
+
+    /* ---------- Page ---------- */
+    .m-page {
+      padding-top: 56px;     /* clear fixed topbar */
+      position: relative;
+    }
+    .m-page-img {
+      display: block; width: 100%; height: auto;
+      user-select: none; -webkit-user-drag: none; pointer-events: none;
+    }
+
+    /* ---------- Tap overlays ---------- */
+    .m-tap {
+      position: absolute;
+      background: transparent;
+      border: 0; padding: 0; margin: 0;
+      cursor: pointer;
+      z-index: 10;
+      color: transparent;
+    }
+    /* Toggle by setting body.m-debug in DevTools. */
+    body.m-debug .m-tap         { background: rgba(255, 0, 128, .35); outline: 1px dashed #f0f; }
+    body.m-debug .m-tap.is-link { background: rgba(0, 144, 255, .35); outline: 1px dashed #09f; }
+
+    /* ---------- Menu overlay ---------- */
+    .m-menu {
+      position: fixed; inset: 0; z-index: 80;
+      background: #fff;
+      transform: translateX(100%);
+      transition: transform .28s ease;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .m-menu.is-open { transform: translateX(0); }
+    .m-menu-img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
+    .m-menu-close {
+      position: absolute; top: 14px; right: 14px;
+      width: 44px; height: 44px;
+      border: 0; background: transparent; cursor: pointer;
+      z-index: 2;
+    }
+    .m-menu-link {
+      position: absolute; left: 0; right: 0;
+      background: transparent; border: 0; cursor: pointer;
+      padding: 0; margin: 0;
+      color: transparent;
+      text-decoration: none; display: block;
+    }
+    body.m-debug .m-menu-link { background: rgba(0, 200, 80, .25); outline: 1px dashed #0c0; }
+
+    /* ---------- Vimeo modal ---------- */
+    .m-video {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,.94);
+      display: none;
+      align-items: center; justify-content: center;
+    }
+    .m-video.is-open { display: flex; }
+    .m-video-frame {
+      width: 100%; height: 56.25vw; max-height: 100vh; border: 0;
+    }
+    .m-video-close {
+      position: absolute; top: 14px; right: 14px;
+      width: 44px; height: 44px;
+      border: 0; background: rgba(255,255,255,.12); border-radius: 50%;
+      color: #fff; font-size: 22px; cursor: pointer;
+      z-index: 2; line-height: 1;
+    }
+  }
+</style>
+
+<div id="m-shell" data-mobile-shell>
+
+  <!-- ===== Top bar ===== -->
+  <header class="m-topbar">
+    <a class="m-brand" href="#m-top" aria-label="Worth Rises home">
+      <svg class="m-brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="14" y="14" width="72" height="72" rx="8" fill="none" stroke="#000" stroke-width="6"/>
+        <path d="M30 64 L42 40 L50 56 L58 36 L70 64" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="m-brand-text">Worth Rises</span>
+    </a>
+    <button class="m-burger" type="button" aria-label="Open menu" data-m-menu-open>
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ===== Locked full-page mobile homepage ===== -->
+  <main class="m-page" id="m-top">
+    <img class="m-page-img" src="assets/mobile/mobile-homepage-full.png" alt="Power of Free — mobile homepage" />
+
+    <!-- Tap overlays. Coordinates are % of the rendered image height.
+         Image natural size: 804×27318. Refine with body.m-debug=true. -->
+
+    <!-- Hero CTA: READ THE REPORT (orange) -->
+    <a class="m-tap is-link" href="#m-about-report" data-m-scroll
+       style="top: 2.30%; left: 6%; right: 6%; height: 0.50%;" aria-label="Read the report"></a>
+
+    <!-- Hero CTA: WATCH THE STORY → hero video -->
+    <button class="m-tap" type="button" data-m-video="1186772181"
+       style="top: 2.92%; left: 6%; right: 6%; height: 0.50%;" aria-label="Watch the hero story video"></button>
+
+    <!-- About-the-report READ THE REPORT pill (purple section) -->
+    <a class="m-tap is-link" href="#m-about-report" data-m-scroll
+       style="top: 13.80%; left: 6%; right: 35%; height: 0.55%;" aria-label="Read the report"></a>
+
+    <!-- Findings nav scroll target (KEY FINDINGS) -->
+    <span class="m-anchor" id="m-key-findings" style="position:absolute; top: 17%;"></span>
+
+    <!-- 8 AREAS OF Measurable Impact - clicks land here -->
+    <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 53%;"></span>
+
+    <!-- F1 photo round play button → F1 video -->
+    <button class="m-tap" type="button" data-m-video="1187871199"
+       style="top: 61.20%; left: 30%; width: 40%; height: 4.00%; right: auto;" aria-label="Play Finding 1 video"></button>
+
+    <!-- Action Center anchor + Take Action -->
+    <span class="m-anchor" id="m-action-center" style="position:absolute; top: 67%;"></span>
+
+    <!-- TAKE ACTION rows (each w/ arrow icon → external link) -->
+    <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+       style="top: 73.20%; left: 4%; right: 4%; height: 4.20%;" aria-label="Read &amp; share the report"></a>
+    <a class="m-tap is-link" href="https://worthrises.org/take-action" target="_blank" rel="noopener"
+       style="top: 77.50%; left: 4%; right: 4%; height: 4.20%;" aria-label="Contact your legislators"></a>
+    <a class="m-tap is-link" href="https://worthrises.org/donate" target="_blank" rel="noopener"
+       style="top: 81.80%; left: 4%; right: 4%; height: 4.20%;" aria-label="Support the movement"></a>
+
+    <!-- RESOURCES section anchor -->
+    <span class="m-anchor" id="m-resources" style="position:absolute; top: 86%;"></span>
+
+    <!-- RESOURCES rows -->
+    <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+       style="top: 87.20%; left: 4%; right: 4%; height: 3.40%;" aria-label="Report fact sheet"></a>
+    <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+       style="top: 90.70%; left: 4%; right: 4%; height: 3.40%;" aria-label="Implementation fact sheet"></a>
+    <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+       style="top: 94.20%; left: 4%; right: 4%; height: 3.40%;" aria-label="Ultimate campaign guide"></a>
+
+    <!-- About this report anchor -->
+    <span class="m-anchor" id="m-about-report" style="position:absolute; top: 82%;"></span>
+
+    <!-- About this project anchor -->
+    <span class="m-anchor" id="m-about-project" style="position:absolute; top: 96.5%;"></span>
+
+    <!-- Footer external links -->
+    <a class="m-tap is-link" href="https://worthrises.org" target="_blank" rel="noopener"
+       style="top: 96.80%; left: 4%; right: 4%; height: 1.30%;" aria-label="Visit Worth Rises"></a>
+    <a class="m-tap is-link" href="https://worthrises.org/connecting-families" target="_blank" rel="noopener"
+       style="top: 98.20%; left: 4%; right: 4%; height: 1.30%;" aria-label="Connecting Families campaign"></a>
+  </main>
+
+  <!-- ===== Slide-in menu ===== -->
+  <aside class="m-menu" data-m-menu aria-hidden="true">
+    <img class="m-menu-img" src="assets/mobile/mobile-menu-overlay.png" alt="Menu" />
+    <button class="m-menu-close" type="button" aria-label="Close menu" data-m-menu-close>
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round">
+        <line x1="6" y1="6" x2="18" y2="18"/>
+        <line x1="18" y1="6" x2="6" y2="18"/>
+      </svg>
+    </button>
+
+    <!-- Menu rows positioned over PNG (PNG is 402×754; rows are 11% high each).
+         data-m-target sends to a scroll anchor in main page. -->
+    <button class="m-menu-link" data-m-target="m-about-report"
+            style="top: 14%; height: 12%;" aria-label="About the report"></button>
+    <button class="m-menu-link" data-m-target="m-key-findings"
+            style="top: 26%; height: 12%;" aria-label="Key findings"></button>
+    <button class="m-menu-link" data-m-target="m-action-center"
+            style="top: 38%; height: 12%;" aria-label="Take action"></button>
+    <button class="m-menu-link" data-m-target="m-about-project"
+            style="top: 50%; height: 12%;" aria-label="About this project"></button>
+    <a class="m-menu-link" href="#" target="_blank" rel="noopener"
+       style="top: 89%; height: 11%;" aria-label="Read the report"></a>
+  </aside>
+
+  <!-- ===== Vimeo modal ===== -->
+  <div class="m-video" data-m-video-modal aria-hidden="true">
+    <iframe class="m-video-frame" data-m-video-frame
+            allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    <button class="m-video-close" type="button" aria-label="Close video" data-m-video-close>&times;</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Bail entirely on desktop — keeps cost zero for the existing experience.
+  if (!window.matchMedia) return;
+  var mq = window.matchMedia('(max-width: 767px)');
+  if (!mq.matches) return;
+
+  // DevTools toggle: window.M_DEBUG = true; document.body.classList.add('m-debug');
+  Object.defineProperty(window, 'M_DEBUG', {
+    get: function(){ return document.body.classList.contains('m-debug'); },
+    set: function(v){ document.body.classList.toggle('m-debug', !!v); }
+  });
+
+  var menu      = document.querySelector('[data-m-menu]');
+  var openBtn   = document.querySelector('[data-m-menu-open]');
+  var closeBtn  = document.querySelector('[data-m-menu-close]');
+  var modal     = document.querySelector('[data-m-video-modal]');
+  var frame     = document.querySelector('[data-m-video-frame]');
+  var vidClose  = document.querySelector('[data-m-video-close]');
+
+  function openMenu(){ if (menu){ menu.classList.add('is-open'); menu.setAttribute('aria-hidden','false'); document.body.style.overflow = 'hidden'; } }
+  function closeMenu(){ if (menu){ menu.classList.remove('is-open'); menu.setAttribute('aria-hidden','true'); document.body.style.overflow = ''; } }
+
+  if (openBtn)  openBtn.addEventListener('click', openMenu);
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+  // Menu rows scroll to anchor IDs on main page
+  document.querySelectorAll('.m-menu-link[data-m-target]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      var id = btn.getAttribute('data-m-target');
+      closeMenu();
+      var el = document.getElementById(id);
+      if (!el) return;
+      // Small delay so menu animates out cleanly first
+      setTimeout(function(){
+        var y = el.getBoundingClientRect().top + window.scrollY - 64;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 200);
+    });
+  });
+
+  // Smooth scroll for in-page anchors
+  document.querySelectorAll('[data-m-scroll]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) !== '#') return;
+      var el = document.querySelector(href);
+      if (!el) return;
+      e.preventDefault();
+      var y = el.getBoundingClientRect().top + window.scrollY - 64;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+  });
+
+  // Vimeo modal
+  function openVideo(id){
+    if (!frame || !modal || !id) return;
+    frame.src = 'https://player.vimeo.com/video/' + id + '?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63';
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeVideo(){
+    if (frame) frame.src = '';
+    if (modal){ modal.classList.remove('is-open'); modal.setAttribute('aria-hidden','true'); }
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('[data-m-video]').forEach(function(b){
+    b.addEventListener('click', function(){ openVideo(b.getAttribute('data-m-video')); });
+  });
+  if (vidClose) vidClose.addEventListener('click', closeVideo);
+  if (modal) modal.addEventListener('click', function(e){ if (e.target === modal) closeVideo(); });
+
+  // ESC closes menu/video
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){ closeMenu(); closeVideo(); }
+  });
+})();
+</script>
+<!-- ===== END MOBILE-ONLY SHELL ===== -->
+
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header class="site-header" data-header>
+  <div class="header-inner">
+    <a href="#top" class="brand" aria-label="Worth Rises home">
+      <img src="assets/illustrations/worth-rises-logo.png" alt="Worth Rises" class="brand-logo"
+           onerror="this.style.display='none'; var f=document.getElementById('brand-fallback'); if(f) f.style.display='inline-flex';" />
+      <span id="brand-fallback" style="display:none; align-items:center; gap:8px;">
+        <span class="brand-mark">▲</span><span class="brand-name">WORTH RISES</span>
+      </span>
+    </a>
+    <div class="header-right">
+      <nav class="primary-nav" aria-label="Primary">
+        <a href="#aboutreport">About the Report</a>
+        <a href="#findings">Key Findings</a>
+        <a href="#actions">Take Action</a>
+      </nav>
+      <a href="#aboutreport" class="header-cta">Read the Report</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero" aria-label="Hero" data-nav-tone="light">
+  <!-- Layer 1: full hero illustration SVG (Frame 2117131439 from Figma) with
+       the cord path stripped out so the only cord visible is the animated one. -->
+  <div class="hero-illustration" aria-hidden="true">
+    <img src="assets/hero/hero-illustration.svg" alt="" />
+  </div>
+
+  <!-- Layer 2: cord SVG. Same 1440x800 viewBox as the illustration and same
+       path that was stripped, so the animated cord lands exactly where the
+       cord would have been in the full illustration. -->
+  <div class="hero-cord-layer" aria-hidden="true">
+    <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path id="hero-cord"
+            d="M167.5 434C189.797 430.445 271.781 486.238 303.042 533.929C356.64 615.694 331.054 698.475 275.032 674.605C233.025 656.707 223.627 491.321 288.5 482C392.488 467.058 373.5 622.5 483.037 696.29C591.473 769.338 687.527 666.066 764.5 667C841.473 667.934 910.882 707.27 1024.43 696.333C1165.08 682.787 1149.85 409.624 1301.5 368"
+            stroke="#E4572E" stroke-width="8" stroke-miterlimit="8.20551" stroke-linecap="round" />
+    </svg>
+  </div>
+
+  <div class="hero-inner">
+    <span class="eyebrow eyebrow-plum" data-anim="fade-up">Critical Connections</span>
+    <h1 class="display" data-anim="fade-up" data-anim-delay="100">The <em>Power</em> of Free</h1>
+    <p class="lede" data-anim="fade-up" data-anim-delay="200">How free communication in prisons and jails is transforming lives, strengthening families, and reshaping reentry. A necessary, achievable, and transformative lifeline.</p>
+    <div class="hero-ctas" data-anim="fade-up" data-anim-delay="300">
+      <a href="#aboutreport" class="btn btn-coral hero-btn">Read the Report</a>
+      <a href="#hero-video" class="btn btn-plum hero-btn">Watch the Story</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ABOUT THE REPORT — split (deep-plum / soft-lavender)
+============================================================ -->
+<section id="aboutreport" class="about" aria-label="About the Report" data-nav-tone="dark">
+  <div class="about-copy">
+    <span class="eyebrow eyebrow-plum" data-anim="fade-up">About the Report</span>
+    <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">
+      <span class="line">FREE COMMUNICATION</span>
+      <span class="line"><em>Changes Everything</em></span>
+    </h2>
+    <p data-anim="fade-up" data-anim-delay="200">Correctional telecom is a $1.5 billion industry built on charging incarcerated people and their families exorbitant rates to stay connected. When families can't afford to call, communication gets rationed — conversations cut short, contact limited to urgent matters, relationships fracture or never form. That isolation doesn't stay inside the walls. It weakens the ties that matter most to rehabilitation, reentry, and public safety.</p>
+    <p data-anim="fade-up" data-anim-delay="300">The national Connecting Families campaign is making communication in prisons and jails entirely free across the country. This report is the first to document the results — and the evidence is clear: when the cost barrier is removed, connection increases, relationships strengthen, and families are better able to navigate incarceration together toward a promising free future that makes us all safer.</p>
+  </div>
+  <div class="about-visual" aria-hidden="true">
+    <img class="about-visual-svg" src="assets/illustrations/about-report-illustration.svg" alt="" data-anim="fade-up" data-anim-delay="200" />
+  </div>
+  <!-- Circular CTA button — positioned absolutely centered on the divider, near bottom.
+       NOTE: no data-anim here because scale-in's transform would override our
+       translateX(-50%) and break horizontal centering. -->
+  <a href="#" class="about-cta-circle" aria-label="Read the Report">
+    <svg class="about-cta-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="about-cta-circle-text">Read the<br>Report</span>
+  </a>
+</section>
+
+
+<!-- ============================================================
+     HERO VIDEO — Vimeo embed
+============================================================ -->
+<section class="hero-video-section" id="hero-video" aria-label="A Smile You Can Hear — documentary film" data-nav-tone="dark">
+  <!-- Ambient looping video behind the play button — autoplays muted on load -->
+  <video class="hero-video-ambient" autoplay muted loop playsinline preload="auto"
+         poster="assets/hero/hero-video-thumb.jpg" aria-hidden="true">
+    <source src="assets/hero/ambient.mp4" type="video/mp4">
+  </video>
+  <button class="hero-video-poster" type="button"
+          aria-label="Play the documentary film"
+          onclick="this.closest('.hero-video-section').classList.add('is-playing'); var f=this.closest('.hero-video-section').querySelector('.hero-video-frame'); f.src=f.dataset.src;"></button>
+  <span class="hero-video-card-sentinel" aria-hidden="true"></span>
+  <div class="hero-video-card hero-video-card-flyin">
+    <button class="hero-video-card-play" type="button"
+            aria-label="Play the documentary film"
+            onclick="this.closest('.hero-video-section').classList.add('is-playing'); var f=this.closest('.hero-video-section').querySelector('.hero-video-frame'); f.src=f.dataset.src;">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M7 5.14v13.72c0 .79.87 1.27 1.54.84l10.78-6.86a1 1 0 0 0 0-1.68L8.54 4.3C7.87 3.87 7 4.35 7 5.14z"/>
+      </svg>
+    </button>
+    <div class="hero-video-card-text">
+      <h3>A Smile You Can Hear</h3>
+      <p>Watch what free<br>communication makes possible</p>
+    </div>
+  </div>
+  <iframe class="hero-video-frame"
+          data-src="https://player.vimeo.com/video/1186772181?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+          title="A Smile You Can Hear"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen></iframe>
+  <button class="hero-video-close" type="button" aria-label="Close video"
+          onclick="var s=this.closest('.hero-video-section'); s.classList.remove('is-playing'); var f=s.querySelector('.hero-video-frame'); f.src='';">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+</section>
+
+
+<!-- ============================================================
+     QUOTES — 12 cards (6 photos/illustrations first, 6 placeholders after)
+============================================================ -->
+<section class="quotes" aria-label="Voices from the people most affected" data-nav-tone="light">
+  <div class="quotes-head">
+    <div>
+      <span class="eyebrow eyebrow-plum quotes-eyebrow" data-anim="fade-up">Testimonials</span>
+      <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">More Than Just<br><em>A Phone Call</em></h2>
+    </div>
+    <div class="quotes-arrows">
+      <button class="qbtn" data-q-prev type="button" aria-label="Previous quote">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M19 12H5M5 12L11 6M5 12L11 18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="qbtn" data-q-next type="button" aria-label="Next quote">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div id="qStrip" class="quotes-strip" data-quotes>
+
+    <!-- 1. Michael (photo) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Michael, formerly incarcerated, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-michael.jpg');">
+        <span class="qc-tag">Michael &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;To have free calls now &mdash; it&rsquo;s more than what I think people realize. It&rsquo;s our lifeline to the world. Our lifeline to our families.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Michael</p>
+          <p class="qc-attr-meta">Formerly incarcerated, New York</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 2. Saul (illustration) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Saul, currently incarcerated, California">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-saul.png');">
+        <span class="qc-tag">Saul &middot; California</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;Today, I talk to my mom every day. I call her like three times a day. I read to her, because it&rsquo;s hard for her to read. And we pray together.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Saul</p>
+          <p class="qc-attr-meta">Currently incarcerated, California</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 3. Felix (photo) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Felix, prison counselor, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-felix.jpg');">
+        <span class="qc-tag">Felix &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;As a counselor, I give them as much support as I possibly can. But I&rsquo;m not their family. I&rsquo;m not their friend. They still have a guard up against me. Being able to talk to their family, they&rsquo;re able to get guidance that they wouldn&rsquo;t really want to take from me.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Felix</p>
+          <p class="qc-attr-meta">Prison counselor, New York</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 4. Angel (photo) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="240" data-quote href="#" tabindex="0" aria-label="Quote from Angel, wife, California">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-angel.jpg');">
+        <span class="qc-tag">Angel &middot; California</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;My husband has a daughter. She&rsquo;s 11 years old, and she is autistic. Not being able to call every single day, his calls with her would be sporadic. But now they talk every day. They&rsquo;re able to spend an hour on the phone each night. He reads to her, and she&rsquo;ll read to him. She is being so vocal since she&rsquo;s been able to speak to her dad.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Angel</p>
+          <p class="qc-attr-meta">Wife, California</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 5. Tricia (illustration) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Tricia, sister, federal">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-tricia.png');">
+        <span class="qc-tag">Tricia &middot; Federal</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;He doesn&rsquo;t like burdening people. So, I remember the first [free] phone call, him being so excited like, &lsquo;okay, now we can talk about anything you want, and when we hang up, I can just call you back.&rsquo;&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Tricia</p>
+          <p class="qc-attr-meta">Sister, Federal</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 6. Sgt. Mitchell (photo) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Sergeant Mitchell, corrections sergeant, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-mitchell.jpg');">
+        <span class="qc-tag">Sgt. Mitchell &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;Their interactions with [officers] become more positive and constructive instead of negative. They have things to look forward to. They go back to their cells, get on the phone, speak to their friends and loved ones, talk about their day, and get advice and counseling over those phone calls.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Sgt. Mitchell</p>
+          <p class="qc-attr-meta">Corrections sergeant, New York</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 7. Marc (photo) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Marc, formerly incarcerated, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-marc.jpg');">
+        <span class="qc-tag">Marc &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;I got to sit on the phone and do homework with my daughter, which was huge &mdash; just kind of sit there and allow her time to think through the problems and not worry about it costing per minute.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Marc</p>
+          <p class="qc-attr-meta">Formerly incarcerated, New York</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 8. Shelene (illustration) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="240" data-quote href="#" tabindex="0" aria-label="Quote from Shelene, mother, Minnesota">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-shelene.png');">
+        <span class="qc-tag">Shelene &middot; Minnesota</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;I don&rsquo;t have the same resentments towards just communicating with him, which had nothing to do with communicating with him, but the fact that they&rsquo;re taking my money and they&rsquo;re robbing me was the feeling, just so that I can speak to my son. I don&rsquo;t feel any of those things anymore, and it&rsquo;s a far cry different.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Shelene</p>
+          <p class="qc-attr-meta">Mother, Minnesota</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 9. Dwayne (photo) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Dwayne, currently incarcerated, Connecticut">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-dwayne.jpg');">
+        <span class="qc-tag">Dwayne &middot; Connecticut</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;I [hadn&rsquo;t] heard from my daughter in over 10 years when I got a letter with a phone number. [Then] when I heard her voice, it killed me. I told her I love her, and that I&rsquo;m going to keep in contact with her. I talk to her every day.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Dwayne</p>
+          <p class="qc-attr-meta">Currently incarcerated, Connecticut</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 10. Nia (photo) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Nia, wife, Massachusetts">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-nia.jpg');">
+        <span class="qc-tag">Nia &middot; Massachusetts</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;When the calls became free, it wasn&rsquo;t just a relief for me. It meant that my son could talk to his dad without me worrying about how much it was costing or how many minutes were left. That changed everything for us.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Nia</p>
+          <p class="qc-attr-meta">Wife, Massachusetts</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 11. Jasmeel (illustration) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Jasmeel, currently incarcerated, California">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-jasmeel.png');">
+        <span class="qc-tag">Jasmeel &middot; California</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;These conversations create a pathway for empathy and healing and just a healthy relationship with my family and actually just hope for a future when I get out, knowing that I have people that I can go to. Without these [free] phone calls, that would not have been possible.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Jasmeel</p>
+          <p class="qc-attr-meta">Currently incarcerated, California</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- 12. Ransey (photo) -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="240" data-quote href="#" tabindex="0" aria-label="Quote from Ransey, daughter, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-ransey.jpg');">
+        <span class="qc-tag">Ransey &middot; New York</span>
+      </div>
+      <div class="qc-quote">
+        <p class="qc-text">&ldquo;The time on the phone is like church.&rdquo;</p>
+        <div>
+          <p class="qc-attr-name">Ransey</p>
+          <p class="qc-attr-meta">Daughter, New York</p>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FINDINGS INTRO
+============================================================ -->
+<section id="findings" class="findings-intro" aria-label="Key Findings" data-nav-tone="light">
+  <div class="findings-intro-inner">
+    <span class="eyebrow eyebrow-plum" data-anim="fade-up">Key Findings</span>
+    <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">
+      <span class="line line-1">8 Areas of</span>
+      <span class="line line-2"><em>Measurable Impact</em></span>
+    </h2>
+    <p data-anim="fade-up" data-anim-delay="200">Drawing on data and interviews across multiple jurisdictions, eight areas of meaningful, measurable change emerged — for incarcerated people, their families, corrections staff, and the broader public.</p>
+  </div>
+  <div class="findings-intro-svg" data-anim="scale-in" aria-hidden="true">
+    <!-- Three-figures illustration only (no surrounding layout). Per client:
+         smaller so the title fits on two lines. -->
+    <img src="assets/illustrations/Group 1261156534 (2).svg" alt="" />
+  </div>
+</section>
+
+
+<!-- ============================================================
+     8 FINDINGS — sticky-wrap centerpiece
+     - Each .finding is animatable
+     - Bars, stat numbers, range bars, pull quotes have data-anim hooks
+============================================================ -->
+<div class="findings-wrap" data-findings-wrap>
+
+  <!-- FINDING 01 — Increased Connection (deep plum bg) -->
+  <!-- FINDING 01 v3 — Locked Figma SVG base (1440×2434) + interactive overlays:
+       - illust-with-subtitle.svg covers the top-right block region (mask the
+         baked "6.4 BILLION" number in the base, leaves a clean canvas)
+       - 6.4 BILLION number.svg with slide-in-from-right animation
+       - two invisible click overlays for prisons/jails toggle (still using PNG
+         swap of base; state PNGs in cropped/ folder remain). -->
+  <article id="finding-01" class="finding f1-locked" data-finding="0" data-area="Connection" data-nav-tone="dark">
+    <div class="f1-wrap" data-debug="0">
+      <img id="f1-img" class="f1-base"
+           src="assets/illustrations/separated/finding-01/finding-01-no-number.svg"
+           alt="Finding 1 — Increased Connection. Today, over 330,000 incarcerated people have access to fully free phone calls. These policies have enabled nearly 600 million additional calls and 6.4 billion additional call minutes between incarcerated people and their loved ones."
+           data-anim="fade-up" />
+      <!-- Animated 6.4 BILLION at NATIVE proportional size (390×193 → 27.08% of 1440 wrap).
+           Stage = positioning host. Counter ticks 0.0→6.4 BILLION, then SVG fades in for crisp final. -->
+      <div class="f-num-stage f1-num-stage"
+           data-num-style="count-up"
+           data-num-end="6.4" data-num-decimals="1" data-num-suffix=" BILLION"
+           data-num-duration="1600" data-num-font-factor="0.40"
+           data-anim-delay="300">
+        <img class="f-num-svg" src="assets/illustrations/separated/finding-01/number.svg" alt="6.4 billion additional minutes of connection" />
+        <span class="f-num-counter">0.0 BILLION</span>
+      </div>
+      <!-- Video click target — invisible button over the baked thumbnail.
+           Thumbnail in SVG is at translate(30, 1577), 690×776. -->
+      <button class="f-video-click" type="button"
+              aria-label="Play documentary clip — Commissioner Martuscello"
+              data-video-id="1187871199"
+              data-target="f1-video"></button>
+      <!-- Vimeo iframe — hidden by default; opens to full viewport width at
+           the thumbnail's vertical position with the thumbnail's natural height. -->
+      <div id="f1-video" class="f-video-player" aria-hidden="true">
+        <iframe class="f-video-frame"
+                data-src="https://player.vimeo.com/video/1187871199?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+                title="Power of Free — Commissioner Martuscello"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+        <button class="f-video-close" type="button" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Toggle click overlays (calibrated positions) -->
+      <button class="f1-tog f1-tog-prisons" type="button"
+              data-state="prisons"
+              aria-label="Show prisons data">PRISONS</button>
+      <button class="f1-tog f1-tog-jails" type="button"
+              data-state="jails"
+              aria-label="Show jails data">JAILS</button>
+    </div>
+  </article>
+
+  <!-- FINDING 02 v2 — Locked Figma SVG base (1440×2535) + animated $622 MIL
+       number fly-in at the top-right block. Same locked-PNG pattern as F1. -->
+  <article id="finding-02" class="finding f2-locked" data-finding="1" data-area="Financial Relief" data-nav-tone="light">
+    <div class="f2-wrap">
+      <img class="f2-base"
+           src="assets/illustrations/separated/finding-02/finding-02-no-number.svg"
+           alt="Finding 2 — Financial Relief. $622 million saved by families to date, with 73% flowing to Black and brown families. Savings ranged from $244 to $2,927 per year per incarcerated loved one. Communication costs fell dramatically when the burden shifted off families."
+           data-anim="fade-up" />
+      <!-- Animated $622 MIL at NATIVE proportional size (463×104 → 32.15% of 1440 wrap) -->
+      <!-- Animated $622 MIL — counter ticks 0→622, then swap to crisp SVG. -->
+      <div class="f-num-stage f2-num-stage"
+           data-num-style="count-up"
+           data-num-end="622" data-num-prefix="$" data-num-suffix=" MIL"
+           data-num-duration="1500" data-num-font-factor="0.78"
+           data-anim-delay="300">
+        <img class="f-num-svg" src="assets/illustrations/separated/finding-02/number.svg" alt="$622 million saved by families to date" />
+        <span class="f-num-counter">$0 MIL</span>
+      </div>
+      <!-- Video click target over baked thumbnail (bottom-left). TODO: add Vimeo ID. -->
+      <button class="f-video-click" type="button"
+              aria-label="Play documentary clip — Finding 2"
+              data-target="f2-video"></button>
+      <div id="f2-video" class="f-video-player" aria-hidden="true">
+        <iframe class="f-video-frame"
+                data-src="https://player.vimeo.com/video/1188179417?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+                title="Power of Free — Finding 2"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+        <button class="f-video-close" type="button" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 03 — Stronger Family & Community Relationships (locked SVG, 1440×2493) -->
+  <article id="finding-03" class="finding f3-locked" data-finding="2" data-area="Family & Community" data-nav-tone="dark">
+    <div class="f3-wrap">
+      <img class="f3-base" src="assets/illustrations/separated/finding-03/finding-03-locked.svg" alt="Finding 3: Stronger Family and Community Relationships. 82% of family members and 93% of incarcerated people said free calls helped build or repair relationships." data-anim="fade-up" />
+      <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
+      <button class="f-video-click" type="button"
+              aria-label="Play documentary clip — Finding 3 (Hamza)"
+              data-target="f3-video"></button>
+      <div id="f3-video" class="f-video-player" aria-hidden="true">
+        <iframe class="f-video-frame"
+                data-src=""
+                title="Power of Free — Finding 3"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+        <button class="f-video-close" type="button" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 04 — Parenting & Child Development (locked SVG, 1440×2341) -->
+  <article id="finding-04" class="finding f4-locked" data-finding="3" data-area="Parenting" data-nav-tone="light">
+    <div class="f4-wrap">
+      <img class="f4-base" src="assets/illustrations/separated/finding-04/finding-04-locked.svg" alt="Finding 4: Parenting and Child Development. Nearly half of people in prison are parents to minor children. Free communication restored consistent parent-child contact." data-anim="fade-up" />
+      <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
+      <button class="f-video-click" type="button"
+              aria-label="Play documentary clip — Finding 4 (Michael)"
+              data-target="f4-video"></button>
+      <div id="f4-video" class="f-video-player" aria-hidden="true">
+        <iframe class="f-video-frame"
+                data-src="https://player.vimeo.com/video/1188176628?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+                title="Power of Free — Finding 4"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+        <button class="f-video-close" type="button" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 05 — Improved Mental & Physical Health (locked SVG, 1440×2508) -->
+  <article id="finding-05" class="finding f5-locked" data-finding="4" data-area="Mental Health" data-nav-tone="dark">
+    <div class="f5-wrap">
+      <img class="f5-base" src="assets/illustrations/separated/finding-05/finding-05-locked.svg" alt="Finding 5: Improved Mental and Physical Health. 77% of family members and 76% of incarcerated people described improvements in stress, emotional stability, or overall wellbeing once calls became free." data-anim="fade-up" />
+      <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
+      <button class="f-video-click" type="button"
+              aria-label="Play documentary clip — Finding 5 (Robert)"
+              data-target="f5-video"></button>
+      <div id="f5-video" class="f-video-player" aria-hidden="true">
+        <iframe class="f-video-frame"
+                data-src=""
+                title="Power of Free — Finding 5"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+        <button class="f-video-close" type="button" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 06 — Less Violence & Operational Disruption (locked SVG + animated 100%) -->
+  <article id="finding-06" class="finding f6-locked" data-finding="5" data-area="Safety" data-nav-tone="light">
+    <div class="f6-wrap">
+      <img class="f6-base" src="assets/illustrations/separated/finding-06/finding-06-no-number.svg" alt="Finding 6: Less Violence and Operational Disruption" data-anim="fade-up" />
+      <!-- Animated 100% — counter ticks 0→100, then swap to crisp SVG. -->
+      <div class="f-num-stage f6-num-stage"
+           data-num-style="count-up"
+           data-num-end="100" data-num-suffix="%"
+           data-num-duration="1300" data-num-font-factor="0.86"
+           data-anim-delay="300">
+        <img class="f-num-svg" src="assets/illustrations/separated/finding-06/number.svg" alt="100% of corrections staff recommended free communication" />
+        <span class="f-num-counter">0%</span>
+      </div>
+      <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
+      <button class="f-video-click" type="button"
+              aria-label="Play documentary clip — Finding 6 (Sergeant Mitchell)"
+              data-target="f6-video"></button>
+      <div id="f6-video" class="f-video-player" aria-hidden="true">
+        <iframe class="f-video-frame"
+                data-src=""
+                title="Power of Free — Finding 6"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+        <button class="f-video-close" type="button" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 07 — Rehabilitation (locked SVG, 1440×2496) -->
+  <article id="finding-07" class="finding f7-locked" data-finding="6" data-area="Rehabilitation" data-nav-tone="dark">
+    <div class="f7-wrap">
+      <img class="f7-base" src="assets/illustrations/separated/finding-07/finding-07-locked.svg" alt="Finding 7: Rehabilitation. Regular communication with loved ones strengthens rehabilitation efforts." data-anim="fade-up" />
+      <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
+      <button class="f-video-click" type="button"
+              aria-label="Play documentary clip — Finding 7 (Jasmeel)"
+              data-target="f7-video"></button>
+      <div id="f7-video" class="f-video-player" aria-hidden="true">
+        <iframe class="f-video-frame"
+                data-src="https://player.vimeo.com/video/1188176912?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+                title="Power of Free — Finding 7"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+        <button class="f-video-close" type="button" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- FINDING 08 — Reentry Planning & Success (locked SVG, 1440×2416) -->
+  <article id="finding-08" class="finding f8-locked" data-finding="7" data-area="Reentry" data-nav-tone="light">
+    <div class="f8-wrap">
+      <img class="f8-base" src="assets/illustrations/separated/finding-08/finding-08-locked.svg" alt="Finding 8: Reentry Planning and Success. Free communication helps incarcerated people plan for life after release." data-anim="fade-up" />
+      <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
+      <button class="f-video-click" type="button"
+              aria-label="Play documentary clip — Finding 8 (Donald)"
+              data-target="f8-video"></button>
+      <div id="f8-video" class="f-video-player" aria-hidden="true">
+        <iframe class="f-video-frame"
+                data-src=""
+                title="Power of Free — Finding 8"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen></iframe>
+        <button class="f-video-close" type="button" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<!-- Fixed bottom sub-nav (lives outside findings-wrap so it can appear earlier — as user enters Findings Intro). Slides up when in findings region; slides down otherwise. 3 zones: plum prev/counter/next | scrollable tabs | coral skip CTA. -->
+<nav class="findings-subnav" data-subnav aria-label="8 Areas of Measurable Impact" aria-hidden="true">
+  <div class="subnav-position">
+    <button class="subnav-arrow" data-subnav-prev type="button" aria-label="Previous finding">&larr;</button>
+    <span class="subnav-counter">Finding <span data-subnav-current>1</span> / 8</span>
+    <button class="subnav-arrow" data-subnav-next type="button" aria-label="Next finding">&rarr;</button>
+  </div>
+  <div class="subnav-tabs">
+    <button class="subnav-tab is-active" data-go="0">Connection</button>
+    <button class="subnav-tab" data-go="1">Financial</button>
+    <button class="subnav-tab" data-go="2">Families</button>
+    <button class="subnav-tab" data-go="3">Parenting</button>
+    <button class="subnav-tab" data-go="4">Health</button>
+    <button class="subnav-tab" data-go="5">Safety</button>
+    <button class="subnav-tab" data-go="6">Rehabilitation</button>
+    <button class="subnav-tab" data-go="7">Reentry</button>
+  </div>
+  <button class="subnav-skip" data-subnav-skip type="button" aria-label="Skip past findings to Take Action section">
+    Skip to Take Action <span class="subnav-skip-arrow">&darr;</span>
+  </button>
+</nav>
+
+
+<!-- ============================================================
+     ACTION CENTER (Hero block) — Communication is a Lifeline
+============================================================ -->
+<section id="actions" class="action-center" aria-label="Action Center — Communication is a Lifeline" data-nav-tone="light">
+  <!-- Figures-only SVG (text stripped) at full bleed -->
+  <img class="action-center-figures" src="assets/illustrations/action-handshake-figures.svg" alt="" aria-hidden="true" data-anim="fade-up" />
+  <!-- Live HTML text overlay -->
+  <div class="action-center-text">
+    <span class="action-center-eyebrow" data-anim="fade-up">Action Center</span>
+    <h2 class="action-center-headline" data-anim="fade-up" data-anim-delay="100">
+      COMMUNICATION<br>IS A <em>Lifeline</em>
+    </h2>
+    <p class="action-center-body" data-anim="fade-up" data-anim-delay="200">The evidence is clear &mdash; and it demands action. Here's how you can help make free communication in prisons and jails the standard everywhere.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TAKE ACTION + RESOURCES — single beige band, 2 rows of 3 cards
+     - Take Action cards: white default, soft-lavender hover
+     - Resources cards 1-2: white default, deep-plum hover
+     - Ultimate Campaign Guide (card 3): pre-filled plum, arrow always shown
+     #actions remains on the preceding Action Center hero so the sub-nav
+     "Skip to Take Action" CTA still lands users at the entry of this region.
+============================================================ -->
+<section class="actions-wrap" aria-labelledby="actions-heading" data-nav-tone="light">
+  <div class="actions-stack">
+
+    <!-- TAKE ACTION -->
+    <div class="actions-section actions-section--take">
+      <h2 id="actions-heading" class="actions-heading" data-anim="fade-up">Take Action</h2>
+      <div class="actions-grid">
+        <a href="#" class="actions-card" data-anim="fade-up">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Read &amp; Share the Report</h3>
+          <p class="actions-card-body">Download the full report and share it with anyone who needs to see what's possible — and what is actively being withheld where these policies haven't yet been adopted.</p>
+        </a>
+        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="100">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Contact Your Legislators</h3>
+          <p class="actions-card-body">Free prison and jails communication is advancing state by state and county by county. Tell your elected officials it's time to act.</p>
+        </a>
+        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="200">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Support the Movement</h3>
+          <p class="actions-card-body">Worth Rises is working to end the correctional telecom industry's exploitation of incarcerated people and their families. Support our work.</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="actions-section actions-section--resources">
+      <h2 class="actions-heading" data-anim="fade-up">Resources</h2>
+      <div class="actions-grid">
+        <a href="#" class="actions-card" data-anim="fade-up">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Report Fact Sheet</h3>
+          <p class="actions-card-body">Key findings from Critical Connections: The Power of Free across 8 areas of measurable impact.</p>
+        </a>
+        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="100">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Implementation Guide</h3>
+          <p class="actions-card-body">A practical guide for agencies, legislators, and advocates designing, procuring, and rolling out free communication in prisons and jails.</p>
+        </a>
+        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="200">
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:22px;height:22px;">
+              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <h3 class="actions-card-title">Ultimate Campaign Guide</h3>
+          <p class="actions-card-body">A step-by-step guide for advocates, organizers, and campaigns working to win free communication in their state or county.</p>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ABOUT THIS PROJECT (Methodology)
+============================================================ -->
+<section id="aboutproject" class="about-project meth-locked" aria-label="About This Project" data-nav-tone="light">
+  <!-- Final methodology SVG (Frame 2117131466). Self-contained — figure
+       illustration is baked into the SVG, no overlay needed. -->
+  <div class="meth-wrap" data-anim="fade-up">
+    <img class="meth-base" src="assets/illustrations/methodology-block.svg"
+         alt="About This Report — Acknowledgments. The Power of Free Communication in Prisons and Jails is a project of Worth Rises, a non-profit dedicated to dismantling the prison industry. Since 2018, Worth Rises has led the national Connecting Families campaign." />
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="site-footer" aria-label="Site footer">
+  <div class="footer-grid">
+    <!-- LEFT: signup -->
+    <div class="footer-signup" data-anim="fade-up">
+      <p class="footer-signup-label">Sign up to receive <em>news and updates</em>.</p>
+      <form class="footer-signup-form" action="#" method="post" novalidate>
+        <input type="email" name="email" class="footer-signup-input"
+               placeholder="Email Address" aria-label="Email address" required />
+        <button type="submit" class="footer-signup-btn">Sign Up</button>
+      </form>
+    </div>
+
+    <!-- RIGHT: copyright + email + socials -->
+    <div class="footer-meta" data-anim="fade-up" data-anim-delay="150">
+      <p class="footer-copyright">&copy; 2026 Worth Rises</p>
+      <a class="footer-email" href="mailto:info@worthrises.com">info@worthrises.com</a>
+      <div class="footer-social" aria-label="Worth Rises on social media">
+        <a href="https://facebook.com/worthrises" target="_blank" rel="noopener" aria-label="Facebook" class="footer-social-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12Z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/worthrises/" target="_blank" rel="noopener" aria-label="Instagram" class="footer-social-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+        </a>
+        <a href="https://twitter.com/WorthRises" target="_blank" rel="noopener" aria-label="X (Twitter)" class="footer-social-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ============================================================
+     INTERACTIVITY
+============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Header: always visible, transparent when scrolled away from top ----------
+     Plus: detects which [data-nav-tone] section is currently dominating the
+     top of the viewport (just below the nav) and applies body.nav-on-dark
+     or body.nav-on-light. CSS uses those classes to flip the nav text color
+     so it's always legible against whatever's behind. */
+  var header = document.querySelector('[data-header]');
+  var toneSections = document.querySelectorAll('[data-nav-tone]');
+  function onScroll() {
+    if (!header) return;
+    var scrolled = window.scrollY > 8;
+    header.classList.toggle('is-scrolled',   scrolled);
+    header.classList.toggle('is-transparent', scrolled);
+
+    // Find the section whose top is just past the nav (i.e. the section the
+    // nav is currently overlapping). The trigger line is at navHeight + 1px.
+    var headerH = header.offsetHeight || 70;
+    var triggerY = headerH + 4;
+    var activeTone = null;
+    for (var i = 0; i < toneSections.length; i++) {
+      var rect = toneSections[i].getBoundingClientRect();
+      if (rect.top <= triggerY && rect.bottom > triggerY) {
+        activeTone = toneSections[i].getAttribute('data-nav-tone');
+        break;
+      }
+    }
+    document.body.classList.toggle('nav-on-dark',  activeTone === 'dark');
+    document.body.classList.toggle('nav-on-light', activeTone === 'light');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- ANIMATION SYSTEM ----------
+     IntersectionObserver watches every [data-anim] element.
+     When in view, adds .is-in. JS-driven primitives (counter, bar-grow)
+     get extra wiring in animateEnter().
+  ---------- */
+  var prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setAnimVars(el) {
+    var delay = parseInt(el.getAttribute('data-anim-delay'), 10) || 0;
+    var dur   = parseInt(el.getAttribute('data-anim-duration'), 10) || 0;
+    if (delay) el.style.setProperty('--delay', delay + 'ms');
+    if (dur)   el.style.setProperty('--d',     dur   + 'ms');
+  }
+
+  function animateCounter(el) {
+    var end       = parseFloat(el.getAttribute('data-counter-end'));
+    var prefix    = el.getAttribute('data-counter-prefix')   || '';
+    var suffix    = el.getAttribute('data-counter-suffix')   || '';
+    var decimals  = parseInt(el.getAttribute('data-counter-decimals'), 10) || 0;
+    var fmt       = el.getAttribute('data-counter-format')   || '';
+    var dur       = parseInt(el.getAttribute('data-anim-duration'), 10) || 1400;
+    var start     = performance.now();
+    if (isNaN(end)) return;
+    function frame(t) {
+      var p = Math.min(1, (t - start) / dur);
+      // ease-out cubic
+      var eased = 1 - Math.pow(1 - p, 3);
+      var val = end * eased;
+      var formatted;
+      if (fmt === 'comma') {
+        formatted = Math.round(val).toLocaleString();
+      } else {
+        formatted = val.toFixed(decimals);
+      }
+      el.textContent = prefix + formatted + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function animateEnter(el) {
+    el.classList.add('is-in');
+    var kind = el.getAttribute('data-anim');
+    if (kind === 'counter' && !el.dataset.counterDone) {
+      el.dataset.counterDone = '1';
+      // Start counter slightly after the fade-up so the user sees the motion
+      var counterDelay = (parseInt(el.getAttribute('data-anim-delay'), 10) || 0) + 150;
+      setTimeout(function () { animateCounter(el); }, counterDelay);
+    }
+  }
+
+  var animObserver;
+  if ('IntersectionObserver' in window && !prefersReduce) {
+    animObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateEnter(entry.target);
+          animObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  }
+
+  document.querySelectorAll('[data-anim]').forEach(function (el) {
+    setAnimVars(el);
+    if (animObserver) {
+      animObserver.observe(el);
+    } else {
+      // No observer → just reveal immediately (also catches reduced-motion)
+      animateEnter(el);
+    }
+  });
+
+  // Safety net: anything still hidden after 4 sec gets revealed
+  setTimeout(function () {
+    document.querySelectorAll('[data-anim]:not(.is-in)').forEach(function (el) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 200) animateEnter(el);
+    });
+  }, 4000);
+
+  /* ---------- Number-reveal stages (F1/F2/F6) ----------
+     Each .f-num-stage wraps an SVG number + a live counter span.
+     Reveal style picked via data-num-style:
+       count-up      → counter ticks 0→end, then crossfade to SVG (default)
+       count-up-keep → counter only, SVG never shown (use if fonts match)
+       scale-pop     → SVG punches in with spring overshoot
+       blur-in       → SVG sharpens from blur
+       mask-wipe     → SVG revealed left→right
+       slide-left    → SVG slides in from right (legacy)
+     data-num-end / data-num-prefix / data-num-suffix / data-num-decimals /
+     data-num-duration / data-num-font-factor (counter font ÷ stage height).
+  ---------- */
+  (function(){
+    var stages = document.querySelectorAll('.f-num-stage');
+    if (!stages.length) return;
+
+    function setCounterFont(stage) {
+      var counter = stage.querySelector('.f-num-counter');
+      if (!counter) return;
+      var factor = parseFloat(stage.dataset.numFontFactor) || 0.85;
+      function upd(){
+        var h = stage.offsetHeight;
+        if (h > 0) counter.style.fontSize = (h * factor) + 'px';
+      }
+      upd();
+      if (window.ResizeObserver) {
+        try { new ResizeObserver(upd).observe(stage); } catch(e){}
+      }
+      window.addEventListener('resize', upd);
+      // Re-run after layout settles (SVG may load async, changing height)
+      var img = stage.querySelector('.f-num-svg');
+      if (img && !img.complete) img.addEventListener('load', upd);
+      setTimeout(upd, 100);
+    }
+    stages.forEach(setCounterFont);
+
+    function runCount(stage) {
+      var counter = stage.querySelector('.f-num-counter');
+      if (!counter) return;
+      var end = parseFloat(stage.dataset.numEnd);
+      if (isNaN(end)) return;
+      var pre = stage.dataset.numPrefix || '';
+      var suf = stage.dataset.numSuffix || '';
+      var dec = parseInt(stage.dataset.numDecimals, 10) || 0;
+      var dur = parseInt(stage.dataset.numDuration, 10) || 1400;
+      var fmt = stage.dataset.numFormat || '';
+      var t0  = performance.now();
+      function frame(t) {
+        var p = Math.min(1, (t - t0) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);  // ease-out cubic
+        var v = end * eased;
+        var s;
+        if (fmt === 'comma')      s = Math.round(v).toLocaleString();
+        else                       s = v.toFixed(dec);
+        counter.textContent = pre + s + suf;
+        if (p < 1) requestAnimationFrame(frame);
+        else      stage.classList.add('is-num-done');
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function startStage(stage) {
+      if (stage.dataset.numStarted === '1') return;
+      stage.dataset.numStarted = '1';
+      var delay = parseInt(stage.dataset.animDelay, 10) || 0;
+      setTimeout(function(){
+        stage.classList.add('is-num-in');
+        var style = stage.dataset.numStyle || 'count-up';
+        if (style === 'count-up' || style === 'count-up-keep') {
+          // Tiny lead-in so users see the start state before it ticks
+          setTimeout(function(){ runCount(stage); }, 180);
+        }
+      }, delay);
+    }
+
+    if ('IntersectionObserver' in window && !prefersReduce) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (en.isIntersecting) {
+            startStage(en.target);
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.35, rootMargin: '0px 0px -40px 0px' });
+      stages.forEach(function(s){ io.observe(s); });
+    } else {
+      stages.forEach(startStage);
+    }
+  })();
+
+  /* ---------- Quotes infinite carousel ----------
+     Pattern ported from squarespace-quotes.html. Clones the original card set
+     once before and once after, parks scroll at the start of the middle (real)
+     set, and silently shifts back into the middle when the user crosses into
+     a clone region. Result: arrows / scroll can be used indefinitely without
+     visually popping back to the start. */
+  var strip = document.querySelector('[data-quotes]');
+  if (strip) {
+    var originalCards = Array.prototype.slice.call(strip.children);
+    var nOrig = originalCards.length;
+
+    function cloneSet() {
+      return originalCards.map(function (c) {
+        var clone = c.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.setAttribute('tabindex', '-1');
+        return clone;
+      });
+    }
+    var beforeClones = cloneSet();
+    var afterClones  = cloneSet();
+    beforeClones.reverse().forEach(function (c) { strip.insertBefore(c, strip.firstChild); });
+    afterClones.forEach(function (c) { strip.appendChild(c); });
+
+    function getCardWidth() {
+      return strip.children[0].getBoundingClientRect().width;
+    }
+    function getMiddleStart() {
+      return getCardWidth() * nOrig;
+    }
+
+    // Park at the start of the middle (real) set after layout settles.
+    setTimeout(function () { strip.scrollLeft = getMiddleStart(); }, 50);
+
+    // Silent wrap when crossing into the clone regions.
+    var wrapping = false;
+    strip.addEventListener('scroll', function () {
+      if (wrapping) return;
+      var setWidth   = getCardWidth() * nOrig;
+      var middleStart = setWidth;
+      var middleEnd   = setWidth * 2;
+      if (strip.scrollLeft < middleStart - getCardWidth() * 0.5) {
+        wrapping = true;
+        strip.scrollLeft += setWidth;
+        requestAnimationFrame(function () { wrapping = false; });
+      } else if (strip.scrollLeft > middleEnd - getCardWidth() * 0.5) {
+        wrapping = true;
+        strip.scrollLeft -= setWidth;
+        requestAnimationFrame(function () { wrapping = false; });
+      }
+    }, { passive: true });
+
+    // Suppress href="#" jump-to-top when a card is clicked/tapped.
+    strip.addEventListener('click', function (e) {
+      var card = e.target.closest('.quote-card');
+      if (card) e.preventDefault();
+    });
+
+    var prevBtn = document.querySelector('[data-q-prev]');
+    var nextBtn = document.querySelector('[data-q-next]');
+    if (prevBtn) prevBtn.addEventListener('click', function () {
+      strip.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+    });
+    if (nextBtn) nextBtn.addEventListener('click', function () {
+      strip.scrollBy({ left:  getCardWidth(), behavior: 'smooth' });
+    });
+  }
+
+  /* ---------- Findings sub-nav: click-to-scroll + scroll-position-based active highlight ---------- */
+  var subnav = document.querySelector('[data-subnav]');
+  var findings = Array.prototype.slice.call(document.querySelectorAll('.finding'));
+  if (subnav && findings.length) {
+    var tabs = Array.prototype.slice.call(subnav.querySelectorAll('[data-go]'));
+    var tabsWrap   = subnav.querySelector('.subnav-tabs');
+    var prevArrow  = subnav.querySelector('[data-subnav-prev]');
+    var nextArrow  = subnav.querySelector('[data-subnav-next]');
+    var counterEl  = subnav.querySelector('[data-subnav-current]');
+    var skipBtn    = subnav.querySelector('[data-subnav-skip]');
+
+    function setActiveTab(idx) {
+      tabs.forEach(function (t, i) { t.classList.toggle('is-active', i === idx); });
+      // Auto-scroll the tabs strip so the active tab stays visible if overflowing
+      var activeTab = tabs[idx];
+      if (activeTab && tabsWrap && tabsWrap.scrollWidth > tabsWrap.clientWidth) {
+        var navRect = tabsWrap.getBoundingClientRect();
+        var tabRect = activeTab.getBoundingClientRect();
+        if (tabRect.left < navRect.left || tabRect.right > navRect.right) {
+          activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      }
+      // Counter + prev/next disabled state
+      if (counterEl) counterEl.textContent = (idx + 1);
+      if (prevArrow) prevArrow.disabled = (idx <= 0);
+      if (nextArrow) nextArrow.disabled = (idx >= tabs.length - 1);
+    }
+
+    function scrollToFinding(idx) {
+      idx = Math.max(0, Math.min(tabs.length - 1, idx));
+      var target = findings[idx];
+      if (!target) return;
+      var headerEl = document.querySelector('.site-header');
+      var off = headerEl ? headerEl.offsetHeight : 72;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    function currentActiveIdx() {
+      for (var i = 0; i < tabs.length; i++) {
+        if (tabs[i].classList.contains('is-active')) return i;
+      }
+      return 0;
+    }
+
+    if (prevArrow) prevArrow.addEventListener('click', function () {
+      scrollToFinding(currentActiveIdx() - 1);
+    });
+    if (nextArrow) nextArrow.addEventListener('click', function () {
+      scrollToFinding(currentActiveIdx() + 1);
+    });
+    if (skipBtn) skipBtn.addEventListener('click', function () {
+      var target = document.getElementById('actions')
+                || document.getElementById('aboutproject')
+                || document.getElementById('take-action');
+      if (!target) return;
+      var headerEl = document.querySelector('.site-header');
+      var off = headerEl ? headerEl.offsetHeight : 72;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+
+    /* Active tab tracking via scroll position. The trigger line sits ~80% down the
+       viewport so the active tab flips the *moment* the next finding's top edge
+       (and its headline immediately below) starts entering view from the bottom —
+       matches "shift the moment I see the start of the next section". */
+    var findingsIntro = document.getElementById('findings');
+    var lastFinding = findings[findings.length - 1];
+
+    function updateActiveTabFromScroll() {
+      var triggerLine = window.innerHeight * 0.8;
+      var bestIdx = 0;
+      // Iterate top-down; track the last (= most recent) finding whose top has
+      // crossed below the trigger line. Findings are stacked, so we can break
+      // as soon as we see one still below the trigger.
+      for (var i = 0; i < findings.length; i++) {
+        var top = findings[i].getBoundingClientRect().top;
+        if (top <= triggerLine) {
+          bestIdx = i;
+        } else {
+          break;
+        }
+      }
+      setActiveTab(bestIdx);
+    }
+
+    /* Sub-nav slides up when user enters Findings Intro and stays visible through the
+       last finding. Slides down (off-screen) otherwise. */
+    function updateSubnavVisibility() {
+      if (!findingsIntro || !lastFinding) return;
+      var introTop = findingsIntro.getBoundingClientRect().top;
+      var lastBottom = lastFinding.getBoundingClientRect().bottom;
+      var headerEl = document.querySelector('.site-header');
+      var headerH = headerEl ? headerEl.offsetHeight : 72;
+      // Show as soon as findings-intro starts entering the viewport (top < 85% of viewport).
+      // Hide once the last finding has fully scrolled above the header.
+      var entered = introTop < window.innerHeight * 0.85;
+      var stillInside = lastBottom > headerH + 50;
+      var visible = entered && stillInside;
+      subnav.classList.toggle('is-visible', visible);
+      subnav.setAttribute('aria-hidden', visible ? 'false' : 'true');
+    }
+
+    // Click-to-jump
+    tabs.forEach(function (tab, idx) {
+      tab.addEventListener('click', function () {
+        var target = findings[idx];
+        if (!target) return;
+        var headerH = document.querySelector('.site-header');
+        var off = headerH ? headerH.offsetHeight : 72;
+        var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      });
+    });
+
+    // Track on every scroll (passive). Throttle with requestAnimationFrame.
+    var subnavTicking = false;
+    function onSubnavScroll() {
+      if (subnavTicking) return;
+      subnavTicking = true;
+      requestAnimationFrame(function () {
+        updateSubnavVisibility();
+        updateActiveTabFromScroll();
+        subnavTicking = false;
+      });
+    }
+    window.addEventListener('scroll', onSubnavScroll, { passive: true });
+    window.addEventListener('resize', onSubnavScroll, { passive: true });
+    // Initial sync
+    updateSubnavVisibility();
+    updateActiveTabFromScroll();
+  }
+
+  /* ---------- Finding 01 v2: Prisons / Jails PNG toggle ----------
+     The locked PNG IS the chart. Click overlay buttons swap the <img> src
+     between the two state PNGs (prisons + jails). All numbers, eyebrow,
+     and chart shapes change because the entire image swaps. */
+  var f1Img = document.getElementById('f1-img');
+  var f1Toggles = document.querySelectorAll('.f1-tog');
+  if (f1Img && f1Toggles.length) {
+    var f1Sources = {
+      prisons: 'assets/illustrations/separated/finding-01/finding-01-no-number.svg',
+      jails:   'assets/illustrations/separated/finding-01/finding-01-jails-no-number.svg'
+    };
+    f1Toggles.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var state = btn.getAttribute('data-state');
+        if (f1Sources[state]) f1Img.src = f1Sources[state];
+      });
+    });
+  }
+
+  /* ---------- Finding video click overlays ----------
+     Reusable pattern: any element with class .f-video-click + data-target
+     opens a sibling .f-video-player by id. Close returns to thumbnail and
+     unloads the iframe so it stops playing. */
+  var fVideoClicks = document.querySelectorAll('.f-video-click');
+  fVideoClicks.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-target');
+      var player = document.getElementById(targetId);
+      if (!player) return;
+      var iframe = player.querySelector('.f-video-frame');
+      // Skip silently if no Vimeo URL has been configured yet
+      if (iframe && !iframe.src && !iframe.dataset.src) return;
+      if (iframe && !iframe.src) iframe.src = iframe.dataset.src;
+      player.classList.add('is-open');
+      player.setAttribute('aria-hidden', 'false');
+    });
+  });
+  document.querySelectorAll('.f-video-close').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var player = btn.closest('.f-video-player');
+      if (!player) return;
+      var iframe = player.querySelector('.f-video-frame');
+      if (iframe) iframe.src = ''; // unload to stop playback
+      player.classList.remove('is-open');
+      player.setAttribute('aria-hidden', 'true');
+    });
+  });
+
+  /* ---------- Hero cord draw-on (getTotalLength approach) ----------
+     pathLength="1" + stroke-dasharray:1 wasn't reliably honored across
+     browsers (the cord rendered as a static line). Using getTotalLength()
+     bypasses that quirk — works in all browsers. Two nested rAFs paint the
+     hidden state before the transition kicks in. */
+  var heroCord = document.getElementById('hero-cord');
+  if (heroCord) {
+    var len;
+    try { len = heroCord.getTotalLength(); } catch (e) { len = 3000; }
+    if (!len || isNaN(len)) len = 3000;
+    heroCord.style.strokeDasharray  = len;
+    heroCord.style.strokeDashoffset = len;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        heroCord.style.transition = 'stroke-dashoffset 2400ms cubic-bezier(0.22, 1, 0.36, 1) 400ms';
+        heroCord.style.strokeDashoffset = '0';
+      });
+    });
+  }
+
+  /* ---------- Hero video title card fly-in ----------
+     Observe a sentinel placed at the card's resting position (bottom-right
+     of the section). Sentinel has stable bounding box; card itself has
+     translateX(110%) which would shift its bbox off-screen and never
+     trigger the observer. When sentinel crosses into view, fire .is-in. */
+  var hvSentinel = document.querySelector('.hero-video-card-sentinel');
+  var hvCard = document.querySelector('.hero-video-card-flyin');
+  if (hvSentinel && hvCard) {
+    if ('IntersectionObserver' in window && !prefersReduce) {
+      var hvObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            hvCard.classList.add('is-in');
+            hvObs.unobserve(hvSentinel);
+          }
+        });
+      }, { threshold: 0.5, rootMargin: '0px 0px -40px 0px' });
+      hvObs.observe(hvSentinel);
+    } else {
+      hvCard.classList.add('is-in');
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
