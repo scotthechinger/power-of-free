@@ -2846,11 +2846,7 @@ main { padding-top: var(--header-h); }
       display: inline-flex; align-items: center; gap: 8px;
       text-decoration: none; color: #000;
     }
-    .m-brand-logo { width: 28px; height: 28px; display: block; }
-    .m-brand-text {
-      font-family: 'Inter', sans-serif; font-weight: 800; font-size: 13px;
-      letter-spacing: .04em; text-transform: uppercase; color: #000;
-    }
+    .m-brand-logo { height: 32px; width: auto; display: block; }
     .m-burger {
       width: 44px; height: 44px; border: 0; background: transparent;
       padding: 0; cursor: pointer;
@@ -2887,14 +2883,77 @@ main { padding-top: var(--header-h); }
       pointer-events: none;
     }
     .m-crop-top {
-      /* height = (5200/402) of width = 12.9353 vw multiples; expressed as calc */
-      height: calc(100vw * 5200 / 402);
+      /* Skip the baked-in 60px nav at the top: visible region y=60 to y=5200 */
+      height: calc(100vw * (5200 - 60) / 402);
     }
-    .m-crop-top .m-bg-svg { top: 0; }
-    .m-crop-bot {
-      height: calc(100vw * (13771 - 8800) / 402);
+    .m-crop-top .m-bg-svg { top: calc(-100vw * 60 / 402); }
+    .m-crop-actioncenter {
+      /* Just the Action Center heading + handshake (y=8800–9450 of Mobile.svg) */
+      height: calc(100vw * (9450 - 8800) / 402);
     }
-    .m-crop-bot .m-bg-svg { top: calc(-100vw * 8800 / 402); }
+    .m-crop-actioncenter .m-bg-svg { top: calc(-100vw * 8800 / 402); }
+
+    /* Take Action / Resources cards (custom HTML) */
+    .m-action-cards {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .m-action-card {
+      position: relative;
+      display: block;
+      padding: 28px 24px 32px;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .m-action-card--lavender {
+      background: var(--soft-lavender);
+      color: var(--ink);
+    }
+    .m-action-card--plum {
+      background: var(--deep-plum);
+      color: #ffffff;
+      border-bottom-color: rgba(255,255,255,0.12);
+    }
+    .m-action-card-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: -0.005em;
+      text-transform: uppercase;
+      margin: 0 32px 14px 0;
+    }
+    .m-action-card-body {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      font-weight: 400;
+      max-width: 100%;
+    }
+    .m-action-card--lavender .m-action-card-body { color: var(--ink); }
+    .m-action-card--plum .m-action-card-body { color: rgba(255,255,255,0.85); }
+    .m-action-card-arrow {
+      position: absolute;
+      top: 28px;
+      right: 24px;
+      font-size: 20px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    /* Methodology section (Frame 2117131592 SVG, 402×1978) */
+    .m-methodology {
+      position: relative;
+      display: block;
+    }
+    .m-methodology-img {
+      display: block;
+      width: 100%;
+      user-select: none; -webkit-user-drag: none;
+      pointer-events: none;
+    }
 
     /* Finding region: stacked SVGs */
     .m-findings { position: relative; }
@@ -2918,42 +2977,56 @@ main { padding-top: var(--header-h); }
       color: #ffffff;
       display: flex;
       align-items: stretch;
-      height: 56px;
+      height: 60px;
       z-index: 40;
       transform: translateY(110%);
       transition: transform .3s cubic-bezier(.7,0,.3,1);
       box-shadow: 0 -4px 18px -4px rgba(0,0,0,.25);
     }
     .m-subnav.is-visible { transform: translateY(0); }
-    .m-subnav-position {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 0 12px;
-    }
     .m-subnav-arrow {
-      width: 36px; height: 36px;
+      flex: 0 0 auto;
+      width: 44px;
       border: 0;
-      background: rgba(255,255,255,0.12);
+      background: transparent;
       color: #ffffff;
-      border-radius: 50%;
       font-size: 18px;
       cursor: pointer;
       display: grid; place-items: center;
     }
     .m-subnav-arrow:disabled { opacity: 0.35; cursor: default; }
+    .m-subnav-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 0 6px;
+      min-width: 0;
+    }
     .m-subnav-counter {
       font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 12px;
-      letter-spacing: 0.04em;
+      font-weight: 800;
+      font-size: 10px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
+      opacity: 0.7;
+    }
+    .m-subnav-area {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
     .m-subnav-skip {
       flex: 0 0 auto;
-      padding: 0 18px;
+      padding: 0 16px;
       background: var(--warm-coral);
       color: #ffffff;
       border: 0;
@@ -2969,6 +3042,121 @@ main { padding-top: var(--header-h); }
     }
     .m-subnav-skip-arrow { font-size: 14px; }
 
+    /* ---------- Mobile footer (custom, matches desktop brand) ---------- */
+    .m-footer {
+      position: relative;
+      background: var(--deep-plum);
+      color: #ffffff;
+      padding: 56px 24px 40px;
+    }
+    /* Coral brand accent strip across top of mobile footer */
+    .m-footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--warm-coral);
+    }
+    .m-footer-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      margin: 0 0 24px;
+    }
+    .m-footer-label em {
+      font-family: 'ConcretteXL', 'Fraunces', serif;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--soft-lavender);
+      letter-spacing: -0.01em;
+    }
+    .m-footer-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 100%;
+    }
+    .m-footer-input {
+      background: transparent;
+      border: 0;
+      border-bottom: 1.5px solid rgba(255,255,255,0.45);
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 12px 4px;
+      outline: none;
+      width: 100%;
+    }
+    .m-footer-input::placeholder { color: rgba(255,255,255,0.5); }
+    .m-footer-input:focus { border-bottom-color: var(--warm-coral); }
+    .m-footer-btn {
+      align-self: flex-start;
+      background: var(--warm-coral);
+      color: #ffffff;
+      border: 0;
+      padding: 14px 28px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: filter .2s ease;
+      margin-top: 8px;
+    }
+    .m-footer-btn:hover, .m-footer-btn:active { filter: brightness(1.06); }
+    .m-footer-meta {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .m-footer-copy {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin: 0;
+    }
+    .m-footer-email {
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 16px;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.4);
+      padding-bottom: 2px;
+      align-self: flex-start;
+    }
+    .m-footer-email:hover { color: var(--warm-coral); border-bottom-color: var(--warm-coral); }
+    .m-footer-social {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .m-footer-social-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px; height: 42px;
+      border: 1.5px solid rgba(255,255,255,0.28);
+      border-radius: 50%;
+      color: #ffffff;
+      background: transparent;
+      transition: background .2s ease, border-color .2s ease;
+    }
+    .m-footer-social-icon:hover {
+      background: var(--warm-coral);
+      border-color: var(--warm-coral);
+    }
+    .m-footer-social-icon svg { width: 16px; height: 16px; display: block; }
+
     /* ---------- Tap overlays ---------- */
     .m-tap {
       position: absolute;
@@ -2982,31 +3170,80 @@ main { padding-top: var(--header-h); }
     body.m-debug .m-tap         { background: rgba(255, 0, 128, .35); outline: 1px dashed #f0f; }
     body.m-debug .m-tap.is-link { background: rgba(0, 144, 255, .35); outline: 1px dashed #09f; }
 
-    /* ---------- Menu overlay ---------- */
+    /* ---------- Menu overlay (live HTML) ---------- */
     .m-menu {
       position: fixed; inset: 0; z-index: 80;
-      background: #fff;
+      background: var(--deep-plum);
+      color: #ffffff;
       transform: translateX(100%);
-      transition: transform .28s ease;
+      transition: transform .3s cubic-bezier(.7,0,.3,1);
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 32px;
     }
     .m-menu.is-open { transform: translateX(0); }
-    .m-menu-img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
+    .m-menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .m-menu-logo {
+      height: 32px;
+      width: auto;
+      filter: brightness(0) invert(1); /* invert dark logo to white */
+    }
     .m-menu-close {
-      position: absolute; top: 14px; right: 14px;
       width: 44px; height: 44px;
       border: 0; background: transparent; cursor: pointer;
-      z-index: 2;
+      color: #ffffff;
+      display: grid; place-items: center;
+    }
+    .m-menu-nav {
+      display: flex;
+      flex-direction: column;
+      padding: 24px 32px;
+      gap: 0;
     }
     .m-menu-link {
-      position: absolute; left: 0; right: 0;
-      background: transparent; border: 0; cursor: pointer;
-      padding: 0; margin: 0;
-      color: transparent;
-      text-decoration: none; display: block;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      padding: 22px 0;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-decoration: none;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.18);
+      transition: color .2s ease;
     }
-    body.m-debug .m-menu-link { background: rgba(0, 200, 80, .25); outline: 1px dashed #0c0; }
+    .m-menu-link:hover, .m-menu-link:focus-visible { color: var(--soft-lavender); }
+    .m-menu-cta {
+      margin-top: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--warm-coral);
+      color: #ffffff;
+      padding: 18px 24px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 0;
+    }
+    .m-menu-cta:hover { filter: brightness(1.06); }
 
     /* ---------- Vimeo modal ---------- */
     .m-video {
@@ -3034,11 +3271,7 @@ main { padding-top: var(--header-h); }
   <!-- ===== Top bar ===== -->
   <header class="m-topbar">
     <a class="m-brand" href="#m-top" aria-label="Worth Rises home">
-      <svg class="m-brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="14" y="14" width="72" height="72" rx="8" fill="none" stroke="#000" stroke-width="6"/>
-        <path d="M30 64 L42 40 L50 56 L58 36 L70 64" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="m-brand-text">Worth Rises</span>
+      <img class="m-brand-logo" src="assets/illustrations/worth-rises-logo.png" alt="Worth Rises" />
     </a>
     <button class="m-burger" type="button" aria-label="Open menu" data-m-menu-open>
       <span></span><span></span><span></span>
@@ -3058,8 +3291,13 @@ main { padding-top: var(--header-h); }
          style="top: 7.73%; left: 6%; right: 6%; height: 1.31%;" aria-label="Watch the hero story video"></button>
       <a class="m-tap is-link" href="#m-about-report" data-m-scroll
          style="top: 36.54%; left: 6%; right: 35%; height: 1.44%;" aria-label="Read the report"></a>
-      <span class="m-anchor" id="m-key-findings"  style="position:absolute; top: 45%;"></span>
+      <!-- About-the-report section starts ~y=620 of Mobile.svg → 12% of top crop (5200) -->
+      <span class="m-anchor" id="m-about-report"   style="position:absolute; top: 12%;"></span>
+      <!-- 8 Areas of Measurable Impact starts ~y=4400 of Mobile.svg → 84.6% of top crop -->
+      <span class="m-anchor" id="m-key-findings"   style="position:absolute; top: 85%;"></span>
       <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 92%;"></span>
+      <!-- Hero video section anchor (for Watch the Story button) — ~y=4000 of Mobile.svg → 77% -->
+      <span class="m-anchor" id="m-video"          style="position:absolute; top: 28%;"></span>
     </div>
 
     <!-- FINDINGS region — 8 standalone SVGs stacked. Sub-nav appears here. -->
@@ -3110,69 +3348,120 @@ main { padding-top: var(--header-h); }
       </article>
     </div>
 
-    <!-- BOTTOM: Mobile.svg cropped to y=8800–13771 (Action Center through Footer) -->
-    <div class="m-crop m-crop-bot">
-      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Action Center, Take Action, About this Report, Footer" />
-      <span class="m-anchor" id="m-action-center" style="position:absolute; top: 0;"></span>
-      <span class="m-anchor" id="m-resources"     style="position:absolute; top: 60%;"></span>
-      <span class="m-anchor" id="m-about-report"  style="position:absolute; top: 88%;"></span>
-      <span class="m-anchor" id="m-about-project" style="position:absolute; top: 95%;"></span>
-      <!-- Take Action rows -->
-      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-         style="top: 25.77%; left: 4%; right: 4%; height: 11.55%;" aria-label="Read &amp; share the report"></a>
-      <a class="m-tap is-link" href="https://worthrises.org/take-action" target="_blank" rel="noopener"
-         style="top: 37.66%; left: 4%; right: 4%; height: 11.55%;" aria-label="Contact your legislators"></a>
-      <a class="m-tap is-link" href="https://worthrises.org/donate" target="_blank" rel="noopener"
-         style="top: 49.57%; left: 4%; right: 4%; height: 11.55%;" aria-label="Support the movement"></a>
-      <!-- Resources rows -->
-      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-         style="top: 64.53%; left: 4%; right: 4%; height: 9.33%;" aria-label="Report fact sheet"></a>
-      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-         style="top: 74.23%; left: 4%; right: 4%; height: 9.33%;" aria-label="Implementation fact sheet"></a>
-      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-         style="top: 83.93%; left: 4%; right: 4%; height: 9.33%;" aria-label="Ultimate campaign guide"></a>
-      <!-- Footer external links -->
-      <a class="m-tap is-link" href="https://worthrises.org" target="_blank" rel="noopener"
-         style="top: 91.13%; left: 4%; right: 4%; height: 3.58%;" aria-label="Visit Worth Rises"></a>
-      <a class="m-tap is-link" href="https://worthrises.org/connecting-families" target="_blank" rel="noopener"
-         style="top: 94.99%; left: 4%; right: 4%; height: 3.58%;" aria-label="Connecting Families campaign"></a>
+    <!-- ACTION CENTER: Mobile.svg y=8800–9450 (just the headline + handshake illustration) -->
+    <div class="m-crop m-crop-actioncenter">
+      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Action Center" />
+      <span class="m-anchor" id="m-action-center" style="position:absolute; top: 2%;"></span>
     </div>
+
+    <!-- TAKE ACTION cards — custom HTML, lavender bg per spec -->
+    <section class="m-action-cards">
+      <a class="m-action-card m-action-card--lavender" href="#" target="_blank" rel="noopener">
+        <div class="m-action-card-title">Read &amp; Share the Report</div>
+        <div class="m-action-card-body">Download the full report and share it with anyone who needs to see what's possible — and what is actively being withheld where these policies haven't yet been adopted.</div>
+        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="m-action-card m-action-card--lavender" href="https://worthrises.org/take-action" target="_blank" rel="noopener">
+        <div class="m-action-card-title">Contact Your Legislators</div>
+        <div class="m-action-card-body">Free prison and jails communication is advancing state by state and county by county. Tell your elected officials it's time to act.</div>
+        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="m-action-card m-action-card--lavender" href="https://worthrises.org/donate" target="_blank" rel="noopener">
+        <div class="m-action-card-title">Support the Movement</div>
+        <div class="m-action-card-body">Worth Rises is working to end the correctional telecom industry's exploitation of incarcerated people and their families. Support our work.</div>
+        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
+      </a>
+    </section>
+
+    <!-- RESOURCES cards — custom HTML, plum bg per spec -->
+    <section class="m-action-cards">
+      <span class="m-anchor" id="m-resources"></span>
+      <a class="m-action-card m-action-card--plum" href="#" target="_blank" rel="noopener">
+        <div class="m-action-card-title">Report Fact Sheet</div>
+        <div class="m-action-card-body">Key findings from Critical Connections: The Power of Free across 8 areas of measurable impact.</div>
+        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="m-action-card m-action-card--plum" href="#" target="_blank" rel="noopener">
+        <div class="m-action-card-title">Implementation Guide</div>
+        <div class="m-action-card-body">A practical guide for agencies, legislators, and advocates designing, procuring, and rolling out free communication in prisons and jails.</div>
+        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="m-action-card m-action-card--plum" href="#" target="_blank" rel="noopener">
+        <div class="m-action-card-title">Ultimate Campaign Guide</div>
+        <div class="m-action-card-body">A step-by-step guide for advocates, organizers, and campaigns working to win free communication in their state or county.</div>
+        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
+      </a>
+    </section>
+
+    <!-- METHODOLOGY: Frame 2117131592 SVG (self-contained, 402×1978) -->
+    <section class="m-methodology">
+      <span class="m-anchor" id="m-about-project"></span>
+      <img class="m-methodology-img" src="assets/mobile/mobile-methodology.svg" alt="About This Report — Acknowledgments" />
+      <!-- Click overlays for the two baked Worth Rises + Connecting Families pills -->
+      <a class="m-tap is-link" href="https://worthrises.org" target="_blank" rel="noopener"
+         style="top: 70.5%; left: 0; right: 0; height: 4.5%;" aria-label="Visit Worth Rises"></a>
+      <a class="m-tap is-link" href="https://connectfamiliesnow.com/" target="_blank" rel="noopener"
+         style="top: 75.0%; left: 0; right: 0; height: 4.5%;" aria-label="Connecting Families campaign"></a>
+    </section>
+
+    <!-- Custom mobile footer — mirrors desktop brand identity -->
+    <footer class="m-footer">
+      <div class="m-footer-signup">
+        <p class="m-footer-label">Sign up to receive <em>news and updates</em>.</p>
+        <form class="m-footer-form" action="#" method="post" novalidate>
+          <input type="email" name="email" class="m-footer-input"
+                 placeholder="Email Address" aria-label="Email address" required />
+          <button type="submit" class="m-footer-btn">Sign Up</button>
+        </form>
+      </div>
+      <div class="m-footer-meta">
+        <p class="m-footer-copy">&copy; 2026 Worth Rises</p>
+        <a class="m-footer-email" href="mailto:info@worthrises.com">info@worthrises.com</a>
+        <div class="m-footer-social" aria-label="Worth Rises on social media">
+          <a href="https://facebook.com/worthrises" target="_blank" rel="noopener" aria-label="Facebook" class="m-footer-social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12Z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/worthrises/" target="_blank" rel="noopener" aria-label="Instagram" class="m-footer-social-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+          </a>
+          <a href="https://twitter.com/WorthRises" target="_blank" rel="noopener" aria-label="X (Twitter)" class="m-footer-social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+          </a>
+        </div>
+      </div>
+    </footer>
 
     <!-- Mobile findings sub-nav: appears when in findings region -->
     <nav class="m-subnav" data-m-subnav aria-hidden="true" aria-label="Findings navigation">
-      <div class="m-subnav-position">
-        <button class="m-subnav-arrow" type="button" data-m-subnav-prev aria-label="Previous finding">&larr;</button>
-        <span class="m-subnav-counter">Finding <span data-m-subnav-current>1</span> / 8</span>
-        <button class="m-subnav-arrow" type="button" data-m-subnav-next aria-label="Next finding">&rarr;</button>
+      <button class="m-subnav-arrow" type="button" data-m-subnav-prev aria-label="Previous finding">&larr;</button>
+      <div class="m-subnav-info">
+        <span class="m-subnav-counter"><span data-m-subnav-current>1</span> / 8</span>
+        <span class="m-subnav-area" data-m-subnav-area>Connection</span>
       </div>
+      <button class="m-subnav-arrow" type="button" data-m-subnav-next aria-label="Next finding">&rarr;</button>
       <button class="m-subnav-skip" type="button" data-m-subnav-skip aria-label="Skip past findings to Take Action">
         Skip <span class="m-subnav-skip-arrow">&darr;</span>
       </button>
     </nav>
   </main>
 
-  <!-- ===== Slide-in menu ===== -->
+  <!-- ===== Slide-in menu (live HTML) ===== -->
   <aside class="m-menu" data-m-menu aria-hidden="true">
-    <img class="m-menu-img" src="assets/mobile/mobile-menu-overlay.png" alt="Menu" />
-    <button class="m-menu-close" type="button" aria-label="Close menu" data-m-menu-close>
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round">
-        <line x1="6" y1="6" x2="18" y2="18"/>
-        <line x1="18" y1="6" x2="6" y2="18"/>
-      </svg>
-    </button>
-
-    <!-- Menu rows positioned over PNG (PNG is 402×754; rows are 11% high each).
-         data-m-target sends to a scroll anchor in main page. -->
-    <button class="m-menu-link" data-m-target="m-about-report"
-            style="top: 14%; height: 12%;" aria-label="About the report"></button>
-    <button class="m-menu-link" data-m-target="m-key-findings"
-            style="top: 26%; height: 12%;" aria-label="Key findings"></button>
-    <button class="m-menu-link" data-m-target="m-action-center"
-            style="top: 38%; height: 12%;" aria-label="Take action"></button>
-    <button class="m-menu-link" data-m-target="m-about-project"
-            style="top: 50%; height: 12%;" aria-label="About this project"></button>
-    <a class="m-menu-link" href="#" target="_blank" rel="noopener"
-       style="top: 89%; height: 11%;" aria-label="Read the report"></a>
+    <div class="m-menu-header">
+      <img src="assets/illustrations/worth-rises-logo.png" alt="Worth Rises" class="m-menu-logo" />
+      <button class="m-menu-close" type="button" aria-label="Close menu" data-m-menu-close>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <nav class="m-menu-nav" aria-label="Mobile navigation">
+      <button class="m-menu-link" type="button" data-m-target="m-about-report">About the Report</button>
+      <button class="m-menu-link" type="button" data-m-target="m-key-findings">Key Findings</button>
+      <button class="m-menu-link" type="button" data-m-target="m-action-center">Take Action</button>
+      <a class="m-menu-cta" href="#" target="_blank" rel="noopener">Read the Report</a>
+    </nav>
   </aside>
 
   <!-- ===== Vimeo modal ===== -->
@@ -3304,12 +3593,17 @@ main { padding-top: var(--header-h); }
     var prevBtn = subnav.querySelector('[data-m-subnav-prev]');
     var nextBtn = subnav.querySelector('[data-m-subnav-next]');
     var counterEl = subnav.querySelector('[data-m-subnav-current]');
+    var areaEl = subnav.querySelector('[data-m-subnav-area]');
     var skipBtn = subnav.querySelector('[data-m-subnav-skip]');
     var currentIdx = 0;
 
     function updateNav(idx){
       currentIdx = idx;
       if (counterEl) counterEl.textContent = (idx + 1);
+      if (areaEl && findingArticles[idx]) {
+        var area = findingArticles[idx].getAttribute('data-finding-area');
+        if (area) areaEl.textContent = area;
+      }
       if (prevBtn) prevBtn.disabled = (idx <= 0);
       if (nextBtn) nextBtn.disabled = (idx >= findingArticles.length - 1);
     }
