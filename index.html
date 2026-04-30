@@ -53,7 +53,7 @@
   --warm-coral:      #E4572E;
   --mist-sage:       #C8D2B3;
   --acid-lime:       #8FBF3D;
-  --ink:             #32302F;
+  --ink:             #1E1E1E;
   --ink-soft:        #5a544f;
   --rule:            rgba(34, 34, 34, 0.10);
 
@@ -134,9 +134,10 @@ a { color: inherit; text-decoration: none; }
 .eyebrow {
   display: inline-block;
   font-family: var(--display);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  line-height: 1;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   padding: 0;
   border: 0;
@@ -245,9 +246,11 @@ a { color: inherit; text-decoration: none; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
+  font-family: var(--display);
+  font-weight: 700;
   font-size: 13px;
-  letter-spacing: 0.06em;
+  line-height: 1;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   padding: 14px 22px;
   border-radius: 4px;
@@ -285,67 +288,141 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--rule);
   transition: background .25s ease, border-color .25s ease, box-shadow .3s;
 }
-.site-header.is-scrolled { box-shadow: 0 4px 24px -16px rgba(0,0,0,.18); }
-/* Transparent state: applied when user has scrolled away from top.
-   Hovering the header restores the white bg so the nav is fully readable
-   when the user is about to interact with it. */
-.site-header.is-transparent {
-  background: rgba(255, 255, 255, 0);
+/* Scrolled state: hide full nav, show only hamburger in top-right. */
+.site-header.is-scrolled {
+  background: transparent;
   border-bottom-color: transparent;
   box-shadow: none;
+  pointer-events: none; /* let scroll/clicks pass through except for the hamburger */
 }
-/* Transparent state: hide logo, transparent CTA. Text color flips based on
-   which section is currently in view — body.nav-on-dark = white text,
-   body.nav-on-light = dark text. JS sets the body class via IntersectionObserver. */
-.site-header.is-transparent .brand {
+.site-header.is-scrolled .header-burger { pointer-events: auto; }
+.site-header.is-scrolled .brand,
+.site-header.is-scrolled .primary-nav,
+.site-header.is-scrolled .header-cta {
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
 }
-.site-header.is-transparent .header-cta {
-  background: transparent;
-}
-/* Default fallback — dark text */
-.site-header.is-transparent .primary-nav a,
-.site-header.is-transparent .header-cta {
-  color: var(--ink);
-}
-/* Dark-bg section in view → light text. Scoped to NOT apply when the user
-   is hovering or focusing the header so the hover state can override. */
-body.nav-on-dark .site-header.is-transparent:not(:hover):not(:focus-within) .primary-nav a,
-body.nav-on-dark .site-header.is-transparent:not(:hover):not(:focus-within) .header-cta {
-  color: #ffffff;
-}
-/* Light-bg section in view → dark text (already the default, but explicit) */
-body.nav-on-light .site-header.is-transparent:not(:hover):not(:focus-within) .primary-nav a,
-body.nav-on-light .site-header.is-transparent:not(:hover):not(:focus-within) .header-cta {
-  color: var(--ink);
-}
-/* Hover restores everything to opaque-white state */
-.site-header.is-transparent:hover,
-.site-header.is-transparent:focus-within {
-  background: #ffffff;
-  border-bottom-color: var(--rule);
-  box-shadow: 0 4px 24px -16px rgba(0,0,0,.18);
-}
-.site-header.is-transparent:hover .brand,
-.site-header.is-transparent:focus-within .brand {
+.site-header.is-scrolled .header-burger {
   opacity: 1;
   visibility: visible;
 }
-.site-header.is-transparent:hover .primary-nav a,
-.site-header.is-transparent:focus-within .primary-nav a {
-  color: var(--ink);
-}
-.site-header.is-transparent:hover .header-cta,
-.site-header.is-transparent:focus-within .header-cta {
-  background: var(--warm-coral);
-  color: #ffffff;
-}
-.brand, .primary-nav a, .header-cta {
-  transition: opacity .25s ease, color .25s ease, background .25s ease;
+.brand, .primary-nav a, .header-cta, .header-burger {
+  transition: opacity .25s ease, color .25s ease, background .25s ease, visibility .25s;
 }
 @media (prefers-reduced-motion: reduce) {
   .site-header { transition: background .15s; }
+}
+
+/* Hamburger button — hidden by default (full nav at top), shown when scrolled */
+.header-burger {
+  position: fixed;
+  top: clamp(16px, 2vh, 24px);
+  right: clamp(16px, 2vw, 32px);
+  width: 52px;
+  height: 52px;
+  border: 0;
+  background: rgba(255,255,255,0.96);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 55;
+  box-shadow: 0 6px 20px -6px rgba(0,0,0,.22);
+}
+.header-burger:hover { background: var(--warm-coral); }
+.header-burger:hover span { background: #ffffff; }
+.header-burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 1px;
+  transition: background .2s ease;
+}
+
+/* Side-drawer menu opened by hamburger */
+.header-menu {
+  position: fixed;
+  top: 0; right: 0;
+  width: clamp(300px, 32vw, 440px);
+  height: 100vh;
+  background: var(--deep-plum);
+  color: #ffffff;
+  z-index: 60;
+  transform: translateX(100%);
+  transition: transform .35s cubic-bezier(.7,0,.3,1);
+  display: flex;
+  flex-direction: column;
+  padding: clamp(80px, 10vh, 140px) clamp(36px, 5vw, 72px) clamp(36px, 5vh, 64px);
+  overflow-y: auto;
+}
+.header-menu.is-open { transform: translateX(0); }
+.header-menu-close {
+  position: absolute;
+  top: 22px; right: 22px;
+  width: 44px; height: 44px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  transition: background .2s ease;
+}
+.header-menu-close:hover { background: rgba(255,255,255,.1); }
+.header-menu-close svg { width: 22px; height: 22px; }
+.header-menu-link {
+  display: block;
+  padding: 18px 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+  transition: color .2s ease;
+}
+.header-menu-link:hover { color: var(--soft-lavender); }
+.header-menu-cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warm-coral);
+  color: #ffffff;
+  padding: 18px 24px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 0;
+  transition: filter .2s ease;
+}
+.header-menu-cta:hover { filter: brightness(1.06); }
+.header-menu-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0);
+  z-index: 58;
+  pointer-events: none;
+  transition: background .35s ease;
+}
+.header-menu-backdrop.is-open {
+  background: rgba(0,0,0,.4);
+  pointer-events: auto;
 }
 /* Spacer so the fixed header doesn't overlap the first section */
 main { padding-top: var(--header-h); }
@@ -392,7 +469,8 @@ main { padding-top: var(--header-h); }
   font-family: var(--display);
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  line-height: 1;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--ink);
   position: relative;
@@ -416,7 +494,8 @@ main { padding-top: var(--header-h); }
   font-family: var(--display);
   font-weight: 700;
   font-size: 13px;
-  letter-spacing: 0.16em;
+  line-height: 1;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   border-radius: 0;
   height: 100%;
@@ -1381,9 +1460,10 @@ main { padding-top: var(--header-h); }
   background: transparent;
   color: var(--ink);
   font-family: var(--display);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  line-height: 1;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   white-space: nowrap;
   border: 0;
@@ -1402,10 +1482,11 @@ main { padding-top: var(--header-h); }
   background: var(--warm-coral);
   color: #fff;
   border: 0;
-  font-family: inherit;
-  font-size: 11px;
+  font-family: var(--display);
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  line-height: 1;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
@@ -3124,7 +3205,26 @@ main { padding-top: var(--header-h); }
       <a href="#aboutreport" class="header-cta">Read the Report</a>
     </div>
   </div>
+  <!-- Hamburger button — only visible when scrolled away from top -->
+  <button class="header-burger" type="button" aria-label="Open menu" data-header-burger>
+    <span></span><span></span><span></span>
+  </button>
 </header>
+
+<!-- Side-drawer menu opened by hamburger -->
+<div class="header-menu-backdrop" data-header-menu-backdrop></div>
+<aside class="header-menu" data-header-menu aria-hidden="true">
+  <button class="header-menu-close" type="button" aria-label="Close menu" data-header-menu-close>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+      <line x1="6" y1="6" x2="18" y2="18"/>
+      <line x1="18" y1="6" x2="6" y2="18"/>
+    </svg>
+  </button>
+  <a class="header-menu-link" href="#aboutreport">About the Report</a>
+  <a class="header-menu-link" href="#findings">Key Findings</a>
+  <a class="header-menu-link" href="#actions">Take Action</a>
+  <a class="header-menu-cta" href="#" target="_blank" rel="noopener">Read the Report</a>
+</aside>
 
 <main id="top">
 
@@ -3150,7 +3250,7 @@ main { padding-top: var(--header-h); }
   </div>
 
   <div class="hero-inner">
-    <span class="eyebrow eyebrow-plum" data-anim="fade-up">Critical Connections</span>
+    <span class="eyebrow" data-anim="fade-up" style="color: var(--ink);">Critical Connections</span>
     <h1 class="display" data-anim="fade-up" data-anim-delay="100">The <em>Power</em> of Free</h1>
     <p class="lede" data-anim="fade-up" data-anim-delay="200">How free communication in prisons and jails is transforming lives, strengthening families, and reshaping reentry. A necessary, achievable, and transformative lifeline.</p>
     <div class="hero-ctas" data-anim="fade-up" data-anim-delay="300">
@@ -3879,37 +3979,47 @@ main { padding-top: var(--header-h); }
 (function () {
   'use strict';
 
-  /* ---------- Header: always visible, transparent when scrolled away from top ----------
-     Plus: detects which [data-nav-tone] section is currently dominating the
-     top of the viewport (just below the nav) and applies body.nav-on-dark
-     or body.nav-on-light. CSS uses those classes to flip the nav text color
-     so it's always legible against whatever's behind. */
+  /* ---------- Header: full nav at top, hamburger only when scrolled ---------- */
   var header = document.querySelector('[data-header]');
-  var toneSections = document.querySelectorAll('[data-nav-tone]');
   function onScroll() {
     if (!header) return;
-    var scrolled = window.scrollY > 8;
-    header.classList.toggle('is-scrolled',   scrolled);
-    header.classList.toggle('is-transparent', scrolled);
-
-    // Find the section whose top is just past the nav (i.e. the section the
-    // nav is currently overlapping). The trigger line is at navHeight + 1px.
-    var headerH = header.offsetHeight || 70;
-    var triggerY = headerH + 4;
-    var activeTone = null;
-    for (var i = 0; i < toneSections.length; i++) {
-      var rect = toneSections[i].getBoundingClientRect();
-      if (rect.top <= triggerY && rect.bottom > triggerY) {
-        activeTone = toneSections[i].getAttribute('data-nav-tone');
-        break;
-      }
-    }
-    document.body.classList.toggle('nav-on-dark',  activeTone === 'dark');
-    document.body.classList.toggle('nav-on-light', activeTone === 'light');
+    header.classList.toggle('is-scrolled', window.scrollY > 8);
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
   onScroll();
+
+  /* ---------- Hamburger menu (opens side-drawer when scrolled) ---------- */
+  var hburger = document.querySelector('[data-header-burger]');
+  var hmenu   = document.querySelector('[data-header-menu]');
+  var hclose  = document.querySelector('[data-header-menu-close]');
+  var hback   = document.querySelector('[data-header-menu-backdrop]');
+  function openHMenu(){
+    if (!hmenu) return;
+    hmenu.classList.add('is-open');
+    hmenu.setAttribute('aria-hidden', 'false');
+    if (hback) hback.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeHMenu(){
+    if (!hmenu) return;
+    hmenu.classList.remove('is-open');
+    hmenu.setAttribute('aria-hidden', 'true');
+    if (hback) hback.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+  if (hburger) hburger.addEventListener('click', openHMenu);
+  if (hclose)  hclose.addEventListener('click', closeHMenu);
+  if (hback)   hback.addEventListener('click', closeHMenu);
+  // Close when a menu link is clicked
+  if (hmenu) {
+    Array.prototype.slice.call(hmenu.querySelectorAll('a')).forEach(function(a){
+      a.addEventListener('click', function(){ setTimeout(closeHMenu, 200); });
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && hmenu && hmenu.classList.contains('is-open')) closeHMenu();
+  });
 
   /* ---------- ANIMATION SYSTEM ----------
      IntersectionObserver watches every [data-anim] element.
@@ -4098,6 +4208,17 @@ main { padding-top: var(--header-h); }
         var clone = c.cloneNode(true);
         clone.setAttribute('aria-hidden', 'true');
         clone.setAttribute('tabindex', '-1');
+        // Strip data-anim from clones — IntersectionObserver was already
+        // initialized so clones never get .is-in and would stay invisible
+        // (the bug that broke the infinite loop). Mark as already revealed.
+        clone.removeAttribute('data-anim');
+        clone.removeAttribute('data-anim-delay');
+        clone.classList.add('is-in');
+        // Same for any descendants with data-anim
+        Array.prototype.slice.call(clone.querySelectorAll('[data-anim]')).forEach(function(el){
+          el.removeAttribute('data-anim');
+          el.classList.add('is-in');
+        });
         return clone;
       });
     }
