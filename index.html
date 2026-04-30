@@ -1067,83 +1067,22 @@ main { padding-top: var(--header-h); }
 /* ============================================================
    FINDINGS — intro + sticky-wrap centerpiece
 ============================================================ */
+/* Findings intro — locked Figma SVG (Frame 2117131440, 1440×706).
+   Title, body, illustration, decorative shapes are all baked into the SVG.
+   Edge-to-edge, scales with viewport. */
 .findings-intro {
   position: relative;
-  padding: var(--top-pad) 0 0 var(--gutter); /* no bottom padding so figures hit the section bottom edge */
-  min-height: calc(100vh - var(--header-h));
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: end; /* anchor BOTH columns to the bottom — figures go flush */
-  gap: clamp(32px, 5vw, 80px);
-  overflow: hidden;
   background: var(--cloud-neutral);
-}
-/* Text column needs to stay visually upper-aligned, not pushed to bottom */
-.findings-intro-inner { align-self: start; padding-top: 0; }
-.findings-intro-inner { position: relative; z-index: 2; max-width: 620px; }
-.findings-intro .eyebrow { margin-bottom: 28px; border: 0; padding: 0; color: var(--deep-plum); font-size: 12px; letter-spacing: 0.18em; }
-.findings-intro .h-display {
-  margin: 0 0 28px;
-  line-height: 0.98;
-  font-size: clamp(48px, 6.4vw, 92px); /* a little bigger now that it's only 2 lines */
-}
-.findings-intro .h-display .line { display: block; }
-/* Line 1 — uppercase Inter 800, black ink */
-.findings-intro .h-display .line-1 {
-  color: var(--ink);
-  font-family: var(--display);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-}
-/* Line 2 — Concrette italic, deep plum, single line */
-.findings-intro .h-display .line-2 {
-  color: var(--deep-plum);
-  font-family: var(--accent);
-  font-weight: 500;
-  font-style: italic;
-  text-transform: none;
-  letter-spacing: -0.01em;
-  margin-top: 4px;
-  white-space: nowrap;
-  font-size: clamp(40px, 5vw, 76px); /* slightly smaller than line 1 so "Measurable Impact" fits on one line */
-}
-.findings-intro p {
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(15px, 1.2vw, 17px);
-  line-height: 1.55;
-  color: var(--ink);
+  padding: 0;
   margin: 0;
-  max-width: 48ch;
-}
-.findings-intro-svg {
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
-  display: flex;
-  align-items: flex-end; /* anchor to bottom of block, per client */
-  justify-content: flex-end; /* hug the right edge */
-  height: 100%;
-  align-self: stretch; /* fill the column's full height in the grid */
-}
-.findings-intro-svg img,
-.findings-intro-svg svg {
-  width: 100%;
-  max-width: clamp(500px, 58vw, 820px); /* bigger per client */
-  height: auto;
-  object-fit: contain;
   display: block;
-  margin-bottom: 0; /* flush bottom */
+  width: 100%;
+  overflow: hidden;
 }
-@media (max-width: 900px) {
-  .findings-intro {
-    grid-template-columns: 1fr;
-    padding: var(--top-pad) var(--gutter);
-  }
-  .findings-intro-svg { justify-content: center; align-items: center; }
-  .findings-intro-svg img,
-  .findings-intro-svg svg { max-width: 420px; }
+.findings-intro-base {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .findings-wrap { position: relative; }
@@ -2701,11 +2640,14 @@ main { padding-top: var(--header-h); }
   z-index: 2;
 }
 .f5-wrap::after {
-  bottom: 36.70%; /* stops at top of bottom strip (63.30%) */
+  /* Cover only the top-right illustration area (block ends at 30.24% of SVG).
+     Stops above the title + body text below so they aren't cut off. */
+  bottom: 69.76%;
   background: var(--deep-plum);
 }
 .f8-wrap::after {
-  bottom: 35.43%; /* stops at top of bottom strip (64.57%) */
+  /* Cover only the top-right illustration area, stops above title + body */
+  bottom: 70%;
   background: var(--soft-lavender);
 }
 
@@ -3528,20 +3470,10 @@ main { padding-top: var(--header-h); }
 <!-- ============================================================
      FINDINGS INTRO
 ============================================================ -->
-<section id="findings" class="findings-intro" aria-label="Key Findings" data-nav-tone="light">
-  <div class="findings-intro-inner">
-    <span class="eyebrow eyebrow-plum" data-anim="fade-up">Key Findings</span>
-    <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">
-      <span class="line line-1">8 Areas of</span>
-      <span class="line line-2"><em>Measurable Impact</em></span>
-    </h2>
-    <p data-anim="fade-up" data-anim-delay="200">Drawing on data and interviews across multiple jurisdictions, eight areas of meaningful, measurable change emerged — for incarcerated people, their families, corrections staff, and the broader public.</p>
-  </div>
-  <div class="findings-intro-svg" data-anim="scale-in" aria-hidden="true">
-    <!-- Three-figures illustration only (no surrounding layout). Per client:
-         smaller so the title fits on two lines. -->
-    <img src="assets/illustrations/Group 1261156534 (2).svg" alt="" />
-  </div>
+<!-- Locked Figma SVG (Frame 2117131440) — title, body, illustration, shapes
+     all baked in. Same edge-to-edge pattern as the findings sections. -->
+<section id="findings" class="findings-intro findings-intro-locked" aria-label="Key Findings" data-nav-tone="light">
+  <img class="findings-intro-base" src="assets/illustrations/findings-intro-locked.svg" alt="Key Findings — 8 Areas of Measurable Impact. Drawing on data and interviews across multiple jurisdictions, eight areas of meaningful, measurable change emerged for incarcerated people, their families, corrections staff, and the broader public." data-anim="fade-up" />
 </section>
 
 
