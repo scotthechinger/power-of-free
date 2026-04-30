@@ -1738,6 +1738,27 @@ main { padding-top: var(--header-h); }
   /* New final methodology SVG: 1440×1093 */
   aspect-ratio: 1440 / 1093;
 }
+/* Click overlays over the two baked-in buttons (Worth Rises + Connecting Families).
+   Coords from SVG: WR button rect at design (720,860) 625×80, CF at (720,951) 625×88. */
+.meth-btn-link {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  text-decoration: none;
+  background: transparent;
+}
+.meth-btn-link.is-worthrises {
+  top: 78.68%;
+  left: 50%;
+  width: 43.4%;
+  height: 7.32%;
+}
+.meth-btn-link.is-connectingfamilies {
+  top: 87.01%;
+  left: 50%;
+  width: 43.4%;
+  height: 8.05%;
+}
 .meth-base {
   position: absolute;
   inset: 0;
@@ -1908,12 +1929,11 @@ main { padding-top: var(--header-h); }
   padding: clamp(72px, 11vh, 132px) var(--gutter) clamp(56px, 8vh, 96px);
   position: relative;
 }
-/* Thin coral accent line at the top of the footer to mark the brand */
+/* Full-width coral accent line at the top of the footer — brand divider */
 .site-footer::before {
   content: '';
   position: absolute;
-  top: 0; left: 0;
-  width: clamp(80px, 8vw, 140px);
+  top: 0; left: 0; right: 0;
   height: 4px;
   background: var(--warm-coral);
 }
@@ -3804,10 +3824,14 @@ main { padding-top: var(--header-h); }
 ============================================================ -->
 <section id="aboutproject" class="about-project meth-locked" aria-label="About This Project" data-nav-tone="light">
   <!-- Final methodology SVG (Frame 2117131466). Self-contained — figure
-       illustration is baked into the SVG, no overlay needed. -->
+       illustration is baked into the SVG, no overlay needed.
+       Two invisible click overlays sit on top of the baked Worth Rises +
+       Connecting Families buttons, linking out to their sites. -->
   <div class="meth-wrap" data-anim="fade-up">
     <img class="meth-base" src="assets/illustrations/methodology-block.svg"
          alt="About This Report — Acknowledgments. The Power of Free Communication in Prisons and Jails is a project of Worth Rises, a non-profit dedicated to dismantling the prison industry. Since 2018, Worth Rises has led the national Connecting Families campaign." />
+    <a class="meth-btn-link is-worthrises" href="https://worthrises.org/" target="_blank" rel="noopener" aria-label="Worth Rises website"></a>
+    <a class="meth-btn-link is-connectingfamilies" href="https://connectfamiliesnow.com/" target="_blank" rel="noopener" aria-label="Connecting Families website"></a>
   </div>
 </section>
 
