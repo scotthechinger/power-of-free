@@ -2870,6 +2870,104 @@ main { padding-top: var(--header-h); }
       display: block; width: 100%; height: auto;
       user-select: none; -webkit-user-drag: none; pointer-events: none;
     }
+    /* Cropped sections of Mobile.svg (which is 402×13771 native).
+       TOP crop: y=0 to 5200 (everything before F1).
+       BOT crop: y=8800 to 13771 (after F1+CONNECTION pill, Action Center on). */
+    .m-crop {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+    .m-crop .m-bg-svg {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      display: block;
+      user-select: none; -webkit-user-drag: none;
+      pointer-events: none;
+    }
+    .m-crop-top {
+      /* height = (5200/402) of width = 12.9353 vw multiples; expressed as calc */
+      height: calc(100vw * 5200 / 402);
+    }
+    .m-crop-top .m-bg-svg { top: 0; }
+    .m-crop-bot {
+      height: calc(100vw * (13771 - 8800) / 402);
+    }
+    .m-crop-bot .m-bg-svg { top: calc(-100vw * 8800 / 402); }
+
+    /* Finding region: stacked SVGs */
+    .m-findings { position: relative; }
+    .m-finding {
+      position: relative;
+      width: 100%;
+      display: block;
+    }
+    .m-finding-img {
+      display: block;
+      width: 100%;
+      user-select: none; -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    /* Mobile findings sub-nav — fixed at bottom of viewport, appears when scrolled into findings */
+    .m-subnav {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: var(--deep-plum);
+      color: #ffffff;
+      display: flex;
+      align-items: stretch;
+      height: 56px;
+      z-index: 40;
+      transform: translateY(110%);
+      transition: transform .3s cubic-bezier(.7,0,.3,1);
+      box-shadow: 0 -4px 18px -4px rgba(0,0,0,.25);
+    }
+    .m-subnav.is-visible { transform: translateY(0); }
+    .m-subnav-position {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 12px;
+    }
+    .m-subnav-arrow {
+      width: 36px; height: 36px;
+      border: 0;
+      background: rgba(255,255,255,0.12);
+      color: #ffffff;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: grid; place-items: center;
+    }
+    .m-subnav-arrow:disabled { opacity: 0.35; cursor: default; }
+    .m-subnav-counter {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .m-subnav-skip {
+      flex: 0 0 auto;
+      padding: 0 18px;
+      background: var(--warm-coral);
+      color: #ffffff;
+      border: 0;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .m-subnav-skip-arrow { font-size: 14px; }
 
     /* ---------- Tap overlays ---------- */
     .m-tap {
@@ -2947,68 +3045,110 @@ main { padding-top: var(--header-h); }
     </button>
   </header>
 
-  <!-- ===== Locked full-page mobile homepage ===== -->
+  <!-- ===== Mobile page — top crop + 8 finding SVGs + bottom crop ===== -->
   <main class="m-page" id="m-top">
-    <img class="m-page-img" src="assets/mobile/mobile-homepage-full.png" alt="Power of Free — mobile homepage" />
 
-    <!-- Tap overlays. Coordinates are % of the rendered image height.
-         Image natural size: 804×27318. Refine with body.m-debug=true. -->
+    <!-- TOP: Mobile.svg cropped to y=0–5200 (hero through 8 Areas intro) -->
+    <div class="m-crop m-crop-top">
+      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Power of Free — mobile homepage" />
+      <!-- Tap overlays for top crop. % values are of crop height (5200 design px). -->
+      <a class="m-tap is-link" href="#m-about-report" data-m-scroll
+         style="top: 6.10%; left: 6%; right: 6%; height: 1.31%;" aria-label="Read the report"></a>
+      <button class="m-tap" type="button" data-m-video="1186772181"
+         style="top: 7.73%; left: 6%; right: 6%; height: 1.31%;" aria-label="Watch the hero story video"></button>
+      <a class="m-tap is-link" href="#m-about-report" data-m-scroll
+         style="top: 36.54%; left: 6%; right: 35%; height: 1.44%;" aria-label="Read the report"></a>
+      <span class="m-anchor" id="m-key-findings"  style="position:absolute; top: 45%;"></span>
+      <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 92%;"></span>
+    </div>
 
-    <!-- Hero CTA: READ THE REPORT (orange) -->
-    <a class="m-tap is-link" href="#m-about-report" data-m-scroll
-       style="top: 2.30%; left: 6%; right: 6%; height: 0.50%;" aria-label="Read the report"></a>
+    <!-- FINDINGS region — 8 standalone SVGs stacked. Sub-nav appears here. -->
+    <div class="m-findings" data-m-findings>
+      <article class="m-finding" id="m-f1" data-finding-idx="0" data-finding-area="Connection">
+        <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" />
+        <button class="m-tap" type="button" data-m-video="1187871199"
+                style="top: 80.5%; left: 30%; width: 40%; height: 6%;" aria-label="Play Finding 1 video"></button>
+        <button class="m-tap m-f1-tog" type="button" data-m-f1-state="prisons"
+                style="top: 39.5%; left: 4%; width: 30%; height: 1.6%;" aria-label="Show prisons data"></button>
+        <button class="m-tap m-f1-tog" type="button" data-m-f1-state="jails"
+                style="top: 41.0%; left: 4%; width: 30%; height: 1.6%;" aria-label="Show jails data"></button>
+      </article>
+      <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Financial">
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" />
+        <button class="m-tap" type="button" data-m-video="1188179417"
+                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 2 video"></button>
+      </article>
+      <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" />
+        <button class="m-tap" type="button" data-m-video=""
+                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 3 video"></button>
+      </article>
+      <article class="m-finding" id="m-f4" data-finding-idx="3" data-finding-area="Parenting">
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-04.svg" alt="Finding 4: Parenting and Child Development" />
+        <button class="m-tap" type="button" data-m-video="1188176628"
+                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 4 video"></button>
+      </article>
+      <article class="m-finding" id="m-f5" data-finding-idx="4" data-finding-area="Health">
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-05.svg" alt="Finding 5: Improved Mental and Physical Health" />
+        <button class="m-tap" type="button" data-m-video=""
+                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 5 video"></button>
+      </article>
+      <article class="m-finding" id="m-f6" data-finding-idx="5" data-finding-area="Safety">
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-06.svg" alt="Finding 6: Less Violence and Operational Disruption" />
+        <button class="m-tap" type="button" data-m-video=""
+                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 6 video"></button>
+      </article>
+      <article class="m-finding" id="m-f7" data-finding-idx="6" data-finding-area="Rehabilitation">
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-07.svg" alt="Finding 7: Rehabilitation" />
+        <button class="m-tap" type="button" data-m-video="1188176912"
+                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 7 video"></button>
+      </article>
+      <article class="m-finding" id="m-f8" data-finding-idx="7" data-finding-area="Reentry">
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-08.svg" alt="Finding 8: Reentry Planning and Success" />
+        <button class="m-tap" type="button" data-m-video=""
+                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 8 video"></button>
+      </article>
+    </div>
 
-    <!-- Hero CTA: WATCH THE STORY → hero video -->
-    <button class="m-tap" type="button" data-m-video="1186772181"
-       style="top: 2.92%; left: 6%; right: 6%; height: 0.50%;" aria-label="Watch the hero story video"></button>
+    <!-- BOTTOM: Mobile.svg cropped to y=8800–13771 (Action Center through Footer) -->
+    <div class="m-crop m-crop-bot">
+      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Action Center, Take Action, About this Report, Footer" />
+      <span class="m-anchor" id="m-action-center" style="position:absolute; top: 0;"></span>
+      <span class="m-anchor" id="m-resources"     style="position:absolute; top: 60%;"></span>
+      <span class="m-anchor" id="m-about-report"  style="position:absolute; top: 88%;"></span>
+      <span class="m-anchor" id="m-about-project" style="position:absolute; top: 95%;"></span>
+      <!-- Take Action rows -->
+      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+         style="top: 25.77%; left: 4%; right: 4%; height: 11.55%;" aria-label="Read &amp; share the report"></a>
+      <a class="m-tap is-link" href="https://worthrises.org/take-action" target="_blank" rel="noopener"
+         style="top: 37.66%; left: 4%; right: 4%; height: 11.55%;" aria-label="Contact your legislators"></a>
+      <a class="m-tap is-link" href="https://worthrises.org/donate" target="_blank" rel="noopener"
+         style="top: 49.57%; left: 4%; right: 4%; height: 11.55%;" aria-label="Support the movement"></a>
+      <!-- Resources rows -->
+      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+         style="top: 64.53%; left: 4%; right: 4%; height: 9.33%;" aria-label="Report fact sheet"></a>
+      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+         style="top: 74.23%; left: 4%; right: 4%; height: 9.33%;" aria-label="Implementation fact sheet"></a>
+      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+         style="top: 83.93%; left: 4%; right: 4%; height: 9.33%;" aria-label="Ultimate campaign guide"></a>
+      <!-- Footer external links -->
+      <a class="m-tap is-link" href="https://worthrises.org" target="_blank" rel="noopener"
+         style="top: 91.13%; left: 4%; right: 4%; height: 3.58%;" aria-label="Visit Worth Rises"></a>
+      <a class="m-tap is-link" href="https://worthrises.org/connecting-families" target="_blank" rel="noopener"
+         style="top: 94.99%; left: 4%; right: 4%; height: 3.58%;" aria-label="Connecting Families campaign"></a>
+    </div>
 
-    <!-- About-the-report READ THE REPORT pill (purple section) -->
-    <a class="m-tap is-link" href="#m-about-report" data-m-scroll
-       style="top: 13.80%; left: 6%; right: 35%; height: 0.55%;" aria-label="Read the report"></a>
-
-    <!-- Findings nav scroll target (KEY FINDINGS) -->
-    <span class="m-anchor" id="m-key-findings" style="position:absolute; top: 17%;"></span>
-
-    <!-- 8 AREAS OF Measurable Impact - clicks land here -->
-    <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 53%;"></span>
-
-    <!-- F1 photo round play button → F1 video -->
-    <button class="m-tap" type="button" data-m-video="1187871199"
-       style="top: 61.20%; left: 30%; width: 40%; height: 4.00%; right: auto;" aria-label="Play Finding 1 video"></button>
-
-    <!-- Action Center anchor + Take Action -->
-    <span class="m-anchor" id="m-action-center" style="position:absolute; top: 67%;"></span>
-
-    <!-- TAKE ACTION rows (each w/ arrow icon → external link) -->
-    <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-       style="top: 73.20%; left: 4%; right: 4%; height: 4.20%;" aria-label="Read &amp; share the report"></a>
-    <a class="m-tap is-link" href="https://worthrises.org/take-action" target="_blank" rel="noopener"
-       style="top: 77.50%; left: 4%; right: 4%; height: 4.20%;" aria-label="Contact your legislators"></a>
-    <a class="m-tap is-link" href="https://worthrises.org/donate" target="_blank" rel="noopener"
-       style="top: 81.80%; left: 4%; right: 4%; height: 4.20%;" aria-label="Support the movement"></a>
-
-    <!-- RESOURCES section anchor -->
-    <span class="m-anchor" id="m-resources" style="position:absolute; top: 86%;"></span>
-
-    <!-- RESOURCES rows -->
-    <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-       style="top: 87.20%; left: 4%; right: 4%; height: 3.40%;" aria-label="Report fact sheet"></a>
-    <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-       style="top: 90.70%; left: 4%; right: 4%; height: 3.40%;" aria-label="Implementation fact sheet"></a>
-    <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-       style="top: 94.20%; left: 4%; right: 4%; height: 3.40%;" aria-label="Ultimate campaign guide"></a>
-
-    <!-- About this report anchor -->
-    <span class="m-anchor" id="m-about-report" style="position:absolute; top: 82%;"></span>
-
-    <!-- About this project anchor -->
-    <span class="m-anchor" id="m-about-project" style="position:absolute; top: 96.5%;"></span>
-
-    <!-- Footer external links -->
-    <a class="m-tap is-link" href="https://worthrises.org" target="_blank" rel="noopener"
-       style="top: 96.80%; left: 4%; right: 4%; height: 1.30%;" aria-label="Visit Worth Rises"></a>
-    <a class="m-tap is-link" href="https://worthrises.org/connecting-families" target="_blank" rel="noopener"
-       style="top: 98.20%; left: 4%; right: 4%; height: 1.30%;" aria-label="Connecting Families campaign"></a>
+    <!-- Mobile findings sub-nav: appears when in findings region -->
+    <nav class="m-subnav" data-m-subnav aria-hidden="true" aria-label="Findings navigation">
+      <div class="m-subnav-position">
+        <button class="m-subnav-arrow" type="button" data-m-subnav-prev aria-label="Previous finding">&larr;</button>
+        <span class="m-subnav-counter">Finding <span data-m-subnav-current>1</span> / 8</span>
+        <button class="m-subnav-arrow" type="button" data-m-subnav-next aria-label="Next finding">&rarr;</button>
+      </div>
+      <button class="m-subnav-skip" type="button" data-m-subnav-skip aria-label="Skip past findings to Take Action">
+        Skip <span class="m-subnav-skip-arrow">&darr;</span>
+      </button>
+    </nav>
   </main>
 
   <!-- ===== Slide-in menu ===== -->
@@ -3112,7 +3252,11 @@ main { padding-top: var(--header-h); }
     document.body.style.overflow = '';
   }
   document.querySelectorAll('[data-m-video]').forEach(function(b){
-    b.addEventListener('click', function(){ openVideo(b.getAttribute('data-m-video')); });
+    b.addEventListener('click', function(){
+      var id = b.getAttribute('data-m-video');
+      if (!id) return; // empty data-m-video → no video wired yet
+      openVideo(id);
+    });
   });
   if (vidClose) vidClose.addEventListener('click', closeVideo);
   if (modal) modal.addEventListener('click', function(e){ if (e.target === modal) closeVideo(); });
@@ -3121,6 +3265,104 @@ main { padding-top: var(--header-h); }
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape'){ closeMenu(); closeVideo(); }
   });
+
+  /* ---------- F1 prisons/jails toggle ---------- */
+  var f1Img = document.getElementById('m-f1-img');
+  if (f1Img) {
+    var f1Sources = {
+      prisons: 'assets/mobile/mobile-finding-01.svg',
+      jails:   'assets/mobile/mobile-finding-01-jails.svg'
+    };
+    document.querySelectorAll('.m-f1-tog').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var state = btn.getAttribute('data-m-f1-state');
+        if (f1Sources[state]) f1Img.src = f1Sources[state];
+      });
+    });
+    // Preload the alt state when F1 enters view
+    if ('IntersectionObserver' in window) {
+      var preloaded = false;
+      var preObs = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (en.isIntersecting && !preloaded) {
+            preloaded = true;
+            var preImg = new Image();
+            preImg.src = f1Sources.jails;
+            preObs.unobserve(en.target);
+          }
+        });
+      }, { rootMargin: '300px 0px' });
+      preObs.observe(f1Img);
+    }
+  }
+
+  /* ---------- Mobile findings sub-nav ---------- */
+  var subnav = document.querySelector('[data-m-subnav]');
+  var findingArticles = Array.prototype.slice.call(document.querySelectorAll('.m-finding'));
+  var findingsRegion = document.querySelector('[data-m-findings]');
+  if (subnav && findingArticles.length && findingsRegion) {
+    var prevBtn = subnav.querySelector('[data-m-subnav-prev]');
+    var nextBtn = subnav.querySelector('[data-m-subnav-next]');
+    var counterEl = subnav.querySelector('[data-m-subnav-current]');
+    var skipBtn = subnav.querySelector('[data-m-subnav-skip]');
+    var currentIdx = 0;
+
+    function updateNav(idx){
+      currentIdx = idx;
+      if (counterEl) counterEl.textContent = (idx + 1);
+      if (prevBtn) prevBtn.disabled = (idx <= 0);
+      if (nextBtn) nextBtn.disabled = (idx >= findingArticles.length - 1);
+    }
+    function scrollToFinding(idx){
+      idx = Math.max(0, Math.min(findingArticles.length - 1, idx));
+      var target = findingArticles[idx];
+      if (!target) return;
+      var topbar = document.querySelector('.m-topbar');
+      var off = topbar ? topbar.offsetHeight + 4 : 60;
+      var y = target.getBoundingClientRect().top + window.scrollY - off;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+    if (prevBtn) prevBtn.addEventListener('click', function(){ scrollToFinding(currentIdx - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function(){ scrollToFinding(currentIdx + 1); });
+    if (skipBtn) skipBtn.addEventListener('click', function(){
+      var ac = document.getElementById('m-action-center');
+      if (!ac) return;
+      var topbar = document.querySelector('.m-topbar');
+      var off = topbar ? topbar.offsetHeight + 4 : 60;
+      var y = ac.getBoundingClientRect().top + window.scrollY - off;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+
+    // Show/hide subnav based on whether findings region is in view
+    if ('IntersectionObserver' in window) {
+      var visObs = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          subnav.classList.toggle('is-visible', en.isIntersecting);
+          subnav.setAttribute('aria-hidden', en.isIntersecting ? 'false' : 'true');
+        });
+      }, { rootMargin: '-30% 0px -30% 0px' });
+      visObs.observe(findingsRegion);
+
+      // Track which finding is currently dominant in viewport
+      var trackObs = new IntersectionObserver(function(entries){
+        // Find the entry whose intersectionRatio is highest
+        var best = null;
+        entries.forEach(function(en){
+          if (en.isIntersecting && (!best || en.intersectionRatio > best.intersectionRatio)) {
+            best = en;
+          }
+        });
+        if (best) {
+          var idx = parseInt(best.target.getAttribute('data-finding-idx'), 10);
+          if (!isNaN(idx)) updateNav(idx);
+        }
+      }, { threshold: [0.25, 0.5, 0.75] });
+      findingArticles.forEach(function(a){ trackObs.observe(a); });
+    } else {
+      subnav.classList.add('is-visible');
+    }
+    updateNav(0);
+  }
 })();
 </script>
 <!-- ===== END MOBILE-ONLY SHELL ===== -->
