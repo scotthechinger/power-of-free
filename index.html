@@ -2883,10 +2883,125 @@ main { padding-top: var(--header-h); }
       pointer-events: none;
     }
     .m-crop-top {
-      /* Skip the baked-in 60px nav at the top: visible region y=60 to y=5200 */
+      /* Legacy single-crop (kept in case anything still uses it). */
       height: calc(100vw * (5200 - 60) / 402);
     }
     .m-crop-top .m-bg-svg { top: calc(-100vw * 60 / 402); }
+    /* Split top crop — quote section between is custom HTML cards */
+    .m-crop-top1 {
+      /* y=60 to y=3100: hero, About the Report, A Smile You Can Hear video */
+      height: calc(100vw * (3100 - 60) / 402);
+    }
+    .m-crop-top1 .m-bg-svg { top: calc(-100vw * 60 / 402); }
+    .m-crop-top2 {
+      /* y=4150 to y=5200: 8 Areas of Measurable Impact intro */
+      height: calc(100vw * (5200 - 4150) / 402);
+    }
+    .m-crop-top2 .m-bg-svg { top: calc(-100vw * 4150 / 402); }
+
+    /* ---------- Mobile quotes section (custom HTML carousel) ---------- */
+    .m-quotes-section {
+      background: var(--cloud-neutral);
+      padding: 56px 0 64px;
+    }
+    .m-quotes-header {
+      padding: 0 24px 28px;
+    }
+    .m-quotes-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--deep-plum);
+      margin: 0 0 12px;
+    }
+    .m-quotes-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin: 0;
+    }
+    .m-quotes-title em {
+      display: block;
+      font-family: 'ConcretteXL', 'Fraunces', serif;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--warm-coral);
+      text-transform: none;
+      font-size: 32px;
+      letter-spacing: -0.01em;
+      margin-top: 4px;
+    }
+    .m-quotes-carousel {
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 14px;
+      padding: 4px 24px 8px;
+      scrollbar-width: none;
+    }
+    .m-quotes-carousel::-webkit-scrollbar { display: none; }
+    .m-quote-card {
+      flex: 0 0 290px;
+      scroll-snap-align: center;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 18px -8px rgba(0,0,0,0.18);
+    }
+    .m-quote-photo {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #eee;
+    }
+    .m-quote-text {
+      padding: 22px 22px 26px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .m-q-mark {
+      font-family: 'ConcretteXL', 'Fraunces', serif;
+      font-style: italic;
+      font-size: 36px;
+      line-height: 0.6;
+      color: var(--deep-plum);
+      margin-bottom: 14px;
+    }
+    .m-q-quote {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink);
+      margin: 0 0 22px;
+      flex: 1;
+    }
+    .m-q-name {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin: 0 0 4px;
+    }
+    .m-q-role {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--ink);
+      opacity: 0.7;
+      margin: 0;
+    }
     .m-crop-actioncenter {
       /* Just the Action Center heading + handshake (y=8800–9450 of Mobile.svg) */
       height: calc(100vw * (9450 - 8800) / 402);
@@ -3281,23 +3396,142 @@ main { padding-top: var(--header-h); }
   <!-- ===== Mobile page — top crop + 8 finding SVGs + bottom crop ===== -->
   <main class="m-page" id="m-top">
 
-    <!-- TOP: Mobile.svg cropped to y=0–5200 (hero through 8 Areas intro) -->
-    <div class="m-crop m-crop-top">
-      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Power of Free — mobile homepage" />
-      <!-- Tap overlays for top crop. % values are of crop height (5200 design px). -->
+    <!-- TOP 1: Mobile.svg y=60–3100 (hero, About the Report, A Smile You Can Hear) -->
+    <div class="m-crop m-crop-top1">
+      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Power of Free — hero, About the Report, video" />
       <a class="m-tap is-link" href="#m-about-report" data-m-scroll
-         style="top: 6.10%; left: 6%; right: 6%; height: 1.31%;" aria-label="Read the report"></a>
+         style="top: 10.4%; left: 6%; right: 6%; height: 2.3%;" aria-label="Read the report"></a>
       <button class="m-tap" type="button" data-m-video="1186772181"
-         style="top: 7.73%; left: 6%; right: 6%; height: 1.31%;" aria-label="Watch the hero story video"></button>
+         style="top: 13.1%; left: 6%; right: 6%; height: 2.3%;" aria-label="Watch the hero story video"></button>
       <a class="m-tap is-link" href="#m-about-report" data-m-scroll
-         style="top: 36.54%; left: 6%; right: 35%; height: 1.44%;" aria-label="Read the report"></a>
-      <!-- About-the-report section starts ~y=620 of Mobile.svg → 12% of top crop (5200) -->
-      <span class="m-anchor" id="m-about-report"   style="position:absolute; top: 12%;"></span>
-      <!-- 8 Areas of Measurable Impact starts ~y=4400 of Mobile.svg → 84.6% of top crop -->
-      <span class="m-anchor" id="m-key-findings"   style="position:absolute; top: 85%;"></span>
-      <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 92%;"></span>
-      <!-- Hero video section anchor (for Watch the Story button) — ~y=4000 of Mobile.svg → 77% -->
-      <span class="m-anchor" id="m-video"          style="position:absolute; top: 28%;"></span>
+         style="top: 62.0%; left: 6%; right: 35%; height: 2.4%;" aria-label="Read the report"></a>
+      <span class="m-anchor" id="m-about-report" style="position:absolute; top: 20%;"></span>
+      <span class="m-anchor" id="m-video"        style="position:absolute; top: 80%;"></span>
+    </div>
+
+    <!-- CUSTOM TESTIMONIALS: header + horizontal-scroll carousel of 12 cards -->
+    <section class="m-quotes-section" aria-label="Testimonials">
+      <div class="m-quotes-header">
+        <p class="m-quotes-eyebrow">Testimonials</p>
+        <h2 class="m-quotes-title">More Than Just <em>A Phone Call</em></h2>
+      </div>
+      <div class="m-quotes-carousel" data-m-quotes>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-michael.jpg" alt="Michael" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">To have free calls now &mdash; it&rsquo;s more than what I think people realize. It&rsquo;s our lifeline to the world. Our lifeline to our families.</p>
+            <p class="m-q-name">Michael</p>
+            <p class="m-q-role">Formerly incarcerated, New York</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-saul.png" alt="Saul" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">Today, I talk to my mom every day. I call her like three times a day. I read to her, because it&rsquo;s hard for her to read. And we pray together.</p>
+            <p class="m-q-name">Saul</p>
+            <p class="m-q-role">Currently incarcerated, California</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-felix.jpg" alt="Felix" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">As a counselor, I give them as much support as I possibly can. But I&rsquo;m not their family. I&rsquo;m not their friend. They still have a guard up against me. Being able to talk to their family, they&rsquo;re able to get guidance that they wouldn&rsquo;t really want to take from me.</p>
+            <p class="m-q-name">Felix</p>
+            <p class="m-q-role">Prison counselor, New York</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-angel.jpg" alt="Angel" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">My husband has a daughter. She&rsquo;s 11 years old, and she is autistic. Not being able to call every single day, his calls with her would be sporadic. But now they talk every day. They&rsquo;re able to spend an hour on the phone each night. He reads to her, and she&rsquo;ll read to him. She is being so vocal since she&rsquo;s been able to speak to her dad.</p>
+            <p class="m-q-name">Angel</p>
+            <p class="m-q-role">Wife, California</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-tricia.png" alt="Tricia" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">He doesn&rsquo;t like burdening people. So, I remember the first [free] phone call, him being so excited like, &lsquo;okay, now we can talk about anything you want, and when we hang up, I can just call you back.&rsquo;</p>
+            <p class="m-q-name">Tricia</p>
+            <p class="m-q-role">Sister, Federal</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-mitchell.jpg" alt="Sgt. Mitchell" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">Their interactions with [officers] become more positive and constructive instead of negative. They have things to look forward to. They go back to their cells, get on the phone, speak to their friends and loved ones, talk about their day, and get advice and counseling over those phone calls.</p>
+            <p class="m-q-name">Sgt. Mitchell</p>
+            <p class="m-q-role">Corrections sergeant, New York</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-shelene.png" alt="Shelene" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">I don&rsquo;t have the same resentments towards just communicating with him, which had nothing to do with communicating with him, but the fact that they&rsquo;re taking my money and they&rsquo;re robbing me was the feeling, just so that I can speak to my son. I don&rsquo;t feel any of those things anymore, and it&rsquo;s a far cry different.</p>
+            <p class="m-q-name">Shelene</p>
+            <p class="m-q-role">Mother, Minnesota</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-marc.jpg" alt="Marc" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">I got to sit on the phone and do homework with my daughter, which was huge &mdash; just kind of sit there and allow her time to think through the problems and not worry about it costing per minute.</p>
+            <p class="m-q-name">Marc</p>
+            <p class="m-q-role">Formerly incarcerated, New York</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-jasmeel.png" alt="Jasmeel" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">These conversations create a pathway for empathy and healing and just a healthy relationship with my family and actually just hope for a future when I get out, knowing that I have people that I can go to. Without these [free] phone calls, that would not have been possible.</p>
+            <p class="m-q-name">Jasmeel</p>
+            <p class="m-q-role">Currently incarcerated, California</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-dwayne.jpg" alt="Dwayne" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">I [hadn&rsquo;t] heard from my daughter in over 10 years when I got a letter with a phone number. [Then] when I heard her voice, it killed me. I told her I love her, and that I&rsquo;m going to keep in contact with her. I talk to her every day.</p>
+            <p class="m-q-name">Dwayne</p>
+            <p class="m-q-role">Currently incarcerated, Connecticut</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-nia.jpg" alt="Nia" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">When the calls became free, it wasn&rsquo;t just a relief for me. It meant that my son could talk to his dad without me worrying about how much it was costing or how many minutes were left. That changed everything for us.</p>
+            <p class="m-q-name">Nia</p>
+            <p class="m-q-role">Wife, Massachusetts</p>
+          </div>
+        </article>
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-ransey.jpg" alt="Ransey" loading="lazy" />
+          <div class="m-quote-text">
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">The time on the phone is like church.</p>
+            <p class="m-q-name">Ransey</p>
+            <p class="m-q-role">Daughter, New York</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TOP 2: Mobile.svg y=4150–5200 (Key Findings intro / 8 Areas of Measurable Impact) -->
+    <div class="m-crop m-crop-top2">
+      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="8 Areas of Measurable Impact" />
+      <span class="m-anchor" id="m-key-findings"   style="position:absolute; top: 24%;"></span>
+      <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 70%;"></span>
     </div>
 
     <!-- FINDINGS region — 8 standalone SVGs stacked. Sub-nav appears here. -->
@@ -3634,23 +3868,24 @@ main { padding-top: var(--header-h); }
           subnav.classList.toggle('is-visible', en.isIntersecting);
           subnav.setAttribute('aria-hidden', en.isIntersecting ? 'false' : 'true');
         });
-      }, { rootMargin: '-30% 0px -30% 0px' });
+      }, { rootMargin: '0px 0px 0px 0px', threshold: 0 });
       visObs.observe(findingsRegion);
 
-      // Track which finding is currently dominant in viewport
+      // Track which finding is currently dominant in viewport.
+      // Each article is much taller than viewport, so threshold-based detection
+      // doesn't fire reliably — instead, detect when each article's bbox
+      // crosses a thin horizontal slice in the middle of viewport.
       var trackObs = new IntersectionObserver(function(entries){
-        // Find the entry whose intersectionRatio is highest
-        var best = null;
         entries.forEach(function(en){
-          if (en.isIntersecting && (!best || en.intersectionRatio > best.intersectionRatio)) {
-            best = en;
+          if (en.isIntersecting) {
+            var idx = parseInt(en.target.getAttribute('data-finding-idx'), 10);
+            if (!isNaN(idx)) updateNav(idx);
           }
         });
-        if (best) {
-          var idx = parseInt(best.target.getAttribute('data-finding-idx'), 10);
-          if (!isNaN(idx)) updateNav(idx);
-        }
-      }, { threshold: [0.25, 0.5, 0.75] });
+      }, {
+        rootMargin: '-45% 0px -45% 0px',  // 10% middle slice
+        threshold: 0
+      });
       findingArticles.forEach(function(a){ trackObs.observe(a); });
     } else {
       subnav.classList.add('is-visible');
