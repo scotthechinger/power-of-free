@@ -2887,12 +2887,85 @@ main { padding-top: var(--header-h); }
       height: calc(100vw * (5200 - 60) / 402);
     }
     .m-crop-top .m-bg-svg { top: calc(-100vw * 60 / 402); }
-    /* Split top crop — quote section between is custom HTML cards */
+    /* Split top crop — video section + quotes are custom HTML, replacing baked content */
     .m-crop-top1 {
-      /* y=60 to y=3100: hero, About the Report, A Smile You Can Hear video */
-      height: calc(100vw * (3100 - 60) / 402);
+      /* y=60 to y=2200: hero + About the Report only (video section is custom below) */
+      height: calc(100vw * (2200 - 60) / 402);
     }
     .m-crop-top1 .m-bg-svg { top: calc(-100vw * 60 / 402); }
+
+    /* Custom mobile hero video block — replaces baked video section in Mobile.svg */
+    .m-hero-video {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      overflow: hidden;
+      display: block;
+    }
+    .m-hero-video-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .m-hero-video-card {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: var(--deep-plum);
+      color: #ffffff;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 0;
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+    }
+    .m-hero-video-card-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .m-hero-video-card-text h3 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      line-height: 1.1;
+      letter-spacing: -0.005em;
+      text-transform: uppercase;
+      margin: 0 0 5px;
+      color: #ffffff;
+    }
+    .m-hero-video-card-text p {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      line-height: 1.35;
+      margin: 0;
+      color: rgba(255,255,255,0.85);
+    }
+    .m-hero-video-card-play {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      background: var(--warm-coral);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      transition: filter .2s ease, transform .2s ease;
+    }
+    .m-hero-video-card:active .m-hero-video-card-play {
+      transform: scale(.96);
+      filter: brightness(1.06);
+    }
+    .m-hero-video-card-play svg {
+      width: 20px;
+      height: 20px;
+      transform: translateX(2px);
+    }
     .m-crop-top2 {
       /* y=4150 to y=5200: 8 Areas of Measurable Impact intro */
       height: calc(100vw * (5200 - 4150) / 402);
@@ -2901,8 +2974,9 @@ main { padding-top: var(--header-h); }
 
     /* ---------- Mobile quotes section (custom HTML carousel) ---------- */
     .m-quotes-section {
-      background: var(--cloud-neutral);
-      padding: 56px 0 64px;
+      /* Lavender per QA. No bottom padding so the section flushes into the next without a white seam. */
+      background: var(--soft-lavender);
+      padding: 56px 0 24px;
     }
     .m-quotes-header {
       padding: 0 24px 28px;
@@ -3008,6 +3082,13 @@ main { padding-top: var(--header-h); }
     }
     .m-crop-actioncenter .m-bg-svg { top: calc(-100vw * 8800 / 402); }
 
+    /* Take Action / Resources title images (above each card group) */
+    .m-section-title {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: var(--cloud-neutral);
+    }
     /* Take Action / Resources cards (custom HTML) */
     .m-action-cards {
       position: relative;
@@ -3396,18 +3477,37 @@ main { padding-top: var(--header-h); }
   <!-- ===== Mobile page — top crop + 8 finding SVGs + bottom crop ===== -->
   <main class="m-page" id="m-top">
 
-    <!-- TOP 1: Mobile.svg y=60–3100 (hero, About the Report, A Smile You Can Hear) -->
+    <!-- TOP 1: Mobile.svg y=60–2200 (hero + About the Report only) -->
     <div class="m-crop m-crop-top1">
-      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Power of Free — hero, About the Report, video" />
+      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Power of Free — hero + About the Report" />
+      <!-- Hero CTAs (scroll, no modal) -->
       <a class="m-tap is-link" href="#m-about-report" data-m-scroll
-         style="top: 10.4%; left: 6%; right: 6%; height: 2.3%;" aria-label="Read the report"></a>
-      <button class="m-tap" type="button" data-m-video="1186772181"
-         style="top: 13.1%; left: 6%; right: 6%; height: 2.3%;" aria-label="Watch the hero story video"></button>
+         style="top: 14.7%; left: 6%; right: 6%; height: 3.3%;" aria-label="Read the report"></a>
+      <a class="m-tap is-link" href="#m-video" data-m-scroll
+         style="top: 18.5%; left: 6%; right: 6%; height: 3.3%;" aria-label="Watch the hero story video"></a>
       <a class="m-tap is-link" href="#m-about-report" data-m-scroll
-         style="top: 62.0%; left: 6%; right: 35%; height: 2.4%;" aria-label="Read the report"></a>
-      <span class="m-anchor" id="m-about-report" style="position:absolute; top: 20%;"></span>
-      <span class="m-anchor" id="m-video"        style="position:absolute; top: 80%;"></span>
+         style="top: 88.0%; left: 6%; right: 35%; height: 3.4%;" aria-label="Read the report"></a>
+      <span class="m-anchor" id="m-about-report" style="position:absolute; top: 26%;"></span>
     </div>
+
+    <!-- HERO VIDEO BLOCK — custom, mobile-optimized. Ambient mp4 loops in background;
+         deep-plum title bar at bottom with coral play button. Tap → Vimeo modal. -->
+    <section class="m-hero-video" id="m-video">
+      <video class="m-hero-video-bg" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+        <source src="assets/mobile/ambient-mobile.mp4" type="video/mp4">
+      </video>
+      <button class="m-hero-video-card" type="button" data-m-video="1186772181" aria-label="Play the documentary film">
+        <div class="m-hero-video-card-text">
+          <h3>A Smile You Can Hear</h3>
+          <p>Watch what free<br>communication makes possible</p>
+        </div>
+        <span class="m-hero-video-card-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 5.14v13.72c0 .79.87 1.27 1.54.84l10.78-6.86a1 1 0 0 0 0-1.68L8.54 4.3C7.87 3.87 7 4.35 7 5.14z"/>
+          </svg>
+        </span>
+      </button>
+    </section>
 
     <!-- CUSTOM TESTIMONIALS: header + horizontal-scroll carousel of 12 cards -->
     <section class="m-quotes-section" aria-label="Testimonials">
@@ -3419,109 +3519,109 @@ main { padding-top: var(--header-h); }
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-michael.jpg" alt="Michael" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">To have free calls now &mdash; it&rsquo;s more than what I think people realize. It&rsquo;s our lifeline to the world. Our lifeline to our families.</p>
             <p class="m-q-name">Michael</p>
             <p class="m-q-role">Formerly incarcerated, New York</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">To have free calls now &mdash; it&rsquo;s more than what I think people realize. It&rsquo;s our lifeline to the world. Our lifeline to our families.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-saul.png" alt="Saul" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">Today, I talk to my mom every day. I call her like three times a day. I read to her, because it&rsquo;s hard for her to read. And we pray together.</p>
             <p class="m-q-name">Saul</p>
             <p class="m-q-role">Currently incarcerated, California</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">Today, I talk to my mom every day. I call her like three times a day. I read to her, because it&rsquo;s hard for her to read. And we pray together.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-felix.jpg" alt="Felix" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">As a counselor, I give them as much support as I possibly can. But I&rsquo;m not their family. I&rsquo;m not their friend. They still have a guard up against me. Being able to talk to their family, they&rsquo;re able to get guidance that they wouldn&rsquo;t really want to take from me.</p>
             <p class="m-q-name">Felix</p>
             <p class="m-q-role">Prison counselor, New York</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">As a counselor, I give them as much support as I possibly can. But I&rsquo;m not their family. I&rsquo;m not their friend. They still have a guard up against me. Being able to talk to their family, they&rsquo;re able to get guidance that they wouldn&rsquo;t really want to take from me.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-angel.jpg" alt="Angel" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">My husband has a daughter. She&rsquo;s 11 years old, and she is autistic. Not being able to call every single day, his calls with her would be sporadic. But now they talk every day. They&rsquo;re able to spend an hour on the phone each night. He reads to her, and she&rsquo;ll read to him. She is being so vocal since she&rsquo;s been able to speak to her dad.</p>
             <p class="m-q-name">Angel</p>
             <p class="m-q-role">Wife, California</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">My husband has a daughter. She&rsquo;s 11 years old, and she is autistic. Not being able to call every single day, his calls with her would be sporadic. But now they talk every day. They&rsquo;re able to spend an hour on the phone each night. He reads to her, and she&rsquo;ll read to him. She is being so vocal since she&rsquo;s been able to speak to her dad.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-tricia.png" alt="Tricia" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">He doesn&rsquo;t like burdening people. So, I remember the first [free] phone call, him being so excited like, &lsquo;okay, now we can talk about anything you want, and when we hang up, I can just call you back.&rsquo;</p>
             <p class="m-q-name">Tricia</p>
             <p class="m-q-role">Sister, Federal</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">He doesn&rsquo;t like burdening people. So, I remember the first [free] phone call, him being so excited like, &lsquo;okay, now we can talk about anything you want, and when we hang up, I can just call you back.&rsquo;</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-mitchell.jpg" alt="Sgt. Mitchell" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">Their interactions with [officers] become more positive and constructive instead of negative. They have things to look forward to. They go back to their cells, get on the phone, speak to their friends and loved ones, talk about their day, and get advice and counseling over those phone calls.</p>
             <p class="m-q-name">Sgt. Mitchell</p>
             <p class="m-q-role">Corrections sergeant, New York</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">Their interactions with [officers] become more positive and constructive instead of negative. They have things to look forward to. They go back to their cells, get on the phone, speak to their friends and loved ones, talk about their day, and get advice and counseling over those phone calls.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-shelene.png" alt="Shelene" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">I don&rsquo;t have the same resentments towards just communicating with him, which had nothing to do with communicating with him, but the fact that they&rsquo;re taking my money and they&rsquo;re robbing me was the feeling, just so that I can speak to my son. I don&rsquo;t feel any of those things anymore, and it&rsquo;s a far cry different.</p>
             <p class="m-q-name">Shelene</p>
             <p class="m-q-role">Mother, Minnesota</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">I don&rsquo;t have the same resentments towards just communicating with him, which had nothing to do with communicating with him, but the fact that they&rsquo;re taking my money and they&rsquo;re robbing me was the feeling, just so that I can speak to my son. I don&rsquo;t feel any of those things anymore, and it&rsquo;s a far cry different.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-marc.jpg" alt="Marc" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">I got to sit on the phone and do homework with my daughter, which was huge &mdash; just kind of sit there and allow her time to think through the problems and not worry about it costing per minute.</p>
             <p class="m-q-name">Marc</p>
             <p class="m-q-role">Formerly incarcerated, New York</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">I got to sit on the phone and do homework with my daughter, which was huge &mdash; just kind of sit there and allow her time to think through the problems and not worry about it costing per minute.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-jasmeel.png" alt="Jasmeel" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">These conversations create a pathway for empathy and healing and just a healthy relationship with my family and actually just hope for a future when I get out, knowing that I have people that I can go to. Without these [free] phone calls, that would not have been possible.</p>
             <p class="m-q-name">Jasmeel</p>
             <p class="m-q-role">Currently incarcerated, California</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">These conversations create a pathway for empathy and healing and just a healthy relationship with my family and actually just hope for a future when I get out, knowing that I have people that I can go to. Without these [free] phone calls, that would not have been possible.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-dwayne.jpg" alt="Dwayne" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">I [hadn&rsquo;t] heard from my daughter in over 10 years when I got a letter with a phone number. [Then] when I heard her voice, it killed me. I told her I love her, and that I&rsquo;m going to keep in contact with her. I talk to her every day.</p>
             <p class="m-q-name">Dwayne</p>
             <p class="m-q-role">Currently incarcerated, Connecticut</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">I [hadn&rsquo;t] heard from my daughter in over 10 years when I got a letter with a phone number. [Then] when I heard her voice, it killed me. I told her I love her, and that I&rsquo;m going to keep in contact with her. I talk to her every day.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-nia.jpg" alt="Nia" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">When the calls became free, it wasn&rsquo;t just a relief for me. It meant that my son could talk to his dad without me worrying about how much it was costing or how many minutes were left. That changed everything for us.</p>
             <p class="m-q-name">Nia</p>
             <p class="m-q-role">Wife, Massachusetts</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">When the calls became free, it wasn&rsquo;t just a relief for me. It meant that my son could talk to his dad without me worrying about how much it was costing or how many minutes were left. That changed everything for us.</p>
           </div>
         </article>
         <article class="m-quote-card">
           <img class="m-quote-photo" src="assets/quotes/quote-ransey.jpg" alt="Ransey" loading="lazy" />
           <div class="m-quote-text">
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">The time on the phone is like church.</p>
             <p class="m-q-name">Ransey</p>
             <p class="m-q-role">Daughter, New York</p>
+            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
+            <p class="m-q-quote">The time on the phone is like church.</p>
           </div>
         </article>
       </div>
@@ -3530,7 +3630,8 @@ main { padding-top: var(--header-h); }
     <!-- TOP 2: Mobile.svg y=4150–5200 (Key Findings intro / 8 Areas of Measurable Impact) -->
     <div class="m-crop m-crop-top2">
       <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="8 Areas of Measurable Impact" />
-      <span class="m-anchor" id="m-key-findings"   style="position:absolute; top: 24%;"></span>
+      <!-- Anchor at top of section so scroll lands on the eyebrow -->
+      <span class="m-anchor" id="m-key-findings"   style="position:absolute; top: 5%;"></span>
       <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 70%;"></span>
     </div>
 
@@ -3540,10 +3641,11 @@ main { padding-top: var(--header-h); }
         <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" />
         <button class="m-tap" type="button" data-m-video="1187871199"
                 style="top: 80.5%; left: 30%; width: 40%; height: 6%;" aria-label="Play Finding 1 video"></button>
+        <!-- Toggle dots horizontal: prisons cx=28, jails cx=154, both cy=1973 in 402×3491 -->
         <button class="m-tap m-f1-tog" type="button" data-m-f1-state="prisons"
-                style="top: 39.5%; left: 4%; width: 30%; height: 1.6%;" aria-label="Show prisons data"></button>
+                style="top: 54.7%; left: 1%; width: 28%; height: 2.5%;" aria-label="Show prisons data"></button>
         <button class="m-tap m-f1-tog" type="button" data-m-f1-state="jails"
-                style="top: 41.0%; left: 4%; width: 30%; height: 1.6%;" aria-label="Show jails data"></button>
+                style="top: 54.7%; left: 31%; width: 28%; height: 2.5%;" aria-label="Show jails data"></button>
       </article>
       <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Financial">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" />
@@ -3588,6 +3690,8 @@ main { padding-top: var(--header-h); }
       <span class="m-anchor" id="m-action-center" style="position:absolute; top: 2%;"></span>
     </div>
 
+    <!-- TAKE ACTION title -->
+    <img class="m-section-title" src="assets/mobile/mobile-title-take-action.svg" alt="Take Action" />
     <!-- TAKE ACTION cards — custom HTML, lavender bg per spec -->
     <section class="m-action-cards">
       <a class="m-action-card m-action-card--lavender" href="#" target="_blank" rel="noopener">
@@ -3607,6 +3711,8 @@ main { padding-top: var(--header-h); }
       </a>
     </section>
 
+    <!-- RESOURCES title -->
+    <img class="m-section-title" src="assets/mobile/mobile-title-resources.svg" alt="Resources" />
     <!-- RESOURCES cards — custom HTML, plum bg per spec -->
     <section class="m-action-cards">
       <span class="m-anchor" id="m-resources"></span>
@@ -3868,7 +3974,13 @@ main { padding-top: var(--header-h); }
           subnav.classList.toggle('is-visible', en.isIntersecting);
           subnav.setAttribute('aria-hidden', en.isIntersecting ? 'false' : 'true');
         });
-      }, { rootMargin: '0px 0px 0px 0px', threshold: 0 });
+      }, {
+        // Only show subnav when the findings region overlaps the middle 40% of viewport.
+        // When user scrolls past last finding into Action Center, region's bottom is
+        // above this slice → not intersecting → subnav hides.
+        rootMargin: '-30% 0px -30% 0px',
+        threshold: 0
+      });
       visObs.observe(findingsRegion);
 
       // Track which finding is currently dominant in viewport.
