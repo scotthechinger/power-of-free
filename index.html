@@ -2889,16 +2889,22 @@ main { padding-top: var(--header-h); }
     .m-crop-top .m-bg-svg { top: calc(-100vw * 60 / 402); }
     /* Split top crop — video section + quotes are custom HTML, replacing baked content */
     .m-crop-top1 {
-      /* y=60 to y=2200: hero + About the Report only (video section is custom below) */
-      height: calc(100vw * (2200 - 60) / 402);
+      /* y=60 to y=2654: hero + full About-the-Report (incl. green chevron + bottom illustration).
+         Was 2200, but content extends to 2654 — shorter crop was cutting the illustration. */
+      height: calc(100vw * (2654 - 60) / 402);
     }
     .m-crop-top1 .m-bg-svg { top: calc(-100vw * 60 / 402); }
 
-    /* Custom mobile hero video block — replaces baked video section in Mobile.svg */
+    /* Custom mobile hero video block — replaces baked video section in Mobile.svg.
+       Uses svh (small viewport height) so the section never exceeds visible area
+       even when the browser URL bar is showing — keeps the title bar in view from
+       the top of the section. Falls back to vh on browsers without svh support. */
     .m-hero-video {
       position: relative;
       width: 100%;
-      aspect-ratio: 16 / 9;
+      height: 85vh;
+      height: 85svh;
+      min-height: 480px;
       background: #000000;
       overflow: hidden;
       display: block;
@@ -2976,7 +2982,8 @@ main { padding-top: var(--header-h); }
     .m-quotes-section {
       /* Lavender per QA. No bottom padding so the section flushes into the next without a white seam. */
       background: var(--soft-lavender);
-      padding: 56px 0 24px;
+      padding: 56px 0 0;
+      margin-bottom: -1px;
     }
     .m-quotes-header {
       padding: 0 24px 28px;
@@ -3048,9 +3055,10 @@ main { padding-top: var(--header-h); }
       font-family: 'ConcretteXL', 'Fraunces', serif;
       font-style: italic;
       font-size: 36px;
-      line-height: 0.6;
+      line-height: 1;
       color: var(--deep-plum);
-      margin-bottom: 14px;
+      margin: 14px 0 10px;
+      display: block;
     }
     .m-q-quote {
       font-family: 'Inter', sans-serif;
@@ -3444,20 +3452,25 @@ main { padding-top: var(--header-h); }
     /* ---------- Vimeo modal ---------- */
     .m-video {
       position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,.94);
+      background: #000;
       display: none;
-      align-items: center; justify-content: center;
     }
-    .m-video.is-open { display: flex; }
+    .m-video.is-open { display: block; }
+    /* Iframe sits BELOW a 56px-tall header strip so the close button isn't
+       overlapped by the Vimeo player — iframes capture pointer events for
+       everything inside their bounding box even when a button has higher z-index. */
     .m-video-frame {
-      width: 100%; height: 56.25vw; max-height: 100vh; border: 0;
+      position: absolute;
+      top: 56px; left: 0; right: 0; bottom: 0;
+      width: 100%; height: calc(100% - 56px);
+      border: 0;
     }
     .m-video-close {
-      position: absolute; top: 14px; right: 14px;
+      position: absolute; top: 6px; right: 8px;
       width: 44px; height: 44px;
-      border: 0; background: rgba(255,255,255,.12); border-radius: 50%;
+      border: 0; background: rgba(255,255,255,.18); border-radius: 50%;
       color: #fff; font-size: 22px; cursor: pointer;
-      z-index: 2; line-height: 1;
+      z-index: 10; line-height: 1;
     }
   }
 </style>
@@ -3480,14 +3493,18 @@ main { padding-top: var(--header-h); }
     <!-- TOP 1: Mobile.svg y=60–2200 (hero + About the Report only) -->
     <div class="m-crop m-crop-top1">
       <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Power of Free — hero + About the Report" />
-      <!-- Hero CTAs (scroll, no modal) -->
+      <!-- Hero CTAs (scroll, no modal). Positions are % of crop height (2594 in SVG units, y=60→2654).
+           READ THE REPORT pill: SVG y=534–584 → top 18.27%, height 1.93%
+           WATCH THE STORY pill:   SVG y=594–644 → top 20.59%, height 1.93%
+           About-the-Report inline READ button: SVG y=1756–1806 → top 65.38%, height 1.93% -->
       <a class="m-tap is-link" href="#m-about-report" data-m-scroll
-         style="top: 14.7%; left: 6%; right: 6%; height: 3.3%;" aria-label="Read the report"></a>
+         style="top: 18.27%; left: 5%; right: 5%; height: 1.93%;" aria-label="Read the report"></a>
       <a class="m-tap is-link" href="#m-video" data-m-scroll
-         style="top: 18.5%; left: 6%; right: 6%; height: 3.3%;" aria-label="Watch the hero story video"></a>
+         style="top: 20.59%; left: 5%; right: 5%; height: 1.93%;" aria-label="Watch the hero story video"></a>
       <a class="m-tap is-link" href="#m-about-report" data-m-scroll
-         style="top: 88.0%; left: 6%; right: 35%; height: 3.4%;" aria-label="Read the report"></a>
-      <span class="m-anchor" id="m-about-report" style="position:absolute; top: 26%;"></span>
+         style="top: 65.38%; left: 5%; width: 56%; height: 1.93%;" aria-label="Read the report"></a>
+      <!-- Anchor at top of About-the-Report band (deep plum starts at SVG y=1041 → 37.82% of crop) -->
+      <span class="m-anchor" id="m-about-report" style="position:absolute; top: 37.82%; left:0;"></span>
     </div>
 
     <!-- HERO VIDEO BLOCK — custom, mobile-optimized. Ambient mp4 loops in background;
@@ -3496,7 +3513,7 @@ main { padding-top: var(--header-h); }
       <video class="m-hero-video-bg" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
         <source src="assets/mobile/ambient-mobile.mp4" type="video/mp4">
       </video>
-      <button class="m-hero-video-card" type="button" data-m-video="1186772181" aria-label="Play the documentary film">
+      <button class="m-hero-video-card" type="button" data-m-video="1188306680" aria-label="Play the documentary film">
         <div class="m-hero-video-card-text">
           <h3>A Smile You Can Hear</h3>
           <p>Watch what free<br>communication makes possible</p>
@@ -3631,7 +3648,9 @@ main { padding-top: var(--header-h); }
     <div class="m-crop m-crop-top2">
       <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="8 Areas of Measurable Impact" />
       <!-- Anchor at top of section so scroll lands on the eyebrow -->
-      <span class="m-anchor" id="m-key-findings"   style="position:absolute; top: 5%;"></span>
+      <!-- "KEY FINDINGS" eyebrow appears at SVG y=4318 (16% into this y=4150–5200 crop).
+           Anchor sits just above it at 14% so the eyebrow lands right under the sticky header. -->
+      <span class="m-anchor" id="m-key-findings"   style="position:absolute; top: 14%;"></span>
       <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 70%;"></span>
     </div>
 
@@ -3640,47 +3659,50 @@ main { padding-top: var(--header-h); }
       <article class="m-finding" id="m-f1" data-finding-idx="0" data-finding-area="Connection">
         <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" />
         <button class="m-tap" type="button" data-m-video="1187871199"
-                style="top: 80.5%; left: 30%; width: 40%; height: 6%;" aria-label="Play Finding 1 video"></button>
-        <!-- Toggle dots horizontal: prisons cx=28, jails cx=154, both cy=1973 in 402×3491 -->
+                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 1 video"></button>
+        <!-- Toggle dots: cy=1973 in BOTH SVGs (prisons 402×3491, jails 402×3431).
+             Using vw-based positioning so the tap zone stays locked to y=1973 in SVG units
+             regardless of which image is loaded — % alone drifts because the article height
+             changes when the IMG src swaps to a shorter SVG. -->
         <button class="m-tap m-f1-tog" type="button" data-m-f1-state="prisons"
-                style="top: 54.7%; left: 1%; width: 28%; height: 2.5%;" aria-label="Show prisons data"></button>
+                style="top: calc(100vw * 1953 / 402); left: 0; width: calc(100vw * 80 / 402); height: calc(100vw * 40 / 402);" aria-label="Show prisons data"></button>
         <button class="m-tap m-f1-tog" type="button" data-m-f1-state="jails"
-                style="top: 54.7%; left: 31%; width: 28%; height: 2.5%;" aria-label="Show jails data"></button>
+                style="top: calc(100vw * 1953 / 402); left: calc(100vw * 126 / 402); width: calc(100vw * 90 / 402); height: calc(100vw * 40 / 402);" aria-label="Show jails data"></button>
       </article>
       <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Financial">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" />
         <button class="m-tap" type="button" data-m-video="1188179417"
-                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 2 video"></button>
+                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 2 video"></button>
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" />
         <button class="m-tap" type="button" data-m-video=""
-                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 3 video"></button>
+                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 3 video"></button>
       </article>
       <article class="m-finding" id="m-f4" data-finding-idx="3" data-finding-area="Parenting">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-04.svg" alt="Finding 4: Parenting and Child Development" />
         <button class="m-tap" type="button" data-m-video="1188176628"
-                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 4 video"></button>
+                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 4 video"></button>
       </article>
       <article class="m-finding" id="m-f5" data-finding-idx="4" data-finding-area="Health">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-05.svg" alt="Finding 5: Improved Mental and Physical Health" />
         <button class="m-tap" type="button" data-m-video=""
-                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 5 video"></button>
+                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 5 video"></button>
       </article>
       <article class="m-finding" id="m-f6" data-finding-idx="5" data-finding-area="Safety">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-06.svg" alt="Finding 6: Less Violence and Operational Disruption" />
         <button class="m-tap" type="button" data-m-video=""
-                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 6 video"></button>
+                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 6 video"></button>
       </article>
       <article class="m-finding" id="m-f7" data-finding-idx="6" data-finding-area="Rehabilitation">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-07.svg" alt="Finding 7: Rehabilitation" />
         <button class="m-tap" type="button" data-m-video="1188176912"
-                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 7 video"></button>
+                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 7 video"></button>
       </article>
       <article class="m-finding" id="m-f8" data-finding-idx="7" data-finding-area="Reentry">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-08.svg" alt="Finding 8: Reentry Planning and Success" />
         <button class="m-tap" type="button" data-m-video=""
-                style="top: 80%; left: 0; width: 100%; height: 7%;" aria-label="Play Finding 8 video"></button>
+                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 8 video"></button>
       </article>
     </div>
 
@@ -3737,11 +3759,14 @@ main { padding-top: var(--header-h); }
     <section class="m-methodology">
       <span class="m-anchor" id="m-about-project"></span>
       <img class="m-methodology-img" src="assets/mobile/mobile-methodology.svg" alt="About This Report — Acknowledgments" />
-      <!-- Click overlays for the two baked Worth Rises + Connecting Families pills -->
+      <!-- Click overlays for the two baked-in pills.
+           SVG is 402×1978. Worth Rises bar: y=1228, h=84 → top 62.08%, height 4.25%.
+           Connecting Families bar: y=1312, h=84 → top 66.33%, height 4.25%.
+           Both span full width of the SVG. -->
       <a class="m-tap is-link" href="https://worthrises.org" target="_blank" rel="noopener"
-         style="top: 70.5%; left: 0; right: 0; height: 4.5%;" aria-label="Visit Worth Rises"></a>
+         style="top: 62.08%; left: 0; right: 0; height: 4.25%;" aria-label="Visit Worth Rises"></a>
       <a class="m-tap is-link" href="https://connectfamiliesnow.com/" target="_blank" rel="noopener"
-         style="top: 75.0%; left: 0; right: 0; height: 4.5%;" aria-label="Connecting Families campaign"></a>
+         style="top: 66.33%; left: 0; right: 0; height: 4.25%;" aria-label="Connecting Families campaign"></a>
     </section>
 
     <!-- Custom mobile footer — mirrors desktop brand identity -->
