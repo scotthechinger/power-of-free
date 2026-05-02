@@ -3141,11 +3141,38 @@ main { padding-top: var(--header-h); }
       height: 20px;
       transform: translateX(2px);
     }
-    .m-crop-top2 {
-      /* y=4150 to y=5200: 8 Areas of Measurable Impact intro */
-      height: calc(100vw * (5200 - 4150) / 402);
+    /* Findings-intro block — clean two-image stack (2026-05-02). Replaces the
+       previous .m-crop-top2 cropped-composite approach since the baked content
+       can't be cleanly masked. Text above (402×565), illustration below
+       (399×385, centered). bg matches surrounding cloud-neutral. */
+    .m-findings-intro-block {
+      position: relative;
+      width: 100%;
+      background: var(--cloud-neutral);
+      padding: 0 0 40px;
+      display: block;
+      /* z-index: 2 covers the .m-quotes-section's -10px margin-bottom overlap
+         (which sits at z-index: 1). Without this, quotes' lavender bg leaked
+         10px into the top of the findings-intro block — the "lavender stripe"
+         users saw above the KEY FINDINGS eyebrow. */
+      z-index: 2;
     }
-    .m-crop-top2 .m-bg-svg { top: calc(-100vw * 4150 / 402); }
+    .m-findings-intro-text {
+      display: block;
+      width: 100vw;
+      height: auto;
+      user-select: none; -webkit-user-drag: none;
+      pointer-events: none;
+    }
+    .m-findings-intro-illust {
+      display: block;
+      width: calc(100vw * 399 / 402);
+      max-width: 399px;
+      height: auto;
+      margin: 0 auto;
+      user-select: none; -webkit-user-drag: none;
+      pointer-events: none;
+    }
 
     /* ---------- Mobile quotes section (custom HTML carousel) ---------- */
     .m-quotes-section {
@@ -3284,13 +3311,13 @@ main { padding-top: var(--header-h); }
     .m-crop-actioncenter {
       /* Action Center heading + handshake (y=8800–9540 of Mobile.svg).
          End extended past 9450 so figure bodies show fully (figures end at
-         y≈9537 in master SVG). padding-top: 80px adds breathing room between
-         previous section and the "ACTION CENTER" eyebrow. */
+         y≈9537 in master SVG). padding-top removed — was adding 80px cream
+         above the eyebrow when menu link landed here. */
       height: calc(100vw * (9540 - 8800) / 402);
-      padding-top: 80px;
+      padding-top: 0;
       background: var(--cloud-neutral);
     }
-    .m-crop-actioncenter .m-bg-svg { top: calc(-100vw * 8800 / 402 + 80px); }
+    .m-crop-actioncenter .m-bg-svg { top: calc(-100vw * 8800 / 402); }
 
     /* Take Action / Resources title images (above each card group).
        Natural SVG render — follows master SVG proportions (402x135 viewBox). */
@@ -3376,6 +3403,20 @@ main { padding-top: var(--header-h); }
       user-select: none; -webkit-user-drag: none;
       pointer-events: none;
     }
+    /* Reserve layout space for lazy-loaded findings so document height is
+       stable BEFORE images load. Without this, when user clicks "Take Action"
+       in the menu, getBoundingClientRect() for #m-action-center returns a
+       y-position based on a document that's still missing F2-F8's heights —
+       scroll lands at what was action-center's old y but is now somewhere
+       around F2 because the page got taller after lazy images loaded. */
+    #m-f1 .m-finding-img { aspect-ratio: 402 / 3491; }
+    #m-f2 .m-finding-img { aspect-ratio: 402 / 3805; }
+    #m-f3 .m-finding-img { aspect-ratio: 402 / 3705; }
+    #m-f4 .m-finding-img { aspect-ratio: 402 / 3475; }
+    #m-f5 .m-finding-img { aspect-ratio: 402 / 3588; }
+    #m-f6 .m-finding-img { aspect-ratio: 402 / 3645; }
+    #m-f7 .m-finding-img { aspect-ratio: 402 / 3867; }
+    #m-f8 .m-finding-img { aspect-ratio: 402 / 3610; }
     /* Mobile F2 chart container — base SVG is the Graph Blank version
        (402×3805), with a 594.5-tall empty rectangle reserved for the chart
        at y=2138 to y=2732.5. Chart fits exactly into the blank space —
@@ -3959,14 +4000,16 @@ main { padding-top: var(--header-h); }
       </div>
     </section>
 
-    <!-- TOP 2: Mobile.svg y=4150–5200 (Key Findings intro / 8 Areas of Measurable Impact) -->
-    <div class="m-crop m-crop-top2">
-      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="8 Areas of Measurable Impact" />
-      <!-- Anchor at top of section so scroll lands on the eyebrow -->
-      <!-- "KEY FINDINGS" eyebrow appears at SVG y=4318 (16% into this y=4150–5200 crop).
-           Anchor sits just above it at 14% so the eyebrow lands right under the sticky header. -->
-      <span class="m-anchor" id="m-key-findings"   style="position:absolute; top: 14%;"></span>
-      <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 70%;"></span>
+    <!-- KEY FINDINGS INTRO — replaced (2026-05-02). The old baked content in
+         mobile-homepage-full.svg is no longer rendered here; new copy + new
+         illustration are stacked as two SVGs (text on top, illust below).
+         id="m-key-findings" lives on the outer block (not an inner absolute
+         span) so getBoundingClientRect returns a stable y-position even
+         before lazy-loaded findings below have laid out. -->
+    <div class="m-findings-intro-block" id="m-key-findings">
+      <img class="m-findings-intro-text" src="assets/illustrations/findings-intro-text-mobile.svg" alt="Key Findings — 8 Areas of Measurable Impact. Drawing on quantitative and qualitative data across multiple jurisdictions, eight areas of meaningful, measurable change emerged — for incarcerated people, their families, corrections staff, and the broader public." />
+      <img class="m-findings-intro-illust" src="assets/illustrations/findings-intro-illust-mobile.svg" alt="" aria-hidden="true" />
+      <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 60%;"></span>
     </div>
 
     <!-- FINDINGS region — 8 standalone SVGs stacked. Sub-nav appears here. -->
@@ -4067,10 +4110,13 @@ main { padding-top: var(--header-h); }
       </article>
     </div>
 
-    <!-- ACTION CENTER: Mobile.svg y=8800–9450 (just the headline + handshake illustration) -->
-    <div class="m-crop m-crop-actioncenter">
+    <!-- ACTION CENTER: Mobile.svg y=8800–9450 (just the headline + handshake illustration).
+         id="m-action-center" on the outer crop div (not an inner absolute span)
+         so menu link "Take Action" lands here reliably even on first click —
+         outer div's position is computed from document flow rather than
+         relative-% which can be miscalculated before lazy images settle. -->
+    <div class="m-crop m-crop-actioncenter" id="m-action-center">
       <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Action Center" />
-      <span class="m-anchor" id="m-action-center" style="position:absolute; top: 2%;"></span>
     </div>
 
     <!-- TAKE ACTION title -->
@@ -4233,13 +4279,13 @@ main { padding-top: var(--header-h); }
       closeMenu();
       var el = document.getElementById(id);
       if (!el) return;
-      // Small delay so menu animates out cleanly first.
-      // -60 + 5 tucks target ~5px behind topbar to kill the sliver of previous
-      // section's bottom strip showing above (matches data-m-scroll handler).
+      // -56 matches mobile topbar height EXACTLY (not -60 which left a 4px
+      // gap). Target's top lands flush with the bottom edge of the header,
+      // no previous-section peek and no extra empty cream above the fold.
       setTimeout(function(){
-        var y = el.getBoundingClientRect().top + window.scrollY - 60 + 5;
+        var y = el.getBoundingClientRect().top + window.scrollY - 56;
         window.scrollTo({ top: y, behavior: 'smooth' });
-      }, 200);
+      }, 350);
     });
   });
 
@@ -4812,7 +4858,7 @@ main { padding-top: var(--header-h); }
 <!-- Locked Figma SVG (Frame 2117131440) — title, body, illustration, shapes
      all baked in. Same edge-to-edge pattern as the findings sections. -->
 <section id="findings" class="findings-intro findings-intro-locked" aria-label="Key Findings" data-nav-tone="light">
-  <img class="findings-intro-base" src="assets/illustrations/findings-intro-locked.svg" alt="Key Findings — 8 Areas of Measurable Impact. Drawing on data and interviews across multiple jurisdictions, eight areas of meaningful, measurable change emerged for incarcerated people, their families, corrections staff, and the broader public." data-anim="fade-up" />
+  <img class="findings-intro-base" src="assets/illustrations/findings-intro-block.svg" alt="Key Findings — 8 Areas of Measurable Impact. Drawing on quantitative and qualitative data across multiple jurisdictions, eight areas of meaningful, measurable change emerged — for incarcerated people, their families, corrections staff, and the broader public." data-anim="fade-up" />
 </section>
 
 
