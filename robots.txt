@@ -1,0 +1,6 @@
+# Allow all crawlers — search engines (Google, Bing) and social media
+# preview bots (Facebook, Slack, X/Twitter, LinkedIn, iMessage).
+User-agent: *
+Allow: /
+
+Sitemap: https://poweroffree.connectfamiliesnow.com/sitemap.xml
