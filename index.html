@@ -84,6 +84,9 @@ html { scroll-behavior: smooth; }
 :target,
 section[id] { scroll-margin-top: var(--header-h); }
 [id="hero-video"], [id="aboutreport"], [id="aboutproject"], [id="findings"], [id="actions"] { scroll-margin-top: var(--header-h); }
+/* Finding articles need extra offset for the -5.56vw negative margin overlap
+   between findings, on top of the standard top-section offset. */
+.finding[id] { scroll-margin-top: calc(var(--header-h) + 5.56vw); }
 body {
   font-family: var(--display);
   font-size: 17px;
@@ -2499,13 +2502,56 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* Smaller-illustration SVG natural is 1440×3213, but the bottom 813px is
-     a stray duplicate of the top + 80 empty. We CROP via wrap aspect 1440/2400
-     + overflow hidden + img with natural aspect anchored top. Wrap visually
-     ends right at the bottom strip — F3 follows naturally with no overlap. */
-  aspect-ratio: 1440 / 2400;
-  overflow: hidden;
-  margin: 0;
+  /* New F2 SVG natural dims: 1440×2435. Title pill ends at y=2355 (80px empty
+     bg below). Wrap renders the full SVG height; negative margin -5.56vw
+     (= 80/1440) pulls the next section up to overlay the empty bottom —
+     same pattern as F1, F3-F8. */
+  aspect-ratio: 1440 / 2435;
+  margin: 0 0 -5.56vw 0;
+}
+/* F2 chart container — middle-LEFT of the F2 desktop layout. Chart bottom
+   aligns with the bottom of the body copy on the right (text ends ~y=1210).
+   Chart natural dims 654×702. The chart SVG itself contains the 6 state radio
+   buttons; we overlay invisible click targets on each radio so swap is one tap. */
+.f2-chart-container {
+  position: absolute;
+  top: 32.73%;    /* 797 / 2435 — chart bottom lands at y=1499 (= bottom of
+                     body text on the right, which spans y=1197-1499) */
+  left: 4.93%;    /* 71 / 1440 — same gutter as the body text above */
+  width: 45.42%;  /* 654 / 1440 — chart natural width */
+  height: 28.83%; /* 702 / 2435 — chart natural height */
+  z-index: 3;
+}
+.f2-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top left;
+  pointer-events: none;
+  user-select: none;
+}
+/* Invisible click zones over each radio in the chart SVG. Chart natural is
+   654×702 with radios at cx=8 cy=135,167,199,231,263,295 (32px row spacing). */
+.f2-chart-radio {
+  position: absolute;
+  left: 0;
+  width: 38%;        /* covers radio + label text */
+  height: 4.56%;     /* 32 / 702 */
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+/* Debug mode for tuning F2 chart position. window.F2_DEBUG = true */
+.f2-wrap[data-debug="1"] .f2-chart-container {
+  outline: 3px dashed magenta;
+  outline-offset: 4px;
+  background: rgba(255, 0, 255, 0.08);
+}
+.f2-wrap[data-debug="1"] .f2-chart-radio {
+  outline: 2px dashed cyan;
+  background: rgba(0, 255, 255, 0.18);
 }
 .f2-base {
   position: absolute;
@@ -2623,9 +2669,11 @@ main { padding-top: var(--header-h); }
 .f7-wrap { aspect-ratio: 1440 / 2398; }   /* smaller-illust update (was 2496) */
 .f8-wrap { aspect-ratio: 1440 / 2416; }   /* smaller-illust update (same dims) */
 
-/* F7 has extra empty plum space at the bottom of its SVG beyond the
-   standard 80px crop — bump the negative margin so F8 pulls up further. */
-.f7-wrap { margin: 0 0 -12vw 0; }
+/* F7 wrap uses the same -5.56vw crop as the other findings. The previous
+   -12vw was a leftover hack from the old SVG layout — too aggressive on the
+   new design; F8 pulled up far enough to overlap F7's title pill + author
+   attribution. */
+.f7-wrap { margin: 0 0 -5.56vw 0; }
 
 /* Right-margin patch for F5 + F8 — 130px wide (130/1440 = 9.03vw). Bottom
    strip is excluded so the video + quote stay edge-to-edge as designed. */
@@ -3172,6 +3220,87 @@ main { padding-top: var(--header-h); }
       user-select: none; -webkit-user-drag: none;
       pointer-events: none;
     }
+    /* Mobile F2 chart container — placement from reference SVG (362×867 at
+       translate(20, 2138)). Chart's 6 radio buttons (3 left col cx=8, 3 right
+       col cx=172) get invisible click overlays. */
+    .m-f2-chart-container {
+      position: absolute;
+      top: 52.44%;     /* 2138 / 4077 */
+      left: 4.98%;     /* 20 / 402 */
+      width: 90.05%;   /* 362 / 402 */
+      height: 21.27%;  /* 867 / 4077 — chart natural aspect ratio */
+      z-index: 3;
+    }
+    .m-f2-chart {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: top left;
+      pointer-events: none;
+      user-select: none; -webkit-user-drag: none;
+    }
+    .m-f2-chart-radio {
+      position: absolute;
+      height: 4.15%;    /* 36 / 867 */
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      padding: 0;
+    }
+    /* Mobile F2 debug — set window.F2_DEBUG = true in console */
+    .m-finding[data-f2-debug] .m-f2-chart-container {
+      outline: 3px dashed magenta;
+      outline-offset: 4px;
+      background: rgba(255, 0, 255, 0.08);
+    }
+    .m-finding[data-f2-debug] .m-f2-chart-radio {
+      outline: 2px dashed cyan;
+      background: rgba(0, 255, 255, 0.18);
+    }
+    /* m-f2-state-btn removed — chart's baked-in radios are now the toggle UI */
+    /* Mobile finding title bar — full-width coral bar overlaying the existing
+       baked-in pill at the bottom of each photo. Play icon left, title right.
+       Top % set per-finding inline to align with the existing pill's y. */
+    .m-finding-titlebar {
+      position: absolute;
+      left: 5%; right: 5%;
+      /* top + bottom set inline per finding so the bar fills exactly from
+         pill_top to photo_bottom — no gaps, no overshoot. */
+      background: var(--warm-coral);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      z-index: 5;
+      pointer-events: none;
+      box-sizing: border-box;
+    }
+    .m-finding-titlebar-icon {
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #fff;
+      display: grid;
+      place-items: center;
+    }
+    .m-finding-titlebar-icon svg {
+      width: 14px;
+      height: 14px;
+      transform: translateX(1px);
+      color: var(--warm-coral);
+    }
+    .m-finding-titlebar-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      color: #fff;
+    }
 
     /* Mobile findings sub-nav — fixed at bottom of viewport, appears when scrolled into findings */
     .m-subnav {
@@ -3552,7 +3681,7 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-felix.jpg" alt="Felix" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-felix.jpg" alt="Felix" loading="lazy" style="object-position: center top;" />
           <div class="m-quote-text">
             <p class="m-q-name">Felix</p>
             <p class="m-q-role">Prison counselor, New York</p>
@@ -3658,6 +3787,10 @@ main { padding-top: var(--header-h); }
     <div class="m-findings" data-m-findings>
       <article class="m-finding" id="m-f1" data-finding-idx="0" data-finding-area="Connection">
         <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" />
+        <div class="m-finding-titlebar" style="top: 96.05%; bottom: 0;">
+          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="m-finding-titlebar-text">More &ldquo;I Love Yous&rdquo;</span>
+        </div>
         <button class="m-tap" type="button" data-m-video="1187871199"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 1 video"></button>
         <!-- Toggle dots: cy=1973 in BOTH SVGs (prisons 402×3491, jails 402×3431).
@@ -3671,36 +3804,78 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Financial">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" />
+        <!-- 6-state chart toggle. Mobile chart has 2-col radio layout: left col
+             cx=8 cy=135/167/199 (Federal/MA/CT), right col cx=172 cy=135/171/207
+             (CA/MN/NY). Invisible click overlays on each. -->
+        <div class="m-f2-chart-container" data-f2-chart-wrap-mobile>
+          <img class="m-f2-chart" data-f2-chart-mobile src="assets/charts/mobile/Connecticut.svg" alt="Connecticut chart" />
+          <!-- Left column: cx=8 (Federal / California / Connecticut) -->
+          <button type="button" class="m-f2-chart-radio" data-state="Federal"       style="top: 13.73%; left: 0;     width: 44%;" aria-label="Show Federal data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="California"    style="top: 17.42%; left: 0;     width: 44%;" aria-label="Show California data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Connecticut"   style="top: 21.11%; left: 0;     width: 44%;" aria-label="Show Connecticut data"></button>
+          <!-- Right column: cx=172 (Massachusetts / Minnesota / New York) -->
+          <button type="button" class="m-f2-chart-radio" data-state="Massachusetts" style="top: 13.73%; left: 44%;   width: 56%;" aria-label="Show Massachusetts data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 17.88%; left: 44%;   width: 56%;" aria-label="Show Minnesota data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 22.03%; left: 44%;   width: 56%;" aria-label="Show New York data"></button>
+        </div>
+        <div class="m-finding-titlebar" style="top: 96.62%; bottom: 0;">
+          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="m-finding-titlebar-text">A Weight&rsquo;s Been Lifted</span>
+        </div>
         <button class="m-tap" type="button" data-m-video="1188179417"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 2 video"></button>
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" />
+        <div class="m-finding-titlebar" style="top: 96.27%; bottom: 0;">
+          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="m-finding-titlebar-text">Mutual Support</span>
+        </div>
         <button class="m-tap" type="button" data-m-video=""
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 3 video"></button>
       </article>
       <article class="m-finding" id="m-f4" data-finding-idx="3" data-finding-area="Parenting">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-04.svg" alt="Finding 4: Parenting and Child Development" />
+        <div class="m-finding-titlebar" style="top: 96.03%; bottom: 0;">
+          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="m-finding-titlebar-text">I Raised My Daughter Over the Phone</span>
+        </div>
         <button class="m-tap" type="button" data-m-video="1188176628"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 4 video"></button>
       </article>
       <article class="m-finding" id="m-f5" data-finding-idx="4" data-finding-area="Health">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-05.svg" alt="Finding 5: Improved Mental and Physical Health" />
+        <div class="m-finding-titlebar" style="top: 96.15%; bottom: 0;">
+          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="m-finding-titlebar-text">Connection as Medicine</span>
+        </div>
         <button class="m-tap" type="button" data-m-video=""
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 5 video"></button>
       </article>
       <article class="m-finding" id="m-f6" data-finding-idx="5" data-finding-area="Safety">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-06.svg" alt="Finding 6: Less Violence and Operational Disruption" />
+        <div class="m-finding-titlebar" style="top: 95.72%; bottom: 0.22%;">
+          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="m-finding-titlebar-text">If They&rsquo;re Having a Good Day, We&rsquo;re Having a Good Day</span>
+        </div>
         <button class="m-tap" type="button" data-m-video=""
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 6 video"></button>
       </article>
       <article class="m-finding" id="m-f7" data-finding-idx="6" data-finding-area="Rehabilitation">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-07.svg" alt="Finding 7: Rehabilitation" />
+        <div class="m-finding-titlebar" style="top: 96.43%; bottom: 1.42%;">
+          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="m-finding-titlebar-text">Hope Has a Phone Number</span>
+        </div>
         <button class="m-tap" type="button" data-m-video="1188176912"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 7 video"></button>
       </article>
       <article class="m-finding" id="m-f8" data-finding-idx="7" data-finding-area="Reentry">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-08.svg" alt="Finding 8: Reentry Planning and Success" />
+        <div class="m-finding-titlebar" style="top: 96.18%; bottom: 0;">
+          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="m-finding-titlebar-text">The Calls That Come Before Freedom</span>
+        </div>
         <button class="m-tap" type="button" data-m-video=""
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 8 video"></button>
       </article>
@@ -3759,14 +3934,14 @@ main { padding-top: var(--header-h); }
     <section class="m-methodology">
       <span class="m-anchor" id="m-about-project"></span>
       <img class="m-methodology-img" src="assets/mobile/mobile-methodology.svg" alt="About This Report — Acknowledgments" />
-      <!-- Click overlays for the two baked-in pills.
-           SVG is 402×1978. Worth Rises bar: y=1228, h=84 → top 62.08%, height 4.25%.
-           Connecting Families bar: y=1312, h=84 → top 66.33%, height 4.25%.
+      <!-- Click overlays for the two baked-in pills (updated methodology SVG).
+           SVG is 402×1918. Worth Rises bar: y=1749.71, h=84 → top 91.22%, height 4.38%.
+           Connecting Families bar: y=1833.71, h=84 → top 95.60%, height 4.38%.
            Both span full width of the SVG. -->
       <a class="m-tap is-link" href="https://worthrises.org" target="_blank" rel="noopener"
-         style="top: 62.08%; left: 0; right: 0; height: 4.25%;" aria-label="Visit Worth Rises"></a>
+         style="top: 91.22%; left: 0; right: 0; height: 4.38%;" aria-label="Visit Worth Rises"></a>
       <a class="m-tap is-link" href="https://connectfamiliesnow.com/" target="_blank" rel="noopener"
-         style="top: 66.33%; left: 0; right: 0; height: 4.25%;" aria-label="Connecting Families campaign"></a>
+         style="top: 95.60%; left: 0; right: 0; height: 4.38%;" aria-label="Connecting Families campaign"></a>
     </section>
 
     <!-- Custom mobile footer — mirrors desktop brand identity -->
@@ -3948,6 +4123,21 @@ main { padding-top: var(--header-h); }
       }, { rootMargin: '300px 0px' });
       preObs.observe(f1Img);
     }
+  }
+
+  /* ---------- Mobile F2 chart 6-state toggle ----------
+     Invisible click overlays sit on top of the chart's baked-in radio buttons.
+     Click → swap chart src (chart natively shows the new state's filled radio). */
+  var mF2Chart = document.querySelector('[data-f2-chart-mobile]');
+  var mF2Wrap = document.querySelector('[data-f2-chart-wrap-mobile]');
+  if (mF2Chart && mF2Wrap) {
+    mF2Wrap.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-state]');
+      if (!btn) return;
+      var state = btn.getAttribute('data-state');
+      mF2Chart.src = 'assets/charts/mobile/' + state + '.svg';
+      mF2Chart.alt = state + ' chart — Financial Relief';
+    });
   }
 
   /* ---------- Mobile findings sub-nav ---------- */
@@ -4462,6 +4652,19 @@ main { padding-top: var(--header-h); }
            data-anim-delay="300">
         <img class="f-num-svg" src="assets/illustrations/separated/finding-02/number.svg" alt="$622 million saved by families to date" />
         <span class="f-num-counter">$0 MIL</span>
+      </div>
+      <!-- 6-state chart toggle. The chart SVG itself draws the 6 radio buttons
+           (Federal, Massachusetts, Connecticut, California, Minnesota, New York
+           at cx=8, cy=135/167/199/231/263/295). Invisible buttons overlay each
+           radio; click → swap chart src to that state's chart. -->
+      <div class="f2-chart-container" data-f2-chart-wrap>
+        <img class="f2-chart" data-f2-chart src="assets/charts/desktop/Connecticut.svg" alt="Connecticut chart — Financial Relief by state" />
+        <button type="button" class="f2-chart-radio" data-state="Federal"        style="top: 16.95%;" aria-label="Show Federal data"></button>
+        <button type="button" class="f2-chart-radio" data-state="California"     style="top: 21.51%;" aria-label="Show California data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Connecticut"    style="top: 26.07%;" aria-label="Show Connecticut data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Massachusetts"  style="top: 30.63%;" aria-label="Show Massachusetts data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Minnesota"      style="top: 35.18%;" aria-label="Show Minnesota data"></button>
+        <button type="button" class="f2-chart-radio" data-state="New York"       style="top: 39.74%;" aria-label="Show New York data"></button>
       </div>
       <!-- Video click target over baked thumbnail (bottom-left). TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
@@ -5145,7 +5348,12 @@ main { padding-top: var(--header-h); }
       if (!target) return;
       var headerEl = document.querySelector('.site-header');
       var off = headerEl ? headerEl.offsetHeight : 72;
-      var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+      // Each section has -5.56vw negative margin-bottom to overlap next.
+      // Add that overlap (80px on 1440-wide) so we land at the visual top of
+      // the target's content, not at its geometric box top (which is INSIDE
+      // the previous section's visible area).
+      var overlap = window.innerWidth * 0.0556;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - off + overlap;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
 
@@ -5163,13 +5371,17 @@ main { padding-top: var(--header-h); }
       scrollToFinding(currentActiveIdx() + 1);
     });
     if (skipBtn) skipBtn.addEventListener('click', function () {
+      // Skip to Take Action — #actions follows finding-08 which has -5.56vw
+      // negative margin, so we need to add that overlap to land past finding-08's
+      // visible content into #actions.
       var target = document.getElementById('actions')
                 || document.getElementById('aboutproject')
                 || document.getElementById('take-action');
       if (!target) return;
       var headerEl = document.querySelector('.site-header');
       var off = headerEl ? headerEl.offsetHeight : 72;
-      var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+      var overlap = window.innerWidth * 0.0556;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - off + overlap;
       window.scrollTo({ top: y, behavior: 'smooth' });
     });
 
@@ -5221,7 +5433,8 @@ main { padding-top: var(--header-h); }
         if (!target) return;
         var headerH = document.querySelector('.site-header');
         var off = headerH ? headerH.offsetHeight : 72;
-        var y = target.getBoundingClientRect().top + window.pageYOffset - off + 1;
+        var overlap = window.innerWidth * 0.0556;
+        var y = target.getBoundingClientRect().top + window.pageYOffset - off + overlap;
         window.scrollTo({ top: y, behavior: 'smooth' });
       });
     });
@@ -5282,6 +5495,65 @@ main { padding-top: var(--header-h); }
       }, { rootMargin: '300px 0px 300px 0px' });  // start preload 300px before F1 hits viewport
       preloadObs.observe(f1Wrap);
     }
+  }
+
+  /* ---------- Top-nav anchor scroll handler ----------
+     Each top section has internal padding (about-copy, etc.) that pushes its
+     eyebrow ~66px below the section's box top. Browsers using CSS
+     scroll-margin-top land at the box top, so the user sees ~66px of empty bg
+     before the eyebrow. Hijack all in-page anchor clicks and scroll DEEPER by
+     that 66px to land at the visible content top. #actions also gets the
+     5.56vw overlap offset on top of that. */
+  var TOP_NAV_INSET = 80;          // section padding-top → empty bg above eyebrow
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || href.length < 2) return;
+    // Skip anchors handled elsewhere (mobile uses data-m-scroll, sub-nav uses data-go)
+    if (a.hasAttribute('data-m-scroll')) return;
+    if (a.hasAttribute('data-go')) return;
+    a.addEventListener('click', function (e) {
+      var target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault();
+      var headerEl = document.querySelector('.site-header');
+      var off = headerEl ? headerEl.offsetHeight : 72;
+      var extra = TOP_NAV_INSET;
+      // #actions has finding-08's -5.56vw overlap above it on top of the inset
+      if (href === '#actions') extra += window.innerWidth * 0.0556;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - off + extra;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+  });
+
+  /* ---------- Finding 02: 6-state chart toggle ----------
+     Connecticut renders by default. Invisible click overlays sit on each of
+     the chart SVG's baked-in radio buttons. Click → swap chart src; the new
+     state's chart already shows that radio's inner dot filled. */
+  var f2Chart = document.querySelector('[data-f2-chart]');
+  var f2ChartWrap = document.querySelector('[data-f2-chart-wrap]');
+  if (f2Chart && f2ChartWrap) {
+    f2ChartWrap.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-state]');
+      if (!btn) return;
+      var state = btn.getAttribute('data-state');
+      f2Chart.src = 'assets/charts/desktop/' + state + '.svg';
+      f2Chart.alt = state + ' chart — Financial Relief';
+    });
+    // Debug: window.F2_DEBUG = true; in console toggles outline overlays on
+    // BOTH desktop AND mobile chart elements so you can visually tune positions.
+    var f2Wrap = f2Chart.closest('.f2-wrap');
+    var mF2Article = document.getElementById('m-f2');
+    Object.defineProperty(window, 'F2_DEBUG', {
+      configurable: true,
+      get: function () { return f2Wrap && f2Wrap.getAttribute('data-debug') === '1'; },
+      set: function (v) {
+        if (f2Wrap) f2Wrap.setAttribute('data-debug', v ? '1' : '0');
+        if (mF2Article) {
+          if (v) mF2Article.setAttribute('data-f2-debug', '1');
+          else   mF2Article.removeAttribute('data-f2-debug');
+        }
+      }
+    });
   }
 
   /* ---------- Finding video click overlays ----------

@@ -20,6 +20,14 @@ finding 4/
 New Folder With Items/
 finding 1*detailed*svgs/
 
+# Designer hand-off folders (raw exports, not used by index.html)
+Finding Desktop Updated/
+Mobile findings updated/
+Updated Photos/
+Desktop finding 3 Graph/
+Mobile finding 3 Graph/
+assets/photos/
+
 # Editor / IDE
 .vscode/
 .idea/
