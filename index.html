@@ -3015,18 +3015,19 @@ main { padding-top: var(--header-h); }
       display: block;
     }
     .m-hero-video-bg {
-      /* Source is portrait, intended to fit the iPhone screen; previous version
-         was almost perfect except a tiny black sliver on the left/right edges.
-         Scale 1.06 zooms in ~3% on each side to swallow that gap. parent's
-         overflow: hidden crops the excess. object-fit cover handles the
-         aspect-ratio match in the rare case the section ratio drifts. */
+      /* "Grab a corner and pull" — scale the video up enough to swallow
+         whatever black slivers iOS Safari is leaving on the sides. The
+         previous 1.06 wasn't enough; bumping to 1.15 = ~7% extra on each
+         side, and parent's overflow: hidden crops the rest. */
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center center;
-      transform: scale(1.06);
+      transform: scale(1.15);
+      transform-origin: center center;
       display: block;
     }
     .m-hero-video-card {
@@ -3758,7 +3759,7 @@ main { padding-top: var(--header-h); }
     <!-- HERO VIDEO BLOCK — custom, mobile-optimized. Ambient mp4 loops in background;
          deep-plum title bar at bottom with coral play button. Tap → Vimeo modal. -->
     <section class="m-hero-video" id="m-video">
-      <video class="m-hero-video-bg" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <video class="m-hero-video-bg" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true" disablepictureinpicture>
         <source src="assets/mobile/ambient-mobile.mp4" type="video/mp4">
       </video>
       <button class="m-hero-video-card" type="button" data-m-video="1188576354" aria-label="Play the documentary film">
@@ -4221,6 +4222,27 @@ main { padding-top: var(--header-h); }
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape'){ closeMenu(); closeVideo(); }
   });
+
+  /* ---------- Mobile ambient hero: force-play fallback ----------
+     iOS Safari occasionally refuses autoplay on first paint (low-power mode,
+     conservative power-save heuristics, etc.) even with muted+playsinline.
+     Calling .play() explicitly when the video has enough data — and again
+     on first user interaction — covers those cases. */
+  (function(){
+    var ambient = document.querySelector('.m-hero-video-bg');
+    if (!ambient) return;
+    function tryPlay(){
+      var p = ambient.play();
+      if (p && typeof p.catch === 'function') p.catch(function(){ /* ignore */ });
+    }
+    if (ambient.readyState >= 2) tryPlay();
+    ambient.addEventListener('loadeddata', tryPlay);
+    ambient.addEventListener('canplay', tryPlay);
+    // First touch / scroll anywhere on the page also wakes it up
+    var once = { once: true, passive: true };
+    document.addEventListener('touchstart', tryPlay, once);
+    document.addEventListener('scroll', tryPlay, once);
+  })();
 
   /* ---------- F1 prisons/jails toggle ---------- */
   var f1Img = document.getElementById('m-f1-img');
