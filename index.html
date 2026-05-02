@@ -4309,12 +4309,24 @@ main { padding-top: var(--header-h); }
      Click → swap chart src (chart natively shows the new state's filled radio). */
   var mF2Chart = document.querySelector('[data-f2-chart-mobile]');
   var mF2Wrap = document.querySelector('[data-f2-chart-wrap-mobile]');
+  // TEST FLAG: ?ct=v2 in URL routes Connecticut clicks (and the default chart
+  // load) to Connecticut-v2.svg so we can preview the redesigned chart in
+  // the live viewport without unwiring the existing 5-state setup. Remove
+  // this block + the v2 SVG to revert.
+  var ctV2 = (function(){
+    try { return new URLSearchParams(window.location.search).get('ct') === 'v2'; }
+    catch (e) { return false; }
+  })();
   if (mF2Chart && mF2Wrap) {
+    if (ctV2) mF2Chart.src = 'assets/charts/mobile/Connecticut-v2.svg';
     mF2Wrap.addEventListener('click', function(e){
       var btn = e.target.closest('[data-state]');
       if (!btn) return;
       var state = btn.getAttribute('data-state');
-      mF2Chart.src = 'assets/charts/mobile/' + state + '.svg';
+      var src = (ctV2 && state === 'Connecticut')
+        ? 'assets/charts/mobile/Connecticut-v2.svg'
+        : 'assets/charts/mobile/' + state + '.svg';
+      mF2Chart.src = src;
       mF2Chart.alt = state + ' chart — Financial Relief';
     });
   }
