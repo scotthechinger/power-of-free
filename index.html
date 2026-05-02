@@ -2986,15 +2986,23 @@ main { padding-top: var(--header-h); }
       display: block;
     }
     .m-hero-video-bg {
-      /* iOS-safe full-cover video. `width: 100vw` forces the video to span
-         the full viewport width regardless of intrinsic dimensions, which
-         iOS Safari otherwise honors over CSS object-fit. */
+      /* iOS-safe full-cover video. The classic "background video" pattern:
+         center the element with a transform, then force it to be AT LEAST as
+         large as the container in both dimensions. The video keeps its
+         aspect ratio (width/height auto) but min-width:100vw + min-height:100%
+         guarantees it always overflows past the viewport edges; the parent's
+         overflow:hidden crops the excess. This is the most reliable approach
+         on iOS Safari, where object-fit on <video> historically misbehaves. */
       position: absolute;
-      inset: 0;
-      width: 100vw;
-      height: 100%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: auto;
+      height: auto;
+      min-width: 100vw;
+      min-height: 100%;
+      max-width: none;
       object-fit: cover;
-      object-position: center center;
       display: block;
     }
     .m-hero-video-card {
