@@ -3015,19 +3015,15 @@ main { padding-top: var(--header-h); }
       display: block;
     }
     .m-hero-video-bg {
-      /* "Grab a corner and pull" — scale the video up enough to swallow
-         whatever black slivers iOS Safari is leaving on the sides. The
-         previous 1.06 wasn't enough; bumping to 1.15 = ~7% extra on each
-         side, and parent's overflow: hidden crops the rest. */
+      /* Source is now native portrait (1080x1920 — rotated in place), so
+         object-fit: cover fills the section cleanly without any scale hack.
+         100vw width guarantees full viewport span on iOS Safari. */
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
+      inset: 0;
+      width: 100vw;
       height: 100%;
       object-fit: cover;
       object-position: center center;
-      transform: scale(1.15);
-      transform-origin: center center;
       display: block;
     }
     .m-hero-video-card {
