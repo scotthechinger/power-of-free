@@ -416,6 +416,21 @@ a { color: inherit; text-decoration: none; }
   transition: filter .2s ease;
 }
 .header-menu-cta:hover { filter: brightness(1.06); }
+.header-menu-back-to-top {
+  margin-top: 14px;
+  padding: 14px 18px;
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.28);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.header-menu-back-to-top:hover { background: rgba(255,255,255,0.08); }
 .header-menu-backdrop {
   position: fixed; inset: 0;
   background: rgba(0,0,0,0);
@@ -2669,11 +2684,10 @@ main { padding-top: var(--header-h); }
 .f7-wrap { aspect-ratio: 1440 / 2398; }   /* smaller-illust update (was 2496) */
 .f8-wrap { aspect-ratio: 1440 / 2416; }   /* smaller-illust update (same dims) */
 
-/* F7 wrap uses the same -5.56vw crop as the other findings. The previous
-   -12vw was a leftover hack from the old SVG layout — too aggressive on the
-   new design; F8 pulled up far enough to overlap F7's title pill + author
-   attribution. */
-.f7-wrap { margin: 0 0 -5.56vw 0; }
+/* F7 wrap uses -6.53vw because F7 has 94px of empty plum bg below its title
+   pill (vs ~80px for other findings). 94/1440 = 6.53vw — exact amount needed
+   for F8's lavender to fully cover F7's bottom plum strip. */
+.f7-wrap { margin: 0 0 -6.53vw 0; }
 
 /* Right-margin patch for F5 + F8 — 130px wide (130/1440 = 9.03vw). Bottom
    strip is excluded so the video + quote stay edge-to-edge as designed. */
@@ -2958,10 +2972,18 @@ main { padding-top: var(--header-h); }
       display: block;
     }
     .m-hero-video-bg {
+      /* iOS Safari sometimes ignores `object-fit: cover` on inline <video>
+         elements. The transform-based center + min-w/min-h pattern is a
+         reliable cross-browser workaround that forces the video to fill the
+         container, cropping any overflow. */
       position: absolute;
-      inset: 0;
+      top: 50%;
+      left: 50%;
       width: 100%;
       height: 100%;
+      min-width: 100%;
+      min-height: 100%;
+      transform: translate(-50%, -50%);
       object-fit: cover;
       display: block;
     }
@@ -3031,7 +3053,7 @@ main { padding-top: var(--header-h); }
       /* Lavender per QA. No bottom padding so the section flushes into the next without a white seam. */
       background: var(--soft-lavender);
       padding: 56px 0 0;
-      margin-bottom: -1px;
+      margin-bottom: -3px;
     }
     .m-quotes-header {
       padding: 0 24px 28px;
@@ -3067,6 +3089,27 @@ main { padding-top: var(--header-h); }
       letter-spacing: -0.01em;
       margin-top: 4px;
     }
+    .m-quotes-arrows {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .m-quotes-arrow {
+      width: 44px;
+      height: 44px;
+      background: var(--warm-coral);
+      color: #fff;
+      border: 0;
+      border-radius: 50%;
+      font-size: 20px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .m-quotes-arrow:hover { filter: brightness(0.92); }
+    .m-quotes-arrow:active { transform: scale(0.95); }
     .m-quotes-carousel {
       display: flex;
       overflow-x: auto;
@@ -3081,23 +3124,26 @@ main { padding-top: var(--header-h); }
     .m-quote-card {
       flex: 0 0 290px;
       scroll-snap-align: center;
-      background: #ffffff;
+      background: var(--cloud-neutral);   /* was white */
       display: flex;
       flex-direction: column;
       box-shadow: 0 4px 18px -8px rgba(0,0,0,0.18);
+      min-height: 600px;                  /* uniform card height across all quotes */
     }
     .m-quote-photo {
       width: 100%;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 4 / 5;                /* taller than square — more of the photo visible */
       object-fit: cover;
+      object-position: center top;
       display: block;
       background: #eee;
     }
     .m-quote-text {
-      padding: 22px 22px 26px;
+      padding: 18px 22px 22px;
       flex: 1;
       display: flex;
       flex-direction: column;
+      justify-content: flex-end;          /* push text to the bottom */
     }
     .m-q-mark {
       font-family: 'ConcretteXL', 'Fraunces', serif;
@@ -3208,7 +3254,7 @@ main { padding-top: var(--header-h); }
     }
 
     /* Finding region: stacked SVGs */
-    .m-findings { position: relative; }
+    .m-findings { position: relative; margin-top: -1px; }  /* kill seam above F1 */
     .m-finding {
       position: relative;
       width: 100%;
@@ -3264,18 +3310,22 @@ main { padding-top: var(--header-h); }
        Top % set per-finding inline to align with the existing pill's y. */
     .m-finding-titlebar {
       position: absolute;
-      left: 5%; right: 5%;
-      /* top + bottom set inline per finding so the bar fills exactly from
-         pill_top to photo_bottom — no gaps, no overshoot. */
+      /* Bar exactly covers the original baked pill — same y, same height per
+         finding (set inline below), but full photo width so it spans flush
+         from left edge of photo (x=20, 4.98%) to right edge (x=382, 4.98%
+         from right). Height scales with viewport (% of article = % of vw). */
+      left: 4.98%;
+      right: 4.98%;
       background: var(--warm-coral);
       color: #fff;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 16px 20px;
+      padding: 0 16px;
       z-index: 5;
       pointer-events: none;
       box-sizing: border-box;
+      overflow: hidden;
     }
     .m-finding-titlebar-icon {
       flex-shrink: 0;
@@ -3287,10 +3337,11 @@ main { padding-top: var(--header-h); }
       place-items: center;
     }
     .m-finding-titlebar-icon svg {
-      width: 14px;
-      height: 14px;
-      transform: translateX(1px);
+      width: 12px;
+      height: 12px;
+      margin-left: 2px;  /* optical centering — play triangle has heavier left edge */
       color: var(--warm-coral);
+      display: block;
     }
     .m-finding-titlebar-text {
       font-family: 'Inter', sans-serif;
@@ -3577,6 +3628,19 @@ main { padding-top: var(--header-h); }
       border-radius: 0;
     }
     .m-menu-cta:hover { filter: brightness(1.06); }
+    .m-menu-back-to-top {
+      margin-top: 14px;
+      padding: 14px 18px;
+      background: transparent;
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.28);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
 
     /* ---------- Vimeo modal ---------- */
     .m-video {
@@ -3660,6 +3724,10 @@ main { padding-top: var(--header-h); }
       <div class="m-quotes-header">
         <p class="m-quotes-eyebrow">Testimonials</p>
         <h2 class="m-quotes-title">More Than Just <em>A Phone Call</em></h2>
+        <div class="m-quotes-arrows" aria-label="Carousel navigation">
+          <button type="button" class="m-quotes-arrow" data-m-quotes-prev aria-label="Previous quote">&larr;</button>
+          <button type="button" class="m-quotes-arrow" data-m-quotes-next aria-label="Next quote">&rarr;</button>
+        </div>
       </div>
       <div class="m-quotes-carousel" data-m-quotes>
         <article class="m-quote-card">
@@ -3787,7 +3855,7 @@ main { padding-top: var(--header-h); }
     <div class="m-findings" data-m-findings>
       <article class="m-finding" id="m-f1" data-finding-idx="0" data-finding-area="Connection">
         <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" />
-        <div class="m-finding-titlebar" style="top: 96.05%; bottom: 0;">
+        <div class="m-finding-titlebar" style="top: 96.05%; height: 1.66%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">More &ldquo;I Love Yous&rdquo;</span>
         </div>
@@ -3818,7 +3886,7 @@ main { padding-top: var(--header-h); }
           <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 17.88%; left: 44%;   width: 56%;" aria-label="Show Minnesota data"></button>
           <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 22.03%; left: 44%;   width: 56%;" aria-label="Show New York data"></button>
         </div>
-        <div class="m-finding-titlebar" style="top: 96.62%; bottom: 0;">
+        <div class="m-finding-titlebar" style="top: 96.62%; height: 1.42%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">A Weight&rsquo;s Been Lifted</span>
         </div>
@@ -3827,7 +3895,7 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" />
-        <div class="m-finding-titlebar" style="top: 96.27%; bottom: 0;">
+        <div class="m-finding-titlebar" style="top: 96.27%; height: 1.57%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Mutual Support</span>
         </div>
@@ -3836,7 +3904,7 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f4" data-finding-idx="3" data-finding-area="Parenting">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-04.svg" alt="Finding 4: Parenting and Child Development" />
-        <div class="m-finding-titlebar" style="top: 96.03%; bottom: 0;">
+        <div class="m-finding-titlebar" style="top: 96.03%; height: 1.67%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">I Raised My Daughter Over the Phone</span>
         </div>
@@ -3845,7 +3913,7 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f5" data-finding-idx="4" data-finding-area="Health">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-05.svg" alt="Finding 5: Improved Mental and Physical Health" />
-        <div class="m-finding-titlebar" style="top: 96.15%; bottom: 0;">
+        <div class="m-finding-titlebar" style="top: 96.15%; height: 1.62%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Connection as Medicine</span>
         </div>
@@ -3854,7 +3922,7 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f6" data-finding-idx="5" data-finding-area="Safety">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-06.svg" alt="Finding 6: Less Violence and Operational Disruption" />
-        <div class="m-finding-titlebar" style="top: 95.72%; bottom: 0.22%;">
+        <div class="m-finding-titlebar" style="top: 95.72%; height: 2.08%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">If They&rsquo;re Having a Good Day, We&rsquo;re Having a Good Day</span>
         </div>
@@ -3863,7 +3931,7 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f7" data-finding-idx="6" data-finding-area="Rehabilitation">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-07.svg" alt="Finding 7: Rehabilitation" />
-        <div class="m-finding-titlebar" style="top: 96.43%; bottom: 1.42%;">
+        <div class="m-finding-titlebar" style="top: 96.43%; height: 1.50%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Hope Has a Phone Number</span>
         </div>
@@ -3872,7 +3940,7 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f8" data-finding-idx="7" data-finding-area="Reentry">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-08.svg" alt="Finding 8: Reentry Planning and Success" />
-        <div class="m-finding-titlebar" style="top: 96.18%; bottom: 0;">
+        <div class="m-finding-titlebar" style="top: 96.18%; height: 1.61%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">The Calls That Come Before Freedom</span>
         </div>
@@ -4001,6 +4069,7 @@ main { padding-top: var(--header-h); }
       <button class="m-menu-link" type="button" data-m-target="m-key-findings">Key Findings</button>
       <button class="m-menu-link" type="button" data-m-target="m-action-center">Take Action</button>
       <a class="m-menu-cta" href="#" target="_blank" rel="noopener">Read the Report</a>
+      <button class="m-menu-back-to-top" type="button" data-back-to-top>&uarr; Back to Top</button>
     </nav>
   </aside>
 
@@ -4054,7 +4123,8 @@ main { padding-top: var(--header-h); }
     });
   });
 
-  // Smooth scroll for in-page anchors
+  // Smooth scroll for in-page anchors. Subtract topbar (60) + small inset (5)
+  // so previous section's bottom strip doesn't show as a sliver above target.
   document.querySelectorAll('[data-m-scroll]').forEach(function(a){
     a.addEventListener('click', function(e){
       var href = a.getAttribute('href');
@@ -4062,7 +4132,7 @@ main { padding-top: var(--header-h); }
       var el = document.querySelector(href);
       if (!el) return;
       e.preventDefault();
-      var y = el.getBoundingClientRect().top + window.scrollY - 64;
+      var y = el.getBoundingClientRect().top + window.scrollY - 60 + 5;
       window.scrollTo({ top: y, behavior: 'smooth' });
     });
   });
@@ -4108,21 +4178,43 @@ main { padding-top: var(--header-h); }
         if (f1Sources[state]) f1Img.src = f1Sources[state];
       });
     });
-    // Preload the alt state when F1 enters view
-    if ('IntersectionObserver' in window) {
-      var preloaded = false;
-      var preObs = new IntersectionObserver(function(entries){
-        entries.forEach(function(en){
-          if (en.isIntersecting && !preloaded) {
-            preloaded = true;
-            var preImg = new Image();
-            preImg.src = f1Sources.jails;
-            preObs.unobserve(en.target);
-          }
-        });
-      }, { rootMargin: '300px 0px' });
-      preObs.observe(f1Img);
+    // Preload the JAILS state immediately on page load so the first toggle
+    // click is instant. Mobile F1 SVGs are 5MB+ each so on-demand loading
+    // takes 1-2 seconds on cellular — preloading on init makes it snappy.
+    var preImg = new Image();
+    preImg.src = f1Sources.jails;
+  }
+
+  /* ---------- Back-to-top button (in hamburger menu) ---------- */
+  document.querySelectorAll('[data-back-to-top]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      // Close any open menu first
+      var mMenu = document.querySelector('[data-m-menu]');
+      if (mMenu) mMenu.classList.remove('is-open');
+      var dMenu = document.querySelector('[data-header-menu]');
+      if (dMenu) dMenu.classList.remove('is-open');
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* ---------- Mobile quotes carousel prev/next arrows ---------- */
+  var mQuotes = document.querySelector('[data-m-quotes]');
+  var mQuotesPrev = document.querySelector('[data-m-quotes-prev]');
+  var mQuotesNext = document.querySelector('[data-m-quotes-next]');
+  if (mQuotes && (mQuotesPrev || mQuotesNext)) {
+    function getCardWidth() {
+      var card = mQuotes.querySelector('.m-quote-card');
+      if (!card) return 300;
+      // Card width + gap
+      return card.offsetWidth + 14;
     }
+    if (mQuotesPrev) mQuotesPrev.addEventListener('click', function(){
+      mQuotes.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+    });
+    if (mQuotesNext) mQuotesNext.addEventListener('click', function(){
+      mQuotes.scrollBy({ left:  getCardWidth(), behavior: 'smooth' });
+    });
   }
 
   /* ---------- Mobile F2 chart 6-state toggle ----------
@@ -4168,7 +4260,8 @@ main { padding-top: var(--header-h); }
       if (!target) return;
       var topbar = document.querySelector('.m-topbar');
       var off = topbar ? topbar.offsetHeight + 4 : 60;
-      var y = target.getBoundingClientRect().top + window.scrollY - off;
+      // +4px extra to kill the tiny sliver of previous section showing above target
+      var y = target.getBoundingClientRect().top + window.scrollY - off + 4;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
     if (prevBtn) prevBtn.addEventListener('click', function(){ scrollToFinding(currentIdx - 1); });
@@ -4264,6 +4357,7 @@ main { padding-top: var(--header-h); }
   <a class="header-menu-link" href="#findings">Key Findings</a>
   <a class="header-menu-link" href="#actions">Take Action</a>
   <a class="header-menu-cta" href="#" target="_blank" rel="noopener">Read the Report</a>
+  <button class="header-menu-back-to-top" type="button" data-back-to-top>&uarr; Back to Top</button>
 </aside>
 
 <main id="top">
@@ -5517,11 +5611,32 @@ main { padding-top: var(--header-h); }
       e.preventDefault();
       var headerEl = document.querySelector('.site-header');
       var off = headerEl ? headerEl.offsetHeight : 72;
-      var extra = TOP_NAV_INSET;
-      // #actions has finding-08's -5.56vw overlap above it on top of the inset
-      if (href === '#actions') extra += window.innerWidth * 0.0556;
+      // #actions follows finding-08's -5.56vw overlap. Other top sections
+      // need the TOP_NAV_INSET to skip section padding-top.
+      var extra = (href === '#actions')
+        ? window.innerWidth * 0.0556
+        : TOP_NAV_INSET;
       var y = target.getBoundingClientRect().top + window.pageYOffset - off + extra;
       window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+  });
+
+  /* ---------- Back-to-top button (desktop hamburger menu) ---------- */
+  document.querySelectorAll('[data-back-to-top]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      // Close any open header menu + backdrop. The backdrop CSS uses
+      // `.is-open` (NOT .is-active) to set visible / pointer-events.
+      var dMenu = document.querySelector('[data-header-menu]');
+      var backdrop = document.querySelector('[data-header-menu-backdrop]');
+      var burger = document.querySelector('[data-header-burger]');
+      if (dMenu) {
+        dMenu.classList.remove('is-open');
+        dMenu.setAttribute('aria-hidden', 'true');
+      }
+      if (backdrop) backdrop.classList.remove('is-open');
+      if (burger) burger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 
