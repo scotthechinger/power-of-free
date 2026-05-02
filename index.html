@@ -3761,7 +3761,7 @@ main { padding-top: var(--header-h); }
     <!-- HERO VIDEO BLOCK — custom, mobile-optimized. Ambient mp4 loops in background;
          deep-plum title bar at bottom with coral play button. Tap → Vimeo modal. -->
     <section class="m-hero-video" id="m-video">
-      <video class="m-hero-video-bg" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true" disablepictureinpicture>
+      <video class="m-hero-video-bg" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true" disablepictureinpicture fetchpriority="high">
         <source src="assets/mobile/ambient-mobile.mp4" type="video/mp4">
       </video>
       <button class="m-hero-video-card" type="button" data-m-video="1188576354" aria-label="Play the documentary film">
@@ -3912,7 +3912,7 @@ main { padding-top: var(--header-h); }
     <!-- FINDINGS region — 8 standalone SVGs stacked. Sub-nav appears here. -->
     <div class="m-findings" data-m-findings>
       <article class="m-finding" id="m-f1" data-finding-idx="0" data-finding-area="Connection">
-        <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" />
+        <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" fetchpriority="high" />
         <div class="m-finding-titlebar" style="top: 96.05%; height: 1.66%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">More &ldquo;I Love Yous&rdquo;</span>
@@ -3929,7 +3929,7 @@ main { padding-top: var(--header-h); }
                 style="top: calc(100vw * 1953 / 402); left: calc(100vw * 126 / 402); width: calc(100vw * 90 / 402); height: calc(100vw * 40 / 402);" aria-label="Show jails data"></button>
       </article>
       <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Financial">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" />
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" loading="lazy" />
         <!-- 6-state chart toggle. Mobile chart has 2-col radio layout: left col
              cx=8 cy=135/167/199 (Federal/MA/CT), right col cx=172 cy=135/171/207
              (CA/MN/NY). Invisible click overlays on each. -->
@@ -3952,7 +3952,7 @@ main { padding-top: var(--header-h); }
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 2 video"></button>
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" />
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" loading="lazy" />
         <div class="m-finding-titlebar" style="top: 96.27%; height: 1.57%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Mutual Support</span>
@@ -3961,7 +3961,7 @@ main { padding-top: var(--header-h); }
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 3 video"></button>
       </article>
       <article class="m-finding" id="m-f4" data-finding-idx="3" data-finding-area="Parenting">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-04.svg" alt="Finding 4: Parenting and Child Development" />
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-04.svg" alt="Finding 4: Parenting and Child Development" loading="lazy" />
         <div class="m-finding-titlebar" style="top: 96.03%; height: 1.67%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">I Raised My Daughter Over the Phone</span>
@@ -3970,7 +3970,7 @@ main { padding-top: var(--header-h); }
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 4 video"></button>
       </article>
       <article class="m-finding" id="m-f5" data-finding-idx="4" data-finding-area="Health">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-05.svg" alt="Finding 5: Improved Mental and Physical Health" />
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-05.svg" alt="Finding 5: Improved Mental and Physical Health" loading="lazy" />
         <div class="m-finding-titlebar" style="top: 96.15%; height: 1.62%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Connection as Medicine</span>
@@ -3979,7 +3979,7 @@ main { padding-top: var(--header-h); }
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 5 video"></button>
       </article>
       <article class="m-finding" id="m-f6" data-finding-idx="5" data-finding-area="Safety">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-06.svg" alt="Finding 6: Less Violence and Operational Disruption" />
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-06.svg" alt="Finding 6: Less Violence and Operational Disruption" loading="lazy" />
         <div class="m-finding-titlebar" style="top: 95.72%; height: 2.08%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">If They&rsquo;re Having a Good Day, We&rsquo;re Having a Good Day</span>
@@ -3988,7 +3988,7 @@ main { padding-top: var(--header-h); }
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 6 video"></button>
       </article>
       <article class="m-finding" id="m-f7" data-finding-idx="6" data-finding-area="Rehabilitation">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-07.svg" alt="Finding 7: Rehabilitation" />
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-07.svg" alt="Finding 7: Rehabilitation" loading="lazy" />
         <div class="m-finding-titlebar" style="top: 96.43%; height: 1.50%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Hope Has a Phone Number</span>
@@ -3997,7 +3997,7 @@ main { padding-top: var(--header-h); }
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 7 video"></button>
       </article>
       <article class="m-finding" id="m-f8" data-finding-idx="7" data-finding-area="Reentry">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-08.svg" alt="Finding 8: Reentry Planning and Success" />
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-08.svg" alt="Finding 8: Reentry Planning and Success" loading="lazy" />
         <div class="m-finding-titlebar" style="top: 96.18%; height: 1.61%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">The Calls That Come Before Freedom</span>
@@ -4823,7 +4823,7 @@ main { padding-top: var(--header-h); }
       <img class="f2-base"
            src="assets/illustrations/separated/finding-02/finding-02-no-number.svg"
            alt="Finding 2 — Financial Relief. $622 million saved by families to date, with 73% flowing to Black and brown families. Savings ranged from $244 to $2,927 per year per incarcerated loved one. Communication costs fell dramatically when the burden shifted off families."
-           data-anim="fade-up" />
+           data-anim="fade-up" loading="lazy" />
       <!-- Animated $622 MIL at NATIVE proportional size (463×104 → 32.15% of 1440 wrap) -->
       <!-- Animated $622 MIL — counter ticks 0→622, then swap to crisp SVG. -->
       <div class="f-num-stage f2-num-stage"
@@ -4869,7 +4869,7 @@ main { padding-top: var(--header-h); }
   <!-- FINDING 03 — Stronger Family & Community Relationships (locked SVG, 1440×2493) -->
   <article id="finding-03" class="finding f3-locked" data-finding="2" data-area="Family & Community" data-nav-tone="dark">
     <div class="f3-wrap">
-      <img class="f3-base" src="assets/illustrations/separated/finding-03/finding-03-locked.svg" alt="Finding 3: Stronger Family and Community Relationships. 82% of family members and 93% of incarcerated people said free calls helped build or repair relationships." data-anim="fade-up" />
+      <img class="f3-base" src="assets/illustrations/separated/finding-03/finding-03-locked.svg" alt="Finding 3: Stronger Family and Community Relationships. 82% of family members and 93% of incarcerated people said free calls helped build or repair relationships." data-anim="fade-up" loading="lazy" />
       <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
               aria-label="Play documentary clip — Finding 3 (Hamza)"
@@ -4892,7 +4892,7 @@ main { padding-top: var(--header-h); }
   <!-- FINDING 04 — Parenting & Child Development (locked SVG, 1440×2341) -->
   <article id="finding-04" class="finding f4-locked" data-finding="3" data-area="Parenting" data-nav-tone="light">
     <div class="f4-wrap">
-      <img class="f4-base" src="assets/illustrations/separated/finding-04/finding-04-locked.svg" alt="Finding 4: Parenting and Child Development. Nearly half of people in prison are parents to minor children. Free communication restored consistent parent-child contact." data-anim="fade-up" />
+      <img class="f4-base" src="assets/illustrations/separated/finding-04/finding-04-locked.svg" alt="Finding 4: Parenting and Child Development. Nearly half of people in prison are parents to minor children. Free communication restored consistent parent-child contact." data-anim="fade-up" loading="lazy" />
       <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
               aria-label="Play documentary clip — Finding 4 (Michael)"
@@ -4915,7 +4915,7 @@ main { padding-top: var(--header-h); }
   <!-- FINDING 05 — Improved Mental & Physical Health (locked SVG, 1440×2508) -->
   <article id="finding-05" class="finding f5-locked" data-finding="4" data-area="Mental Health" data-nav-tone="dark">
     <div class="f5-wrap">
-      <img class="f5-base" src="assets/illustrations/separated/finding-05/finding-05-locked.svg" alt="Finding 5: Improved Mental and Physical Health. 77% of family members and 76% of incarcerated people described improvements in stress, emotional stability, or overall wellbeing once calls became free." data-anim="fade-up" />
+      <img class="f5-base" src="assets/illustrations/separated/finding-05/finding-05-locked.svg" alt="Finding 5: Improved Mental and Physical Health. 77% of family members and 76% of incarcerated people described improvements in stress, emotional stability, or overall wellbeing once calls became free." data-anim="fade-up" loading="lazy" />
       <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
               aria-label="Play documentary clip — Finding 5 (Robert)"
@@ -4938,7 +4938,7 @@ main { padding-top: var(--header-h); }
   <!-- FINDING 06 — Less Violence & Operational Disruption (locked SVG + animated 100%) -->
   <article id="finding-06" class="finding f6-locked" data-finding="5" data-area="Safety" data-nav-tone="light">
     <div class="f6-wrap">
-      <img class="f6-base" src="assets/illustrations/separated/finding-06/finding-06-no-number.svg" alt="Finding 6: Less Violence and Operational Disruption" data-anim="fade-up" />
+      <img class="f6-base" src="assets/illustrations/separated/finding-06/finding-06-no-number.svg" alt="Finding 6: Less Violence and Operational Disruption" data-anim="fade-up" loading="lazy" />
       <!-- Animated 100% — counter ticks 0→100, then swap to crisp SVG. -->
       <div class="f-num-stage f6-num-stage"
            data-num-style="count-up"
@@ -4970,7 +4970,7 @@ main { padding-top: var(--header-h); }
   <!-- FINDING 07 — Rehabilitation (locked SVG, 1440×2496) -->
   <article id="finding-07" class="finding f7-locked" data-finding="6" data-area="Rehabilitation" data-nav-tone="dark">
     <div class="f7-wrap">
-      <img class="f7-base" src="assets/illustrations/separated/finding-07/finding-07-locked.svg" alt="Finding 7: Rehabilitation. Regular communication with loved ones strengthens rehabilitation efforts." data-anim="fade-up" />
+      <img class="f7-base" src="assets/illustrations/separated/finding-07/finding-07-locked.svg" alt="Finding 7: Rehabilitation. Regular communication with loved ones strengthens rehabilitation efforts." data-anim="fade-up" loading="lazy" />
       <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
               aria-label="Play documentary clip — Finding 7 (Jasmeel)"
@@ -4993,7 +4993,7 @@ main { padding-top: var(--header-h); }
   <!-- FINDING 08 — Reentry Planning & Success (locked SVG, 1440×2416) -->
   <article id="finding-08" class="finding f8-locked" data-finding="7" data-area="Reentry" data-nav-tone="light">
     <div class="f8-wrap">
-      <img class="f8-base" src="assets/illustrations/separated/finding-08/finding-08-locked.svg" alt="Finding 8: Reentry Planning and Success. Free communication helps incarcerated people plan for life after release." data-anim="fade-up" />
+      <img class="f8-base" src="assets/illustrations/separated/finding-08/finding-08-locked.svg" alt="Finding 8: Reentry Planning and Success. Free communication helps incarcerated people plan for life after release." data-anim="fade-up" loading="lazy" />
       <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
               aria-label="Play documentary clip — Finding 8 (Donald)"
