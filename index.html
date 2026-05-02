@@ -2460,6 +2460,18 @@ main { padding-top: var(--header-h); }
 .f2-num-stage > .f-num-counter { color: #ffffff; }       /* white */
 .f6-num-stage > .f-num-counter { color: #4B0F63; }       /* plum */
 
+/* F6 counter — match Figma spec for the final "100%" so swap is seamless:
+   Inter Display ExtraBold, 90px @ 1440 design (6.25vw), letter-spacing -3%.
+   font-size uses !important to override the JS-set inline style.
+   Keeps inherited align-items: center; the larger 90px font centers the
+   line-box such that the baseline lands close to the SVG glyph baseline. */
+.f6-num-stage > .f-num-counter {
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-size: 6.25vw !important;
+}
+
 /* === Reveal styles (set by data-num-style on the stage) === */
 
 /* count-up: counter shows + ticks while SVG is hidden, then swap at end */
@@ -3717,7 +3729,7 @@ main { padding-top: var(--header-h); }
       <video class="m-hero-video-bg" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
         <source src="assets/mobile/ambient-mobile.mp4" type="video/mp4">
       </video>
-      <button class="m-hero-video-card" type="button" data-m-video="1188306680" aria-label="Play the documentary film">
+      <button class="m-hero-video-card" type="button" data-m-video="1188576354" aria-label="Play the documentary film">
         <div class="m-hero-video-card-text">
           <h3>A Smile You Can Hear</h3>
           <p>Watch what free<br>communication makes possible</p>
@@ -3870,7 +3882,7 @@ main { padding-top: var(--header-h); }
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">More &ldquo;I Love Yous&rdquo;</span>
         </div>
-        <button class="m-tap" type="button" data-m-video="1187871199"
+        <button class="m-tap" type="button" data-m-video="1188574670"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 1 video"></button>
         <!-- Toggle dots: cy=1973 in BOTH SVGs (prisons 402×3491, jails 402×3431).
              Using vw-based positioning so the tap zone stays locked to y=1973 in SVG units
@@ -3901,7 +3913,7 @@ main { padding-top: var(--header-h); }
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">A Weight&rsquo;s Been Lifted</span>
         </div>
-        <button class="m-tap" type="button" data-m-video="1188179417"
+        <button class="m-tap" type="button" data-m-video="1188574671"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 2 video"></button>
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
@@ -3910,7 +3922,7 @@ main { padding-top: var(--header-h); }
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Mutual Support</span>
         </div>
-        <button class="m-tap" type="button" data-m-video=""
+        <button class="m-tap" type="button" data-m-video="1188574901"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 3 video"></button>
       </article>
       <article class="m-finding" id="m-f4" data-finding-idx="3" data-finding-area="Parenting">
@@ -3919,7 +3931,7 @@ main { padding-top: var(--header-h); }
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">I Raised My Daughter Over the Phone</span>
         </div>
-        <button class="m-tap" type="button" data-m-video="1188176628"
+        <button class="m-tap" type="button" data-m-video="1188574923"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 4 video"></button>
       </article>
       <article class="m-finding" id="m-f5" data-finding-idx="4" data-finding-area="Health">
@@ -3928,7 +3940,7 @@ main { padding-top: var(--header-h); }
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Connection as Medicine</span>
         </div>
-        <button class="m-tap" type="button" data-m-video=""
+        <button class="m-tap" type="button" data-m-video="1188574952"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 5 video"></button>
       </article>
       <article class="m-finding" id="m-f6" data-finding-idx="5" data-finding-area="Safety">
@@ -3946,7 +3958,7 @@ main { padding-top: var(--header-h); }
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">Hope Has a Phone Number</span>
         </div>
-        <button class="m-tap" type="button" data-m-video="1188176912"
+        <button class="m-tap" type="button" data-m-video="1188574993"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 7 video"></button>
       </article>
       <article class="m-finding" id="m-f8" data-finding-idx="7" data-finding-area="Reentry">
@@ -4463,7 +4475,7 @@ main { padding-top: var(--header-h); }
     </div>
   </div>
   <iframe class="hero-video-frame"
-          data-src="https://player.vimeo.com/video/1186772181?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+          data-src="https://player.vimeo.com/video/1188576353?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
           title="A Smile You Can Hear"
           allow="autoplay; fullscreen; picture-in-picture"
           allowfullscreen></iframe>
@@ -4722,7 +4734,7 @@ main { padding-top: var(--header-h); }
            the thumbnail's vertical position with the thumbnail's natural height. -->
       <div id="f1-video" class="f-video-player" aria-hidden="true">
         <iframe class="f-video-frame"
-                data-src="https://player.vimeo.com/video/1187871199?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+                data-src="https://player.vimeo.com/video/1188574670?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
                 title="Power of Free — Commissioner Martuscello"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
@@ -4779,7 +4791,7 @@ main { padding-top: var(--header-h); }
               data-target="f2-video"></button>
       <div id="f2-video" class="f-video-player" aria-hidden="true">
         <iframe class="f-video-frame"
-                data-src="https://player.vimeo.com/video/1188179417?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+                data-src="https://player.vimeo.com/video/1188574671?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
                 title="Power of Free — Finding 2"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
@@ -4802,7 +4814,7 @@ main { padding-top: var(--header-h); }
               data-target="f3-video"></button>
       <div id="f3-video" class="f-video-player" aria-hidden="true">
         <iframe class="f-video-frame"
-                data-src=""
+                data-src="https://player.vimeo.com/video/1188574901?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
                 title="Power of Free — Finding 3"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
@@ -4825,7 +4837,7 @@ main { padding-top: var(--header-h); }
               data-target="f4-video"></button>
       <div id="f4-video" class="f-video-player" aria-hidden="true">
         <iframe class="f-video-frame"
-                data-src="https://player.vimeo.com/video/1188176628?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+                data-src="https://player.vimeo.com/video/1188574923?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
                 title="Power of Free — Finding 4"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
@@ -4848,7 +4860,7 @@ main { padding-top: var(--header-h); }
               data-target="f5-video"></button>
       <div id="f5-video" class="f-video-player" aria-hidden="true">
         <iframe class="f-video-frame"
-                data-src=""
+                data-src="https://player.vimeo.com/video/1188574952?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
                 title="Power of Free — Finding 5"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
@@ -4868,7 +4880,7 @@ main { padding-top: var(--header-h); }
       <!-- Animated 100% — counter ticks 0→100, then swap to crisp SVG. -->
       <div class="f-num-stage f6-num-stage"
            data-num-style="count-up"
-           data-num-end="100" data-num-suffix="%"
+           data-num-end="99" data-num-suffix="%"
            data-num-duration="1300" data-num-font-factor="0.86"
            data-anim-delay="300">
         <img class="f-num-svg" src="assets/illustrations/separated/finding-06/number.svg" alt="100% of corrections staff recommended free communication" />
@@ -4903,7 +4915,7 @@ main { padding-top: var(--header-h); }
               data-target="f7-video"></button>
       <div id="f7-video" class="f-video-player" aria-hidden="true">
         <iframe class="f-video-frame"
-                data-src="https://player.vimeo.com/video/1188176912?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
+                data-src="https://player.vimeo.com/video/1188574993?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
                 title="Power of Free — Finding 7"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
