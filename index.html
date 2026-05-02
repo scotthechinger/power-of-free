@@ -1476,13 +1476,14 @@ main { padding-top: var(--header-h); }
   position: relative;
   background: var(--cloud-neutral);
   width: 100%;
-  height: calc(100vh - var(--header-h));
-  min-height: 560px;
+  /* +68px on bottom so figures can sit flush w/o the heads cropping at top */
+  height: calc(100vh - var(--header-h) + 68px);
+  min-height: 628px;
   overflow: hidden;
 }
 .action-center-figures {
   position: absolute;
-  bottom: -7vh; /* push figures down so heads are mostly visible at the top */
+  bottom: 0; /* flush with new (taller) bottom — gives heads room up top */
   left: 0; right: 0;
   width: 100%;
   height: auto;
@@ -1490,7 +1491,8 @@ main { padding-top: var(--header-h); }
 }
 .action-center-text {
   position: absolute;
-  top: 30%; /* drop into the cradle formed by the figures' arms */
+  /* Pin text to the OLD 30% mark so it stays where it was after the +68 added below */
+  top: calc((100vh - var(--header-h)) * 0.3);
   left: 0; right: 0;
   z-index: 2;
   text-align: center;
@@ -2972,19 +2974,15 @@ main { padding-top: var(--header-h); }
       display: block;
     }
     .m-hero-video-bg {
-      /* iOS Safari sometimes ignores `object-fit: cover` on inline <video>
-         elements. The transform-based center + min-w/min-h pattern is a
-         reliable cross-browser workaround that forces the video to fill the
-         container, cropping any overflow. */
+      /* iOS-safe full-cover video. `width: 100vw` forces the video to span
+         the full viewport width regardless of intrinsic dimensions, which
+         iOS Safari otherwise honors over CSS object-fit. */
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
+      inset: 0;
+      width: 100vw;
       height: 100%;
-      min-width: 100%;
-      min-height: 100%;
-      transform: translate(-50%, -50%);
       object-fit: cover;
+      object-position: center center;
       display: block;
     }
     .m-hero-video-card {
@@ -3050,10 +3048,14 @@ main { padding-top: var(--header-h); }
 
     /* ---------- Mobile quotes section (custom HTML carousel) ---------- */
     .m-quotes-section {
-      /* Lavender per QA. No bottom padding so the section flushes into the next without a white seam. */
+      /* Lavender per QA. No bottom padding so the section flushes into the next.
+         margin-bottom: -10px guarantees the lavender bg overlaps any subpixel
+         rounding gap that creates a white sliver above the next section. */
       background: var(--soft-lavender);
       padding: 56px 0 0;
-      margin-bottom: -3px;
+      margin-bottom: -10px;
+      position: relative;
+      z-index: 1;
     }
     .m-quotes-header {
       padding: 0 24px 28px;
@@ -3179,17 +3181,24 @@ main { padding-top: var(--header-h); }
       margin: 0;
     }
     .m-crop-actioncenter {
-      /* Just the Action Center heading + handshake (y=8800–9450 of Mobile.svg) */
-      height: calc(100vw * (9450 - 8800) / 402);
+      /* Action Center heading + handshake (y=8800–9540 of Mobile.svg).
+         End extended past 9450 so figure bodies show fully (figures end at
+         y≈9537 in master SVG). padding-top: 80px adds breathing room between
+         previous section and the "ACTION CENTER" eyebrow. */
+      height: calc(100vw * (9540 - 8800) / 402);
+      padding-top: 80px;
+      background: var(--cloud-neutral);
     }
-    .m-crop-actioncenter .m-bg-svg { top: calc(-100vw * 8800 / 402); }
+    .m-crop-actioncenter .m-bg-svg { top: calc(-100vw * 8800 / 402 + 80px); }
 
-    /* Take Action / Resources title images (above each card group) */
+    /* Take Action / Resources title images (above each card group).
+       Natural SVG render — follows master SVG proportions (402x135 viewBox). */
     .m-section-title {
       display: block;
       width: 100%;
       height: auto;
-      background: var(--cloud-neutral);
+      /* Warm wheat (#DED6C1) — matches the desktop .actions-stack section bg */
+      background: #DED6C1;
     }
     /* Take Action / Resources cards (custom HTML) */
     .m-action-cards {
@@ -3651,11 +3660,13 @@ main { padding-top: var(--header-h); }
     .m-video.is-open { display: block; }
     /* Iframe sits BELOW a 56px-tall header strip so the close button isn't
        overlapped by the Vimeo player — iframes capture pointer events for
-       everything inside their bounding box even when a button has higher z-index. */
+       everything inside their bounding box even when a button has higher z-index.
+       Width 100vw forces full viewport width so Vimeo's player has more room
+       to render the video at full resolution. */
     .m-video-frame {
       position: absolute;
       top: 56px; left: 0; right: 0; bottom: 0;
-      width: 100%; height: calc(100% - 56px);
+      width: 100vw; height: calc(100% - 56px);
       border: 0;
     }
     .m-video-close {
@@ -3812,7 +3823,7 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-dwayne.jpg" alt="Dwayne" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-dwayne.png" alt="Dwayne" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Dwayne</p>
             <p class="m-q-role">Currently incarcerated, Connecticut</p>
@@ -3821,7 +3832,7 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-nia.jpg" alt="Nia" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-nia.png" alt="Nia" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Nia</p>
             <p class="m-q-role">Wife, Massachusetts</p>
@@ -3983,7 +3994,7 @@ main { padding-top: var(--header-h); }
       <span class="m-anchor" id="m-resources"></span>
       <a class="m-action-card m-action-card--plum" href="#" target="_blank" rel="noopener">
         <div class="m-action-card-title">Report Fact Sheet</div>
-        <div class="m-action-card-body">Key findings from Critical Connections: The Power of Free across 8 areas of measurable impact.</div>
+        <div class="m-action-card-body">Two-pager covering the eight areas of measurable impact.</div>
         <span class="m-action-card-arrow" aria-hidden="true">↗</span>
       </a>
       <a class="m-action-card m-action-card--plum" href="#" target="_blank" rel="noopener">
@@ -3993,7 +4004,7 @@ main { padding-top: var(--header-h); }
       </a>
       <a class="m-action-card m-action-card--plum" href="#" target="_blank" rel="noopener">
         <div class="m-action-card-title">Ultimate Campaign Guide</div>
-        <div class="m-action-card-body">A step-by-step guide for advocates, organizers, and campaigns working to win free communication in their state or county.</div>
+        <div class="m-action-card-body">A guide for advocates, organizers, and campaigns working to win free communication in their community.</div>
         <span class="m-action-card-arrow" aria-hidden="true">↗</span>
       </a>
     </section>
@@ -4115,9 +4126,11 @@ main { padding-top: var(--header-h); }
       closeMenu();
       var el = document.getElementById(id);
       if (!el) return;
-      // Small delay so menu animates out cleanly first
+      // Small delay so menu animates out cleanly first.
+      // -60 + 5 tucks target ~5px behind topbar to kill the sliver of previous
+      // section's bottom strip showing above (matches data-m-scroll handler).
       setTimeout(function(){
-        var y = el.getBoundingClientRect().top + window.scrollY - 64;
+        var y = el.getBoundingClientRect().top + window.scrollY - 60 + 5;
         window.scrollTo({ top: y, behavior: 'smooth' });
       }, 200);
     });
@@ -4601,7 +4614,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 9. Dwayne (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Dwayne, currently incarcerated, Connecticut">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-dwayne.jpg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-dwayne.png');">
         <span class="qc-tag">Dwayne &middot; Connecticut</span>
       </div>
       <div class="qc-quote">
@@ -4615,7 +4628,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 10. Nia (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Nia, wife, Massachusetts">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-nia.jpg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-nia.png');">
         <span class="qc-tag">Nia &middot; Massachusetts</span>
       </div>
       <div class="qc-quote">
@@ -5027,7 +5040,7 @@ main { padding-top: var(--header-h); }
             </svg>
           </span>
           <h3 class="actions-card-title">Report Fact Sheet</h3>
-          <p class="actions-card-body">Key findings from Critical Connections: The Power of Free across 8 areas of measurable impact.</p>
+          <p class="actions-card-body">Two-pager covering the eight areas of measurable impact.</p>
         </a>
         <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="100">
           <span class="actions-card-arrow" aria-hidden="true">
@@ -5047,7 +5060,7 @@ main { padding-top: var(--header-h); }
             </svg>
           </span>
           <h3 class="actions-card-title">Ultimate Campaign Guide</h3>
-          <p class="actions-card-body">A step-by-step guide for advocates, organizers, and campaigns working to win free communication in their state or county.</p>
+          <p class="actions-card-body">A guide for advocates, organizers, and campaigns working to win free communication in their community.</p>
         </a>
       </div>
     </div>
@@ -5374,18 +5387,21 @@ main { padding-top: var(--header-h); }
     // Park at the start of the middle (real) set after layout settles.
     setTimeout(function () { strip.scrollLeft = getMiddleStart(); }, 50);
 
-    // Silent wrap when crossing into the clone regions.
+    // Silent wrap when crossing into the clone regions. Threshold raised from
+    // 0.5 cards to 2 full cards inside the clone region — keeps the wrap
+    // from firing during normal scrolling, which was causing visual "blinks"
+    // as the silent jump fired mid-scroll-animation.
     var wrapping = false;
     strip.addEventListener('scroll', function () {
       if (wrapping) return;
       var setWidth   = getCardWidth() * nOrig;
       var middleStart = setWidth;
       var middleEnd   = setWidth * 2;
-      if (strip.scrollLeft < middleStart - getCardWidth() * 0.5) {
+      if (strip.scrollLeft < middleStart - getCardWidth() * 2) {
         wrapping = true;
         strip.scrollLeft += setWidth;
         requestAnimationFrame(function () { wrapping = false; });
-      } else if (strip.scrollLeft > middleEnd - getCardWidth() * 0.5) {
+      } else if (strip.scrollLeft > middleEnd + getCardWidth()) {
         wrapping = true;
         strip.scrollLeft -= setWidth;
         requestAnimationFrame(function () { wrapping = false; });
