@@ -3017,7 +3017,10 @@ main { padding-top: var(--header-h); }
     .m-hero-video-bg {
       /* Source is now native portrait (1080x1920 — rotated in place), so
          object-fit: cover fills the section cleanly without any scale hack.
-         100vw width guarantees full viewport span on iOS Safari. */
+         100vw width guarantees full viewport span on iOS Safari.
+         opacity 0 until playback actually starts so iOS Safari's native
+         "tap to play" overlay never gets a chance to flash. Section bg
+         (#000) shows in the meantime — usually <100ms. */
       position: absolute;
       inset: 0;
       width: 100vw;
@@ -3025,7 +3028,10 @@ main { padding-top: var(--header-h); }
       object-fit: cover;
       object-position: center center;
       display: block;
+      opacity: 0;
+      transition: opacity 0.25s ease;
     }
+    .m-hero-video-bg.is-playing { opacity: 1; }
     .m-hero-video-card {
       position: absolute;
       left: 0; right: 0; bottom: 0;
@@ -4223,7 +4229,10 @@ main { padding-top: var(--header-h); }
      iOS Safari occasionally refuses autoplay on first paint (low-power mode,
      conservative power-save heuristics, etc.) even with muted+playsinline.
      Calling .play() explicitly when the video has enough data — and again
-     on first user interaction — covers those cases. */
+     on first user interaction — covers those cases.
+     Also: video starts at opacity 0 (see CSS) and fades in only when the
+     'playing' event fires, so iOS Safari's native "tap to play" overlay
+     never gets a chance to flash before our JS .play() lands. */
   (function(){
     var ambient = document.querySelector('.m-hero-video-bg');
     if (!ambient) return;
@@ -4231,6 +4240,9 @@ main { padding-top: var(--header-h); }
       var p = ambient.play();
       if (p && typeof p.catch === 'function') p.catch(function(){ /* ignore */ });
     }
+    ambient.addEventListener('playing', function(){
+      ambient.classList.add('is-playing');
+    });
     if (ambient.readyState >= 2) tryPlay();
     ambient.addEventListener('loadeddata', tryPlay);
     ambient.addEventListener('canplay', tryPlay);
