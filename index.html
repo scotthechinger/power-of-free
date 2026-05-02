@@ -22,8 +22,8 @@
 <meta property="og:site_name" content="Critical Connections — The Power of Free">
 <meta property="og:title" content="The Power of Free — Critical Connections">
 <meta property="og:description" content="How free communication in prisons and jails is transforming lives, strengthening families, and reshaping reentry.">
-<meta property="og:url" content="https://power-of-free.onrender.com/">
-<meta property="og:image" content="https://power-of-free.onrender.com/assets/Meta/og-image.jpg">
+<meta property="og:url" content="https://poweroffree.connectfamiliesnow.com/">
+<meta property="og:image" content="https://poweroffree.connectfamiliesnow.com/assets/Meta/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Power of Free — three figures in orange jumpsuits next to the headline THE POWER OF FREE.">
@@ -32,8 +32,33 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Power of Free — Critical Connections">
 <meta name="twitter:description" content="How free communication in prisons and jails is transforming lives, strengthening families, and reshaping reentry.">
-<meta name="twitter:image" content="https://power-of-free.onrender.com/assets/Meta/og-image.jpg">
+<meta name="twitter:image" content="https://poweroffree.connectfamiliesnow.com/assets/Meta/og-image.jpg">
+
+<!-- Canonical URL — tells search engines + social platforms this is the
+     authoritative location for the site. -->
+<link rel="canonical" href="https://poweroffree.connectfamiliesnow.com/">
 <meta name="twitter:image:alt" content="The Power of Free — three figures in orange jumpsuits next to the headline THE POWER OF FREE.">
+
+<!-- Preload toggle assets so first-click on F1 prisons/jails or F2 chart radios is instant.
+     The JS-based new Image() preload sometimes garbage-collects before the file is fully
+     fetched — these <link rel="preload"> tags pin the request at high browser priority. -->
+<link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-no-number.svg">
+<link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-jails-no-number.svg">
+<link rel="preload" as="image" href="assets/mobile/mobile-finding-01.svg">
+<link rel="preload" as="image" href="assets/mobile/mobile-finding-01-jails.svg">
+<link rel="preload" as="image" href="assets/charts/desktop/Federal.svg">
+<link rel="preload" as="image" href="assets/charts/desktop/California.svg">
+<link rel="preload" as="image" href="assets/charts/desktop/Connecticut.svg">
+<link rel="preload" as="image" href="assets/charts/desktop/Massachusetts.svg">
+<link rel="preload" as="image" href="assets/charts/desktop/Minnesota.svg">
+<link rel="preload" as="image" href="assets/charts/desktop/New York.svg">
+<link rel="preload" as="image" href="assets/charts/mobile/Federal.svg">
+<link rel="preload" as="image" href="assets/charts/mobile/California.svg">
+<link rel="preload" as="image" href="assets/charts/mobile/Connecticut.svg">
+<link rel="preload" as="image" href="assets/charts/mobile/Massachusetts.svg">
+<link rel="preload" as="image" href="assets/charts/mobile/Minnesota.svg">
+<link rel="preload" as="image" href="assets/charts/mobile/New York.svg">
+
 
 <!-- ============================================================
      POWER OF FREE — Standalone backup site
@@ -2500,6 +2525,10 @@ main { padding-top: var(--header-h); }
   font-weight: 800;
   letter-spacing: -0.03em;
   font-size: 6.25vw !important;
+  /* Counter sits ~3px to the right of where the SVG glyphs start (font's
+     left bearing on "$" / "6" differs from the SVG path's x=0). Nudge left
+     so the count visually aligns with the final landing position. */
+  transform: translateX(-3px);
 }
 
 /* F6 counter — match Figma spec for the final "100%" so swap is seamless:
@@ -2787,7 +2816,7 @@ main { padding-top: var(--header-h); }
    ============================================================ */
 /* Video click positions — extracted from each smaller-illust SVG's photo rect. */
 .f2-wrap .f-video-click,
-.f2-wrap .f-video-player { top: 67.67%; height: 32.33%; } /* wrap cropped to 1440/2400 */
+.f2-wrap .f-video-player { top: 62.50%; height: 37.50%; } /* extended top to cover thumbnail above */
 .f2-wrap .f-video-click  { left: 0; width: 50%; }
 
 .f3-wrap .f-video-click,
@@ -2799,7 +2828,7 @@ main { padding-top: var(--header-h); }
 .f4-wrap .f-video-click  { left: 0; width: 50%; }
 
 .f5-wrap .f-video-click,
-.f5-wrap .f-video-player { top: 63.30%; height: 31.75%; } /* smaller-illust */
+.f5-wrap .f-video-player { top: 63.30%; height: 36.70%; } /* extended height to cover bottom strip */
 .f5-wrap .f-video-click  { left: 0; width: 50%; }
 
 .f6-wrap .f-video-click,
