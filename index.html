@@ -2489,6 +2489,19 @@ main { padding-top: var(--header-h); }
 .f2-num-stage > .f-num-counter { color: #ffffff; }       /* white */
 .f6-num-stage > .f-num-counter { color: #4B0F63; }       /* plum */
 
+/* F1 + F2 desktop redesign 2026-05-02 — match F6 pattern exactly. The base
+   SVGs do NOT have the final numbers; counter ticks to one less, then the
+   f-num-svg overlay reveals the final number ("6.4" / "$622").
+   Counter font matches Figma spec: Inter Display ExtraBold, 90px @ 1440 design
+   (6.25vw), letter-spacing -3%. */
+.f1-num-stage > .f-num-counter,
+.f2-num-stage > .f-num-counter {
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-size: 6.25vw !important;
+}
+
 /* F6 counter — match Figma spec for the final "100%" so swap is seamless:
    Inter Display ExtraBold, 90px @ 1440 design (6.25vw), letter-spacing -3%.
    font-size uses !important to override the JS-set inline style.
@@ -2531,16 +2544,15 @@ main { padding-top: var(--header-h); }
 .f-num-stage[data-num-style="slide-left"].is-num-in  > .f-num-svg     { transform: translateX(0); opacity: 1; }
 .f-num-stage[data-num-style="slide-left"]            > .f-num-counter { opacity: 0; }
 
-/* OLD .fX-number rules retained below for any image still using them. */
 .f1-number,
 .f1-num-stage {
-  /* Position: box now at (720, 120) in the new 70px-margin SVG, was (760, 120). */
+  /* New base layout 2026-05-02. Number SVG native is now 128×68 (just "6.4",
+     no BILLION text — that's baked into the base subtitle). 6.4 sits 24px
+     above the baked BILLION text. */
   position: absolute;
-  /* Smaller-illust SVG: box at (746, 151). Actual subtitle Y=398, 18px inset.
-     Number SVG native 319×158. Spec: 40px above subtitle, aligned left with it. */
-  top: 8.61%;   /* (398 - 40 - 158) / 2324 */
+  top: 8%;
   left: 53.06%; /* (746 + 18) / 1440 */
-  width: 22.15%; /* 319 / 1440 */
+  width: 8.89%;  /* 128 / 1440 — new "6.4" SVG natural width */
   height: auto;
   z-index: 3;
   display: block;
@@ -2567,15 +2579,13 @@ main { padding-top: var(--header-h); }
   aspect-ratio: 1440 / 2435;
   margin: 0 0 -5.56vw 0;
 }
-/* F2 chart container — middle-LEFT of the F2 desktop layout. Chart bottom
-   aligns with the bottom of the body copy on the right (text ends ~y=1210).
-   Chart natural dims 654×702. The chart SVG itself contains the 6 state radio
-   buttons; we overlay invisible click targets on each radio so swap is one tap. */
+/* F2 chart container — middle-LEFT of the F2 desktop layout. Reverted
+   to the original positioning (chart was correctly placed before; the
+   y=1579 white rect was the video area, not the chart blank). */
 .f2-chart-container {
   position: absolute;
-  top: 32.73%;    /* 797 / 2435 — chart bottom lands at y=1499 (= bottom of
-                     body text on the right, which spans y=1197-1499) */
-  left: 4.93%;    /* 71 / 1440 — same gutter as the body text above */
+  top: 32.73%;    /* 797 / 2435 */
+  left: 4.93%;    /* 71 / 1440 — same gutter as body text */
   width: 45.42%;  /* 654 / 1440 — chart natural width */
   height: 28.83%; /* 702 / 2435 — chart natural height */
   z-index: 3;
@@ -2639,13 +2649,13 @@ main { padding-top: var(--header-h); }
    subtitle top (subtitle Y=300, number height 104). */
 .f2-number,
 .f2-num-stage {
+  /* New base layout 2026-05-02. Number SVG natural is now 214×85 (just "$622",
+     no MILLION text — that's baked into the base subtitle). $622 sits 30px
+     above the baked MILLION text. */
   position: absolute;
-  /* Smaller-illust SVG: box at (750, 170). Actual subtitle Y=343, 30px inset.
-     Number SVG native 379×85. Spec: 40px above subtitle, aligned left with it.
-     Wrap is now cropped to 1440/2400 (down from 3213) — recompute pcts accordingly. */
-  top: 9.08%;   /* (343 - 40 - 85) / 2400 */
+  top: 8.5%;
   left: 54.17%; /* (750 + 30) / 1440 */
-  width: 26.32%; /* 379 / 1440 */
+  width: 14.86%; /* 214 / 1440 — new "$622" SVG natural width */
   height: auto;
   z-index: 3;
   display: block;
@@ -3000,6 +3010,21 @@ main { padding-top: var(--header-h); }
     }
     .m-crop-top1 .m-bg-svg { top: calc(-100vw * 60 / 402); }
 
+    /* Mobile about-report illustration overlay — covers the older illustration
+       baked into mobile-homepage-full.svg around y≈2286. New illustration is
+       402×768 (full mobile width × ~191vw tall). top % = (1891-60)/2594. */
+    .m-about-report-overlay {
+      position: absolute;
+      top: 70.59%;
+      left: 0;
+      width: 100vw;
+      height: auto;
+      z-index: 2;
+      display: block;
+      pointer-events: none;
+      user-select: none; -webkit-user-drag: none;
+    }
+
     /* Custom mobile hero video block — replaces baked video section in Mobile.svg.
        Uses svh (small viewport height) so the section never exceeds visible area
        even when the browser URL bar is showing — keeps the title bar in view from
@@ -3322,16 +3347,40 @@ main { padding-top: var(--header-h); }
       user-select: none; -webkit-user-drag: none;
       pointer-events: none;
     }
-    /* Mobile F2 chart container — placement from reference SVG (362×867 at
-       translate(20, 2138)). Chart's 6 radio buttons (3 left col cx=8, 3 right
-       col cx=172) get invisible click overlays. */
+    /* Mobile F2 chart container — chart sector in the SVG (y=2138 to y=3084,
+       946 SVG units total) is bigger than the new chart (595). To minimize
+       perceived cream on either side, split the leftover ~350 units evenly
+       above + below the chart. Chart at y=2313 to y=2908 (center of sector). */
     .m-f2-chart-container {
       position: absolute;
-      top: 52.44%;     /* 2138 / 4077 */
+      top: 56.73%;     /* 2313 / 4077 — chart centered in chart sector */
       left: 4.98%;     /* 20 / 402 */
       width: 90.05%;   /* 362 / 402 */
-      height: 21.27%;  /* 867 / 4077 — chart natural aspect ratio */
+      height: 14.59%;  /* 595 / 4077 */
       z-index: 3;
+      background: #F0EEE9;
+    }
+    /* Cream strip ABOVE container — masks baked chart top y=2138-2313 (175). */
+    .m-f2-chart-container::before {
+      content: '';
+      position: absolute;
+      left: -5.53%;
+      right: -5.53%;
+      bottom: 100%;
+      height: 29.41%;  /* 175 / 595 */
+      background: #F0EEE9;
+      pointer-events: none;
+    }
+    /* Cream strip BELOW container — masks baked chart bottom y=2908-3005 (97). */
+    .m-f2-chart-container::after {
+      content: '';
+      position: absolute;
+      left: -5.53%;
+      right: -5.53%;
+      top: 100%;
+      height: 16.30%;  /* 97 / 595 */
+      background: #F0EEE9;
+      pointer-events: none;
     }
     .m-f2-chart {
       display: block;
@@ -3344,7 +3393,7 @@ main { padding-top: var(--header-h); }
     }
     .m-f2-chart-radio {
       position: absolute;
-      height: 4.15%;    /* 36 / 867 */
+      height: 5.38%;    /* 32 / 595 — radio row spacing in 595-tall container */
       background: transparent;
       border: 0;
       cursor: pointer;
@@ -3756,6 +3805,10 @@ main { padding-top: var(--header-h); }
          style="top: 65.38%; left: 5%; width: 56%; height: 1.93%;" aria-label="Read the report"></a>
       <!-- Anchor at top of About-the-Report band (deep plum starts at SVG y=1041 → 37.82% of crop) -->
       <span class="m-anchor" id="m-about-report" style="position:absolute; top: 37.82%; left:0;"></span>
+      <!-- About-the-Report illustration overlay (new, 2026-05-02). The composite
+           SVG has the OLD illustration baked in around y=2286; this overlay covers
+           it with the new 402x768 design. Top y=1891 in source = 70.59% of crop. -->
+      <img class="m-about-report-overlay" src="assets/illustrations/about-report-mobile.svg" alt="" aria-hidden="true" />
     </div>
 
     <!-- HERO VIDEO BLOCK — custom, mobile-optimized. Ambient mp4 loops in background;
@@ -3861,7 +3914,7 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-jasmeel.png" alt="Jasmeel" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-jasmeel.svg" alt="Jasmeel" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Jasmeel</p>
             <p class="m-q-role">Currently incarcerated, California</p>
@@ -3935,14 +3988,14 @@ main { padding-top: var(--header-h); }
              (CA/MN/NY). Invisible click overlays on each. -->
         <div class="m-f2-chart-container" data-f2-chart-wrap-mobile>
           <img class="m-f2-chart" data-f2-chart-mobile src="assets/charts/mobile/Connecticut.svg" alt="Connecticut chart" />
-          <!-- Left column: cx=8 (Federal / California / Connecticut) -->
-          <button type="button" class="m-f2-chart-radio" data-state="Federal"       style="top: 13.73%; left: 0;     width: 44%;" aria-label="Show Federal data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="California"    style="top: 17.42%; left: 0;     width: 44%;" aria-label="Show California data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="Connecticut"   style="top: 21.11%; left: 0;     width: 44%;" aria-label="Show Connecticut data"></button>
-          <!-- Right column: cx=172 (Massachusetts / Minnesota / New York) -->
-          <button type="button" class="m-f2-chart-radio" data-state="Massachusetts" style="top: 13.73%; left: 44%;   width: 56%;" aria-label="Show Massachusetts data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 17.88%; left: 44%;   width: 56%;" aria-label="Show Minnesota data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 22.03%; left: 44%;   width: 56%;" aria-label="Show New York data"></button>
+          <!-- Left column: cx=8, cy=115/147/179 in 595-tall container -->
+          <button type="button" class="m-f2-chart-radio" data-state="Federal"       style="top: 16.64%; left: 0;     width: 44%;" aria-label="Show Federal data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="California"    style="top: 22.02%; left: 0;     width: 44%;" aria-label="Show California data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Connecticut"   style="top: 27.39%; left: 0;     width: 44%;" aria-label="Show Connecticut data"></button>
+          <!-- Right column: cx=172, cy=115/151/187 -->
+          <button type="button" class="m-f2-chart-radio" data-state="Massachusetts" style="top: 16.64%; left: 44%;   width: 56%;" aria-label="Show Massachusetts data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 22.69%; left: 44%;   width: 56%;" aria-label="Show Minnesota data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 28.74%; left: 44%;   width: 56%;" aria-label="Show New York data"></button>
         </div>
         <div class="m-finding-titlebar" style="top: 96.62%; height: 1.42%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
@@ -4309,24 +4362,12 @@ main { padding-top: var(--header-h); }
      Click → swap chart src (chart natively shows the new state's filled radio). */
   var mF2Chart = document.querySelector('[data-f2-chart-mobile]');
   var mF2Wrap = document.querySelector('[data-f2-chart-wrap-mobile]');
-  // TEST FLAG: ?ct=v2 in URL routes Connecticut clicks (and the default chart
-  // load) to Connecticut-v2.svg so we can preview the redesigned chart in
-  // the live viewport without unwiring the existing 5-state setup. Remove
-  // this block + the v2 SVG to revert.
-  var ctV2 = (function(){
-    try { return new URLSearchParams(window.location.search).get('ct') === 'v2'; }
-    catch (e) { return false; }
-  })();
   if (mF2Chart && mF2Wrap) {
-    if (ctV2) mF2Chart.src = 'assets/charts/mobile/Connecticut-v2.svg';
     mF2Wrap.addEventListener('click', function(e){
       var btn = e.target.closest('[data-state]');
       if (!btn) return;
       var state = btn.getAttribute('data-state');
-      var src = (ctV2 && state === 'Connecticut')
-        ? 'assets/charts/mobile/Connecticut-v2.svg'
-        : 'assets/charts/mobile/' + state + '.svg';
-      mF2Chart.src = src;
+      mF2Chart.src = 'assets/charts/mobile/' + state + '.svg';
       mF2Chart.alt = state + ' chart — Financial Relief';
     });
   }
@@ -4728,7 +4769,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 11. Jasmeel (illustration) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Jasmeel, currently incarcerated, California">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-jasmeel.png');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-jasmeel.svg');">
         <span class="qc-tag">Jasmeel &middot; California</span>
       </div>
       <div class="qc-quote">
@@ -4790,13 +4831,16 @@ main { padding-top: var(--header-h); }
            data-anim="fade-up" />
       <!-- Animated 6.4 BILLION at NATIVE proportional size (390×193 → 27.08% of 1440 wrap).
            Stage = positioning host. Counter ticks 0.0→6.4 BILLION, then SVG fades in for crisp final. -->
+      <!-- F1 number animation matches F6 pattern: counter ticks 0.0→6.3, then
+           SVG overlay reveals final "6.4" (BILLION text is baked in the base
+           SVG below the number). Counter has no suffix — just the digits. -->
       <div class="f-num-stage f1-num-stage"
            data-num-style="count-up"
-           data-num-end="6.4" data-num-decimals="1" data-num-suffix=" BILLION"
-           data-num-duration="1600" data-num-font-factor="0.40"
+           data-num-end="6.3" data-num-decimals="1"
+           data-num-duration="1600" data-num-font-factor="0.86"
            data-anim-delay="300">
         <img class="f-num-svg" src="assets/illustrations/separated/finding-01/number.svg" alt="6.4 billion additional minutes of connection" />
-        <span class="f-num-counter">0.0 BILLION</span>
+        <span class="f-num-counter">0.0</span>
       </div>
       <!-- Video click target — invisible button over the baked thumbnail.
            Thumbnail in SVG is at translate(30, 1577), 690×776. -->
@@ -4836,15 +4880,15 @@ main { padding-top: var(--header-h); }
            src="assets/illustrations/separated/finding-02/finding-02-no-number.svg"
            alt="Finding 2 — Financial Relief. $622 million saved by families to date, with 73% flowing to Black and brown families. Savings ranged from $244 to $2,927 per year per incarcerated loved one. Communication costs fell dramatically when the burden shifted off families."
            data-anim="fade-up" loading="lazy" />
-      <!-- Animated $622 MIL at NATIVE proportional size (463×104 → 32.15% of 1440 wrap) -->
-      <!-- Animated $622 MIL — counter ticks 0→622, then swap to crisp SVG. -->
+      <!-- Animated $622 — base SVG has "$622" baked into the design. Counter
+           ticks 0→621 then fades, baked $622 reveals. F6-style pattern. -->
       <div class="f-num-stage f2-num-stage"
            data-num-style="count-up"
-           data-num-end="622" data-num-prefix="$" data-num-suffix=" MIL"
+           data-num-end="621" data-num-prefix="$" data-num-suffix=""
            data-num-duration="1500" data-num-font-factor="0.78"
            data-anim-delay="300">
         <img class="f-num-svg" src="assets/illustrations/separated/finding-02/number.svg" alt="$622 million saved by families to date" />
-        <span class="f-num-counter">$0 MIL</span>
+        <span class="f-num-counter">$0</span>
       </div>
       <!-- 6-state chart toggle. The chart SVG itself draws the 6 radio buttons
            (Federal, Massachusetts, Connecticut, California, Minnesota, New York
