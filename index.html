@@ -5597,26 +5597,12 @@ main { padding-top: var(--header-h); }
       });
     });
 
-    // Preload the OTHER state's SVG once F1 scrolls into view, so the first
-    // toggle click is instant instead of waiting on a ~10MB download.
-    var f1Wrap = f1Img.closest('.f1-wrap');
-    if (f1Wrap && 'IntersectionObserver' in window) {
-      var preloaded = false;
-      var preloadObs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting && !preloaded) {
-            preloaded = true;
-            // Determine which state isn't currently loaded and prefetch it
-            var currentSrc = f1Img.getAttribute('src') || '';
-            var other = currentSrc.indexOf('jails') > -1 ? f1Sources.prisons : f1Sources.jails;
-            var preImg = new Image();
-            preImg.src = other;  // browser caches it; toggle click is instant
-            preloadObs.unobserve(en.target);
-          }
-        });
-      }, { rootMargin: '300px 0px 300px 0px' });  // start preload 300px before F1 hits viewport
-      preloadObs.observe(f1Wrap);
-    }
+    // Preload BOTH state SVGs immediately on page load, so the first toggle
+    // click is instant instead of waiting on a ~10MB download. (Previously
+    // gated on IntersectionObserver with rootMargin 300px — not enough lead
+    // time when the user scrolls fast on a slow connection.)
+    var f1PreA = new Image(); f1PreA.src = f1Sources.prisons;
+    var f1PreB = new Image(); f1PreB.src = f1Sources.jails;
   }
 
   /* ---------- Top-nav anchor scroll handler ----------
@@ -5671,7 +5657,15 @@ main { padding-top: var(--header-h); }
   /* ---------- Finding 02: 6-state chart toggle ----------
      Connecticut renders by default. Invisible click overlays sit on each of
      the chart SVG's baked-in radio buttons. Click → swap chart src; the new
-     state's chart already shows that radio's inner dot filled. */
+     state's chart already shows that radio's inner dot filled.
+     Preload all 6 state variants (desktop + mobile) on page init so the
+     first click on each radio is instant — was previously waiting on a fresh
+     fetch every time, ~1-2s lag per state. */
+  ['Federal','California','Connecticut','Massachusetts','Minnesota','New York']
+    .forEach(function (state) {
+      var d = new Image(); d.src = 'assets/charts/desktop/' + state + '.svg';
+      var m = new Image(); m.src = 'assets/charts/mobile/'  + state + '.svg';
+    });
   var f2Chart = document.querySelector('[data-f2-chart]');
   var f2ChartWrap = document.querySelector('[data-f2-chart-wrap]');
   if (f2Chart && f2ChartWrap) {
