@@ -6297,20 +6297,18 @@ main { padding-top: var(--header-h); }
         });
       });
     };
-    // Wait for window.load — fires after ALL resources finish loading
-    // (including images), so the heavy hero illustration SVG is fully
-    // painted before the cord starts drawing. Plus 600ms buffer for
-    // browser to actually render the painted SVG to screen.
+    // Wait for window.load + 300ms buffer so the people + text are painted
+    // first, then the cord draws on top.
     var triggerOnLoad = function () {
-      setTimeout(startCord, 600);
+      setTimeout(startCord, 300);
     };
     if (document.readyState === 'complete') {
       triggerOnLoad();
     } else {
       window.addEventListener('load', triggerOnLoad, { once: true });
     }
-    // Hard failsafe — start no later than 5s even if load never fires
-    setTimeout(startCord, 5000);
+    // Hard failsafe — start no later than 4s even if load never fires
+    setTimeout(startCord, 4000);
   }
 
   /* ---------- Hero video title card fly-in ----------
