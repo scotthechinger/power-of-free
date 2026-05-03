@@ -1,0 +1,58 @@
+<svg width="402" height="900" viewBox="0 0 402 900" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+  <!-- Soft lavender section background -->
+  <rect width="402" height="900" fill="#D6B4FC"/>
+
+  <!-- ============ HEADER (24px side padding) ============ -->
+  <!-- Eyebrow: "TESTIMONIALS" — Inter Bold 13, plum, uppercase, 5% letter-spacing -->
+  <text x="24" y="80" fill="#4B0F63" font-size="13" font-weight="700" letter-spacing="0.65">TESTIMONIALS</text>
+
+  <!-- Title line 1: "MORE THAN JUST" Inter ExtraBold 30, ink, uppercase -->
+  <text x="24" y="116" fill="#1F1F1F" font-size="30" font-weight="800" letter-spacing="-0.3">MORE THAN JUST</text>
+  <!-- Title line 2: "A Phone Call" Concrette italic 32, coral -->
+  <text x="24" y="156" fill="#E4572E" font-size="32" font-style="italic" font-family="Fraunces, ConcretteXL, serif" font-weight="500" letter-spacing="-0.32">A Phone Call</text>
+
+  <!-- Two coral circle arrow buttons -->
+  <circle cx="46" cy="200" r="22" fill="#E4572E"/>
+  <text x="46" y="208" fill="#FFFFFF" font-size="20" font-weight="700" text-anchor="middle">&#8592;</text>
+  <circle cx="100" cy="200" r="22" fill="#E4572E"/>
+  <text x="100" y="208" fill="#FFFFFF" font-size="20" font-weight="700" text-anchor="middle">&#8594;</text>
+
+  <!-- ============ CAROUSEL — primary visible card + sliver of next ============ -->
+  <!-- Card 1 — full visible -->
+  <!-- Card body: cream bg, 290 wide, ~600 tall, starts at x=24, y=246 -->
+  <rect x="24" y="246" width="290" height="640" fill="#F0EEE9"/>
+
+  <!-- Photo at top: 4:5 aspect, full width, ~232 tall -->
+  <defs>
+    <linearGradient id="mPhoto1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5C3A1F"/>
+      <stop offset="1" stop-color="#2D1A0E"/>
+    </linearGradient>
+    <linearGradient id="mPhoto2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7A5A4B"/>
+      <stop offset="1" stop-color="#3D2A1E"/>
+    </linearGradient>
+  </defs>
+  <rect x="24" y="246" width="290" height="362" fill="url(#mPhoto1)"/>
+
+  <!-- Open quote mark (Concrette italic, plum) -->
+  <text x="46" y="652" fill="#4B0F63" font-size="36" font-style="italic" font-family="Fraunces, ConcretteXL, serif">&#8220;</text>
+
+  <!-- Quote body — Inter 14/1.55, ink -->
+  <text x="46" y="680" fill="#1F1F1F" font-size="14" font-weight="400">
+    <tspan x="46" dy="0">My husband has a daughter.</tspan>
+    <tspan x="46" dy="22">She's 11 years old, and she</tspan>
+    <tspan x="46" dy="22">is autistic. Now they talk</tspan>
+    <tspan x="46" dy="22">every day. She is being so</tspan>
+    <tspan x="46" dy="22">vocal since she's been able</tspan>
+    <tspan x="46" dy="22">to speak to her dad.</tspan>
+  </text>
+
+  <!-- Attribution name (uppercase, ExtraBold) + role -->
+  <text x="46" y="838" fill="#1F1F1F" font-size="14" font-weight="800" letter-spacing="0.56">ANGEL</text>
+  <text x="46" y="860" fill="rgba(31,31,31,0.7)" font-size="12" font-weight="400">Wife, California</text>
+
+  <!-- Sliver of next card (suggests carousel) -->
+  <rect x="328" y="246" width="74" height="640" fill="#F0EEE9"/>
+  <rect x="328" y="246" width="74" height="362" fill="url(#mPhoto2)"/>
+</svg>

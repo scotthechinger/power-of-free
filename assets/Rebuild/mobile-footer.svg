@@ -1,0 +1,47 @@
+<svg width="402" height="488" viewBox="0 0 402 488" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+  <!-- Plum background -->
+  <rect width="402" height="488" fill="#4B0F63"/>
+  <!-- Coral brand strip across top -->
+  <rect width="402" height="4" fill="#E4572E"/>
+
+  <!-- Sign up label: "Sign up to receive news and updates." -->
+  <!-- Two-line layout: line 1 black inter, line 2 italic lavender -->
+  <text x="24" y="86" fill="#FFFFFF" font-size="22" font-weight="800" letter-spacing="-0.22">Sign up to receive</text>
+  <text x="24" y="116" fill="#D6B4FC" font-style="italic" font-family="Fraunces, ConcretteXL, serif" font-weight="500" font-size="22" letter-spacing="-0.22">news and updates.</text>
+
+  <!-- Email input field — placeholder text + bottom border -->
+  <text x="28" y="174" fill="rgba(255,255,255,0.5)" font-size="16" font-weight="500">Email Address</text>
+  <line x1="24" y1="190" x2="378" y2="190" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+
+  <!-- Coral Sign Up button -->
+  <rect x="24" y="218" width="106" height="44" fill="#E4572E"/>
+  <text x="77" y="245" fill="#FFFFFF" font-size="13" font-weight="700" letter-spacing="0.26" text-anchor="middle" text-transform="uppercase">SIGN UP</text>
+
+  <!-- © 2026 Worth Rises -->
+  <text x="24" y="318" fill="rgba(255,255,255,0.55)" font-size="11" font-weight="800" letter-spacing="1.98">© 2026 WORTH RISES</text>
+
+  <!-- Email link -->
+  <text x="24" y="350" fill="#FFFFFF" font-size="16" font-weight="500">info@worthrises.com</text>
+  <line x1="24" y1="354" x2="194" y2="354" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+
+  <!-- Social icons row (Facebook, Instagram, X) — 42×42 circles, 10px gap -->
+  <!-- Facebook -->
+  <circle cx="45" cy="394" r="20" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+  <g transform="translate(37 386)" fill="#FFFFFF">
+    <path d="M14.667 8c0-3.682-2.985-6.667-6.667-6.667S1.333 4.318 1.333 8c0 3.327 2.438 6.085 5.625 6.585V9.927H5.265V8h1.693V6.531c0-1.671.995-2.594 2.518-2.594.73 0 1.493.13 1.493.13v1.64h-.84c-.829 0-1.087.515-1.087 1.042V8h1.85l-.296 1.927h-1.554v4.658c3.187-.5 5.625-3.258 5.625-6.585Z"/>
+  </g>
+
+  <!-- Instagram -->
+  <circle cx="97" cy="394" r="20" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+  <g transform="translate(89 386)" fill="none" stroke="#FFFFFF" stroke-width="1.33">
+    <rect x="2" y="2" width="12" height="12" rx="3.33"/>
+    <circle cx="8" cy="8" r="2.67"/>
+    <circle cx="11.67" cy="4.33" r="0.33" fill="#FFFFFF"/>
+  </g>
+
+  <!-- X (Twitter) -->
+  <circle cx="149" cy="394" r="20" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+  <g transform="translate(141 386)" fill="#FFFFFF">
+    <path d="M12.163 1.5h2.205l-4.818 5.507 5.668 7.493h-4.439l-3.476-4.545L3.327 14.5H1.12l5.153-5.89L.836 1.5H5.387l3.142 4.154L12.163 1.5Zm-.774 11.68h1.222L4.722 2.752H3.411l7.978 10.428Z"/>
+  </g>
+</svg>

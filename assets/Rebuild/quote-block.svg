@@ -1,0 +1,86 @@
+<svg width="1440" height="820" viewBox="0 0 1440 820" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+  <!-- Soft lavender section background -->
+  <rect width="1440" height="820" fill="#D6B4FC"/>
+
+  <!-- ============ HEADER ROW ============ -->
+  <!-- Eyebrow: "TESTIMONIALS" — Inter Bold 15, plum, 5% letter-spacing, uppercase -->
+  <text x="80" y="135" fill="#4B0F63" font-size="15" font-weight="700" letter-spacing="0.75">TESTIMONIALS</text>
+
+  <!-- Title: "MORE THAN JUST" Inter ExtraBold 70, black -->
+  <text x="80" y="210" fill="#1F1F1F" font-size="70" font-weight="800" letter-spacing="-2.1">MORE THAN JUST</text>
+  <!-- Subtitle: "A Phone Call" Concrette Italic 74, coral -->
+  <text x="80" y="290" fill="#E4572E" font-size="74" font-style="italic" font-family="Fraunces, ConcretteXL, serif" font-weight="500" letter-spacing="-2.22">A Phone Call</text>
+
+  <!-- Arrow buttons (right-aligned, top of title block) -->
+  <!-- Prev — cream bg with coral arrow -->
+  <rect x="1304" y="172" width="44" height="44" fill="#F0EEE9"/>
+  <g transform="translate(1316 184)" stroke="#E4572E" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 10H4M4 10L9 5M4 10L9 15"/>
+  </g>
+  <!-- Next — coral bg with white arrow -->
+  <rect x="1360" y="172" width="44" height="44" fill="#E4572E"/>
+  <g transform="translate(1372 184)" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10H16M16 10L11 5M16 10L11 15"/>
+  </g>
+
+  <!-- ============ CARD STRIP ============ -->
+  <!-- 4 cards, gap 20px, photos 213×480, photos start at y=350 -->
+  <!-- Photos use simple placeholder gradients to suggest portrait imagery -->
+  <defs>
+    <linearGradient id="photoG1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5C3A1F"/>
+      <stop offset="1" stop-color="#2D1A0E"/>
+    </linearGradient>
+    <linearGradient id="photoG2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7A5A4B"/>
+      <stop offset="1" stop-color="#3D2A1E"/>
+    </linearGradient>
+    <linearGradient id="photoG3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7A4D2A"/>
+      <stop offset="1" stop-color="#321F12"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Card 1 — Default photo state -->
+  <rect x="80" y="350" width="213" height="384" fill="url(#photoG1)"/>
+  <!-- Coral name plate flush bottom-left, 8px×14px padding-equivalent -->
+  <rect x="80" y="690" width="160" height="32" fill="#E4572E"/>
+  <text x="92" y="710" fill="#FFFFFF" font-size="12" font-weight="700" letter-spacing="1.68">MICHAEL · NEW YORK</text>
+
+  <!-- Card 2 — Default photo state -->
+  <rect x="313" y="350" width="213" height="384" fill="url(#photoG2)"/>
+  <rect x="313" y="690" width="170" height="32" fill="#E4572E"/>
+  <text x="325" y="710" fill="#FFFFFF" font-size="12" font-weight="700" letter-spacing="1.68">RANSEY · NEW YORK</text>
+
+  <!-- Card 3 — HOVER STATE (white bg with quote text) -->
+  <rect x="546" y="350" width="213" height="384" fill="#FFFFFF"/>
+  <!-- Quote text wrapped in card (Inter Display Regular 16/140) -->
+  <text x="566" y="395" fill="#1F1F1F" font-size="13" font-weight="400">
+    <tspan x="566" dy="0">&#8220;My husband has a</tspan>
+    <tspan x="566" dy="20">daughter. She's 11 years</tspan>
+    <tspan x="566" dy="20">old, and she is autistic.</tspan>
+    <tspan x="566" dy="20">Not being able to call</tspan>
+    <tspan x="566" dy="20">every day, his calls with</tspan>
+    <tspan x="566" dy="20">her would be sporadic.</tspan>
+    <tspan x="566" dy="20">But now they talk every</tspan>
+    <tspan x="566" dy="20">day. She is being so</tspan>
+    <tspan x="566" dy="20">vocal since she's been</tspan>
+    <tspan x="566" dy="20">able to speak to her dad.&#8221;</tspan>
+  </text>
+  <!-- Attribution name + role -->
+  <text x="566" y="675" fill="#1F1F1F" font-size="11" font-weight="800" letter-spacing="1.54">ANGEL</text>
+  <text x="566" y="697" fill="#1F1F1F" font-size="13" font-weight="400">Wife, California</text>
+
+  <!-- Card 4 — Default photo state -->
+  <rect x="779" y="350" width="213" height="384" fill="url(#photoG3)"/>
+  <rect x="779" y="690" width="180" height="32" fill="#E4572E"/>
+  <text x="791" y="710" fill="#FFFFFF" font-size="12" font-weight="700" letter-spacing="1.68">DWAYNE · CONNECTICUT</text>
+
+  <!-- Card 5 (partial — suggests scroll) — Default photo state -->
+  <rect x="1012" y="350" width="213" height="384" fill="url(#photoG1)"/>
+  <rect x="1012" y="690" width="155" height="32" fill="#E4572E"/>
+  <text x="1024" y="710" fill="#FFFFFF" font-size="12" font-weight="700" letter-spacing="1.68">FELIX · NEW YORK</text>
+
+  <!-- Card 6 (cut off at right edge — suggests carousel) -->
+  <rect x="1245" y="350" width="195" height="384" fill="url(#photoG2)"/>
+</svg>

@@ -1589,7 +1589,7 @@ main { padding-top: var(--header-h); }
   align-items: center;
   gap: 6px;
   padding: 0 14px;
-  background: var(--deep-plum);
+  background: var(--warm-coral);
   color: #fff;
   flex: 0 0 auto;
   min-width: 178px;
@@ -2751,13 +2751,13 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* New F2 SVG natural dims: 1440×2435. Title pill ends at y=2355 (80px empty
-     bg below). Wrap renders the full SVG height; negative margin -5.56vw
-     (= 80/1440) pulls the next section up to overlay the empty bottom —
-     same pattern as F1, F3-F8. */
-  aspect-ratio: 1440 / 2435;
-  margin: 0 0 -5.56vw 0;
+  /* New F2 v2 SVG (with-graph variant): 1440×2259 natural. Bottom 80px
+     cropped via overflow:hidden + cover/top — same pattern as F1 v2. */
+  aspect-ratio: 1440 / 2179;
+  margin: 0;
+  overflow: hidden;
 }
+.f2-wrap .f2-base { object-fit: cover; object-position: top; }
 /* F2 chart container — middle-LEFT of the F2 desktop layout. Reverted
    to the original positioning (chart was correctly placed before; the
    y=1579 white rect was the video area, not the chart blank). */
@@ -2855,10 +2855,10 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* Edge-to-edge: no max-width so SVG stretches with the viewport.
-     Negative margin-bottom hides the ~80px of empty space designed below. */
-  aspect-ratio: 1440 / 2543;
-  margin: 0 0 -5.56vw 0;
+  /* New F6 v2 SVG: 1440×2198 natural; bottom 80px cropped. */
+  aspect-ratio: 1440 / 2118;
+  margin: 0;
+  overflow: hidden;
 }
 .f6-base {
   position: absolute;
@@ -2866,7 +2866,8 @@ main { padding-top: var(--header-h); }
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: top;
 }
 .f6-number,
 .f6-num-stage {
@@ -2906,47 +2907,19 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* Edge-to-edge: no max-width so each SVG stretches with the viewport.
-     Negative margin-bottom hides the ~80px of empty space designed below. */
-  margin: 0 0 -5.56vw 0;
+  margin: 0;
+  overflow: hidden;
 }
-.f3-wrap { aspect-ratio: 1440 / 2467; }   /* smaller-illust update (was 2493) */
-.f4-wrap { aspect-ratio: 1440 / 2341; }
-.f5-wrap { aspect-ratio: 1440 / 2444; }   /* smaller-illust update (was 2508) */
-.f7-wrap { aspect-ratio: 1440 / 2398; }   /* smaller-illust update (was 2496) */
-.f8-wrap { aspect-ratio: 1440 / 2416; }   /* smaller-illust update (same dims) */
+/* New v2 SVG aspect ratios (natural − 80px bottom crop):
+   F3 2239→2159, F4 2219→2139, F5 2214→2134, F7 2137→2057, F8 2244→2164. */
+.f3-wrap { aspect-ratio: 1440 / 2159; }
+.f4-wrap { aspect-ratio: 1440 / 2139; }
+.f5-wrap { aspect-ratio: 1440 / 2134; }
+.f7-wrap { aspect-ratio: 1440 / 2057; }
+.f8-wrap { aspect-ratio: 1440 / 2164; }
 
-/* F7 wrap uses -6.53vw because F7 has 94px of empty plum bg below its title
-   pill (vs ~80px for other findings). 94/1440 = 6.53vw — exact amount needed
-   for F8's lavender to fully cover F7's bottom plum strip. */
-.f7-wrap { margin: 0 0 -6.53vw 0; }
-
-/* Right-margin patch for F5 + F8 — 130px wide (130/1440 = 9.03vw). Bottom
-   strip is excluded so the video + quote stay edge-to-edge as designed. */
-.f5-wrap::after,
-.f8-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 9.03vw;
-  pointer-events: none;
-  z-index: 2;
-}
-.f5-wrap::after {
-  /* Cover only the top-right illustration area (block ends at 30.24% of SVG).
-     Stops above the title + body text below so they aren't cut off. */
-  bottom: 69.76%;
-  background: var(--deep-plum);
-}
-.f8-wrap::after {
-  /* Cover only the top-right illustration area, stops above title + body */
-  bottom: 70%;
-  background: var(--soft-lavender);
-}
-
-/* F2 duplicate is now cropped at the wrap level via aspect-ratio + overflow,
-   so no pseudo-element mask is needed. */
+/* (Old F5/F8 right-mask pseudo-elements removed — new v2 SVGs don't have
+   the 130px right margin anymore.) */
 
 .f3-base, .f4-base, .f5-base, .f7-base, .f8-base {
   position: absolute;
@@ -2954,7 +2927,10 @@ main { padding-top: var(--header-h); }
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: contain;
+  /* cover + position top so the natural-height SVG fills the cropped wrap
+     by clipping the bottom 80px. */
+  object-fit: cover;
+  object-position: top;
 }
 
 /* ============================================================
@@ -2964,34 +2940,30 @@ main { padding-top: var(--header-h); }
    higher specificity. Calibrate by toggling data-debug="1" on the
    wrap div (highlights click zones in pink).
    ============================================================ */
-/* Video click positions — extracted from each smaller-illust SVG's photo rect. */
+/* Video click + player overrides — v2 SVGs all use the same photo+quote
+   block layout at the bottom (720×700 photo on left + 720×700 quote on
+   right). Player covers the entire block, full width, matching block top
+   and height in the cropped frame. */
 .f2-wrap .f-video-click,
-.f2-wrap .f-video-player { top: 62.50%; height: 37.50%; } /* extended top to cover thumbnail above */
-.f2-wrap .f-video-click  { left: 0; width: 50%; }
+.f2-wrap .f-video-player { top: 67.88%; height: 32.12%; left: 0; width: 100%; }
 
 .f3-wrap .f-video-click,
-.f3-wrap .f-video-player { top: 65.30%; height: 31.46%; }
-.f3-wrap .f-video-click  { left: 0; width: 50%; }
+.f3-wrap .f-video-player { top: 67.58%; height: 32.42%; left: 0; width: 100%; }
 
 .f4-wrap .f-video-click,
-.f4-wrap .f-video-player { top: 63.43%; height: 33.15%; }
-.f4-wrap .f-video-click  { left: 0; width: 50%; }
+.f4-wrap .f-video-player { top: 67.27%; height: 32.73%; left: 0; width: 100%; }
 
 .f5-wrap .f-video-click,
-.f5-wrap .f-video-player { top: 63.30%; height: 36.70%; } /* extended height to cover bottom strip */
-.f5-wrap .f-video-click  { left: 0; width: 50%; }
+.f5-wrap .f-video-player { top: 67.20%; height: 32.80%; left: 0; width: 100%; }
 
 .f6-wrap .f-video-click,
-.f6-wrap .f-video-player { top: 66.34%; height: 30.52%; }
-.f6-wrap .f-video-click  { left: 0; width: 50%; }
+.f6-wrap .f-video-player { top: 66.95%; height: 33.05%; left: 0; width: 100%; }
 
 .f7-wrap .f-video-click,
-.f7-wrap .f-video-player { top: 63.72%; height: 35.49%; }
-.f7-wrap .f-video-click  { left: 0; width: 50%; }
+.f7-wrap .f-video-player { top: 65.97%; height: 34.03%; left: 0; width: 100%; }
 
 .f8-wrap .f-video-click,
-.f8-wrap .f-video-player { top: 64.57%; height: 32.12%; } /* F8 prior version */
-.f8-wrap .f-video-click  { left: 0; width: 50%; }
+.f8-wrap .f-video-player { top: 67.65%; height: 32.35%; left: 0; width: 100%; }
 
 /* Debug zones for click target calibration */
 .f2-wrap[data-debug="1"] .f-video-click,
@@ -3664,7 +3636,7 @@ main { padding-top: var(--header-h); }
     .m-subnav {
       position: fixed;
       left: 0; right: 0; bottom: 0;
-      background: var(--deep-plum);
+      background: var(--warm-coral);
       color: #ffffff;
       display: flex;
       align-items: stretch;
@@ -4121,7 +4093,7 @@ main { padding-top: var(--header-h); }
       </div>
       <div class="m-quotes-carousel" data-m-quotes>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-michael.jpg" alt="Michael" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-michael.png" alt="Michael" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Michael</p>
             <p class="m-q-role">Formerly incarcerated, New York</p>
@@ -4129,8 +4101,8 @@ main { padding-top: var(--header-h); }
             <p class="m-q-quote">To have free calls now &mdash; it&rsquo;s more than what I think people realize. It&rsquo;s our lifeline to the world. Our lifeline to our families.</p>
           </div>
         </article>
-        <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-saul.png" alt="Saul" loading="lazy" />
+        <article class="m-quote-card" style="background: #ffffff;">
+          <img class="m-quote-photo" src="assets/quotes/quote-saul.png" alt="Saul" loading="lazy" style="margin-top: 25px; background: #ffffff;" />
           <div class="m-quote-text">
             <p class="m-q-name">Saul</p>
             <p class="m-q-role">Currently incarcerated, California</p>
@@ -4139,7 +4111,7 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-felix.jpg" alt="Felix" loading="lazy" style="object-position: center top;" />
+          <img class="m-quote-photo" src="assets/quotes/quote-felix.png" alt="Felix" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Felix</p>
             <p class="m-q-role">Prison counselor, New York</p>
@@ -4148,7 +4120,7 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-angel.jpg" alt="Angel" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-angel.png" alt="Angel" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Angel</p>
             <p class="m-q-role">Wife, California</p>
@@ -4166,12 +4138,12 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-mitchell.jpg" alt="Sgt. Mitchell" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-justin.png" alt="Officer Walls" loading="lazy" />
           <div class="m-quote-text">
-            <p class="m-q-name">Sgt. Mitchell</p>
-            <p class="m-q-role">Corrections sergeant, New York</p>
+            <p class="m-q-name">Officer Walls</p>
+            <p class="m-q-role">Corrections officer, New York</p>
             <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
-            <p class="m-q-quote">Their interactions with [officers] become more positive and constructive instead of negative. They have things to look forward to. They go back to their cells, get on the phone, speak to their friends and loved ones, talk about their day, and get advice and counseling over those phone calls.</p>
+            <p class="m-q-quote">Having that connection with the outside is important. It&rsquo;s very easy to get lost in the prison environment, so being able to connect as much and as often as you want is very good for them.</p>
           </div>
         </article>
         <article class="m-quote-card">
@@ -4184,7 +4156,7 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-marc.jpg" alt="Marc" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-marc.png" alt="Marc" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Marc</p>
             <p class="m-q-role">Formerly incarcerated, New York</p>
@@ -4192,8 +4164,8 @@ main { padding-top: var(--header-h); }
             <p class="m-q-quote">I got to sit on the phone and do homework with my daughter, which was huge &mdash; just kind of sit there and allow her time to think through the problems and not worry about it costing per minute.</p>
           </div>
         </article>
-        <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-jasmeel.svg" alt="Jasmeel" loading="lazy" />
+        <article class="m-quote-card" style="background: #ffffff;">
+          <img class="m-quote-photo" src="assets/quotes/quote-jasmeel.svg" alt="Jasmeel" loading="lazy" style="margin-top: 25px; background: #ffffff;" />
           <div class="m-quote-text">
             <p class="m-q-name">Jasmeel</p>
             <p class="m-q-role">Currently incarcerated, California</p>
@@ -4220,7 +4192,7 @@ main { padding-top: var(--header-h); }
           </div>
         </article>
         <article class="m-quote-card">
-          <img class="m-quote-photo" src="assets/quotes/quote-ransey.jpg" alt="Ransey" loading="lazy" />
+          <img class="m-quote-photo" src="assets/quotes/quote-ransey.png" alt="Ransey" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Ransey</p>
             <p class="m-q-role">Daughter, New York</p>
@@ -4336,7 +4308,7 @@ main { padding-top: var(--header-h); }
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
           <span class="m-finding-titlebar-text">The Calls That Come Before Freedom</span>
         </div>
-        <button class="m-tap" type="button" data-m-video=""
+        <button class="m-tap" type="button" data-m-video="1188849398"
                 style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 8 video"></button>
       </article>
     </div>
@@ -4434,17 +4406,8 @@ main { padding-top: var(--header-h); }
       </div>
     </footer>
 
-    <!-- Mobile end-of-finding CTA — separate element from desktop. Sits above
-         the .m-subnav (bottom: 60px). Plum bg matching m-subnav style. Two
-         halves: "Explore more findings" left + "Scroll to take action" right. -->
-    <div class="m-finding-end-bar" data-m-finding-end-bar aria-hidden="true">
-      <a class="m-finding-end-half m-finding-end-half--explore" href="#" data-m-end-explore>
-        Explore more findings <span aria-hidden="true">&darr;</span>
-      </a>
-      <a class="m-finding-end-half m-finding-end-half--takeaction" href="#m-action-center" data-m-end-takeaction>
-        Scroll to take action
-      </a>
-    </div>
+    <!-- (Mobile end-bar removed per client — sub-nav alone now handles
+         end-of-finding navigation.) -->
 
     <!-- Mobile findings sub-nav: appears when in findings region -->
     <nav class="m-subnav" data-m-subnav aria-hidden="true" aria-label="Findings navigation">
@@ -4678,49 +4641,18 @@ main { padding-top: var(--header-h); }
     var counterEl = subnav.querySelector('[data-m-subnav-current]');
     var areaEl = subnav.querySelector('[data-m-subnav-area]');
     var skipBtn = subnav.querySelector('[data-m-subnav-skip]');
-    var counterParent = subnav.querySelector('.m-subnav-counter');
-    var infoEl = subnav.querySelector('.m-subnav-info');
-    var subnavNextUpMode = false; // tracks whether sub-nav is in "next up" preview state
-
     function currentActiveIdx() {
       for (var i = 0; i < findingArticles.length; i++) {
         if (findingArticles[i].classList.contains('is-active')) return i;
       }
       return 0;
     }
-    function setSubnavMode(nextUp){
-      var idx = currentActiveIdx();
-      if (!counterParent || !areaEl || !infoEl) return;
-      if (nextUp) {
-        var isLast = idx >= findingArticles.length - 1;
-        counterParent.classList.add('is-next-up-label');
-        if (isLast) {
-          counterParent.textContent = 'READY TO ACT?';
-          areaEl.textContent = 'Take Action ↓';
-        } else {
-          var nextArea = findingArticles[idx + 1].getAttribute('data-finding-area') || '';
-          counterParent.textContent = 'NEXT UP →';
-          areaEl.textContent = nextArea;
-        }
-        infoEl.classList.add('is-clickable');
-        infoEl.setAttribute('role', 'button');
-        infoEl.setAttribute('tabindex', '0');
-      } else {
-        counterParent.classList.remove('is-next-up-label');
-        counterParent.innerHTML = '<span data-m-subnav-current>' + (idx + 1) + '</span> / 8';
-        counterEl = counterParent.querySelector('[data-m-subnav-current]');
-        var area = findingArticles[idx] ? findingArticles[idx].getAttribute('data-finding-area') : '';
-        if (area) areaEl.textContent = area;
-        infoEl.classList.remove('is-clickable');
-        infoEl.removeAttribute('role');
-        infoEl.removeAttribute('tabindex');
-      }
-      subnavNextUpMode = !!nextUp;
-    }
     function updateNav(idx){
-      // Always reset to normal mode on finding change; updateMVisibility
-      // will re-apply next-up mode on the next scroll frame if applicable.
-      setSubnavMode(false);
+      if (counterEl) counterEl.textContent = (idx + 1);
+      if (areaEl && findingArticles[idx]) {
+        var area = findingArticles[idx].getAttribute('data-finding-area');
+        if (area) areaEl.textContent = area;
+      }
       if (prevBtn) prevBtn.disabled = (idx <= 0);
       if (nextBtn) nextBtn.disabled = (idx >= findingArticles.length - 1);
     }
@@ -4747,54 +4679,8 @@ main { padding-top: var(--header-h); }
     if (prevBtn) prevBtn.addEventListener('click', function(){ setActiveFinding(currentActiveIdx() - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function(){ setActiveFinding(currentActiveIdx() + 1); });
     if (skipBtn) skipBtn.addEventListener('click', scrollToTakeAction);
-    // Center info area is tappable in "next up" mode — advance to next
-    // finding (or scroll to Take Action on the last finding).
-    if (infoEl) {
-      infoEl.addEventListener('click', function(e){
-        if (!subnavNextUpMode) return;
-        e.preventDefault();
-        var idx = currentActiveIdx();
-        if (idx >= findingArticles.length - 1) {
-          scrollToTakeAction();
-        } else {
-          setActiveFinding(idx + 1);
-        }
-      });
-      infoEl.addEventListener('keydown', function(e){
-        if (!subnavNextUpMode) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          var idx = currentActiveIdx();
-          if (idx >= findingArticles.length - 1) {
-            scrollToTakeAction();
-          } else {
-            setActiveFinding(idx + 1);
-          }
-        }
-      });
-    }
 
-    /* Mobile end-of-finding bar — separate element from desktop. */
-    var mEndBar = document.querySelector('[data-m-finding-end-bar]');
-    var mExploreLink = document.querySelector('[data-m-end-explore]');
-    var mTakeActionLink = document.querySelector('[data-m-end-takeaction]');
-
-    if (mExploreLink) {
-      mExploreLink.addEventListener('click', function(e){
-        e.preventDefault();
-        // Pulse the sub-nav so user sees where to pick another finding
-        subnav.classList.add('is-pulse');
-        setTimeout(function(){ subnav.classList.remove('is-pulse'); }, 1800);
-      });
-    }
-    if (mTakeActionLink) {
-      mTakeActionLink.addEventListener('click', function(e){
-        e.preventDefault();
-        scrollToTakeAction();
-      });
-    }
-
-    /* Show/hide subnav + end-CTA based on scroll position. */
+    /* Show/hide subnav based on scroll position. */
     var mTakeAction = document.getElementById('m-action-center');
     function updateMVisibility(){
       var regionRect = findingsRegion.getBoundingClientRect();
@@ -4807,30 +4693,6 @@ main { padding-top: var(--header-h); }
       var subnavVis = entered && stillInside;
       subnav.classList.toggle('is-visible', subnavVis);
       subnav.setAttribute('aria-hidden', subnavVis ? 'false' : 'true');
-
-      // Mobile end-bar: show when active finding's bottom is visible in
-      // viewport (= user is near end of finding). Hide once Take Action
-      // approaches OR finding has scrolled past / hasn't reached end yet.
-      var barVis = false;
-      var activeFinding = findingArticles[currentActiveIdx()];
-      if (activeFinding) {
-        var rect = activeFinding.getBoundingClientRect();
-        var taApproaching = taRect ? taRect.top < vh * 0.75 : false;
-        barVis = rect.bottom > 0 && rect.bottom < vh * 1.0 && !taApproaching;
-      }
-      if (mEndBar) {
-        mEndBar.classList.toggle('is-visible', barVis);
-        mEndBar.setAttribute('aria-hidden', barVis ? 'false' : 'true');
-      }
-      // Sub-nav center text morphs into "Next Up: [next area]" when at
-      // end of finding. Only run when subnav itself is visible — otherwise
-      // we'd be morphing offscreen text.
-      if (subnavVis && barVis !== subnavNextUpMode) {
-        setSubnavMode(barVis);
-      } else if (!subnavVis && subnavNextUpMode) {
-        // When subnav slides out, reset back to normal mode
-        setSubnavMode(false);
-      }
     }
     var mSubnavTicking = false;
     function onMSubnavScroll(){
@@ -5028,7 +4890,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 1. Michael (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Michael, formerly incarcerated, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-michael.jpg'); background-position: center calc(50% + 3px);">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-michael.png');">
         <span class="qc-tag">Michael &middot; New York</span>
       </div>
       <div class="qc-quote">
@@ -5056,7 +4918,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 3. Felix (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Felix, prison counselor, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-felix.jpg'); background-position: center calc(50% + 30px); background-color: #A7A6A1;">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-felix.png');">
         <span class="qc-tag">Felix &middot; New York</span>
       </div>
       <div class="qc-quote">
@@ -5070,7 +4932,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 4. Angel (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="240" data-quote href="#" tabindex="0" aria-label="Quote from Angel, wife, California">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-angel.jpg'); background-position: center calc(50% - 10px);">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-angel.png');">
         <span class="qc-tag">Angel &middot; California</span>
       </div>
       <div class="qc-quote">
@@ -5096,23 +4958,23 @@ main { padding-top: var(--header-h); }
       </div>
     </a>
 
-    <!-- 6. Sgt. Mitchell (photo) -->
-    <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Sergeant Mitchell, corrections sergeant, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-mitchell.jpg'); background-position: center calc(50% - 15px);">
-        <span class="qc-tag">Sgt. Mitchell &middot; New York</span>
+    <!-- 6. Officer Walls (photo) — replaces Sgt. Mitchell -->
+    <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Officer Walls, corrections officer, New York">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-justin.png');">
+        <span class="qc-tag">Officer Walls &middot; New York</span>
       </div>
       <div class="qc-quote">
-        <p class="qc-text">&ldquo;Their interactions with [officers] become more positive and constructive instead of negative. They have things to look forward to. They go back to their cells, get on the phone, speak to their friends and loved ones, talk about their day, and get advice and counseling over those phone calls.&rdquo;</p>
+        <p class="qc-text">&ldquo;Having that connection with the outside is important. It&rsquo;s very easy to get lost in the prison environment, so being able to connect as much and as often as you want is very good for them.&rdquo;</p>
         <div>
-          <p class="qc-attr-name">Sgt. Mitchell</p>
-          <p class="qc-attr-meta">Corrections sergeant, New York</p>
+          <p class="qc-attr-name">Officer Walls</p>
+          <p class="qc-attr-meta">Corrections officer, New York</p>
         </div>
       </div>
     </a>
 
     <!-- 7. Marc (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Marc, formerly incarcerated, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-marc.jpg'); background-position: center calc(50% + 10px);">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-marc.png');">
         <span class="qc-tag">Marc &middot; New York</span>
       </div>
       <div class="qc-quote">
@@ -5126,7 +4988,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 8. Shelene (illustration) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="240" data-quote href="#" tabindex="0" aria-label="Quote from Shelene, mother, Minnesota">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-shelene.png'); background-position: center calc(50% - 73px); background-color: #43353A;">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-shelene.png');">
         <span class="qc-tag">Shelene &middot; Minnesota</span>
       </div>
       <div class="qc-quote">
@@ -5140,7 +5002,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 9. Dwayne (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Dwayne, currently incarcerated, Connecticut">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-dwayne.png'); background-position: center calc(50% - 12px); background-color: #B1A49B;">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-dwayne.png');">
         <span class="qc-tag">Dwayne &middot; Connecticut</span>
       </div>
       <div class="qc-quote">
@@ -5154,7 +5016,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 10. Nia (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Nia, wife, Massachusetts">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-nia.png'); background-position: center calc(50% - 3px);">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-nia.png');">
         <span class="qc-tag">Nia &middot; Massachusetts</span>
       </div>
       <div class="qc-quote">
@@ -5182,7 +5044,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 12. Ransey (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="240" data-quote href="#" tabindex="0" aria-label="Quote from Ransey, daughter, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-ransey.jpg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-ransey.png');">
         <span class="qc-tag">Ransey &middot; New York</span>
       </div>
       <div class="qc-quote">
@@ -5278,13 +5140,12 @@ main { padding-top: var(--header-h); }
            src="assets/illustrations/separated/finding-02/finding-02-no-number.svg"
            alt="Finding 2 — Financial Relief. $622 million saved by families to date, with 73% flowing to Black and brown families. Savings ranged from $244 to $2,927 per year per incarcerated loved one. Communication costs fell dramatically when the burden shifted off families."
            data-anim="fade-up" loading="lazy" />
-      <!-- Animated $622 — base SVG has "$622" baked into the design. Counter
-           ticks 0→621 then fades, baked $622 reveals. F6-style pattern. -->
-      <div class="f-num-stage f2-num-stage"
-           data-num-style="count-up"
+      <!-- F2 number animation DISABLED for now — number is baked into the new
+           Pallavi SVG. Markup kept (with data-num-style stripped + display:none)
+           so we can re-enable later. -->
+      <div class="f-num-stage f2-num-stage" style="display:none;"
            data-num-end="621" data-num-prefix="$" data-num-suffix=""
-           data-num-duration="1500" data-num-font-factor="0.78"
-           data-anim-delay="300">
+           data-num-duration="1500" data-num-font-factor="0.78">
         <img class="f-num-svg" src="assets/illustrations/separated/finding-02/number.svg" alt="$622 million saved by families to date" />
         <span class="f-num-counter">$0</span>
       </div>
@@ -5393,12 +5254,11 @@ main { padding-top: var(--header-h); }
   <article id="finding-06" class="finding f6-locked" data-finding="5" data-area="Safety" data-nav-tone="light">
     <div class="f6-wrap">
       <img class="f6-base" src="assets/illustrations/separated/finding-06/finding-06-no-number.svg" alt="Finding 6: Less Violence and Operational Disruption" data-anim="fade-up" loading="lazy" />
-      <!-- Animated 100% — counter ticks 0→100, then swap to crisp SVG. -->
-      <div class="f-num-stage f6-num-stage"
-           data-num-style="count-up"
+      <!-- F6 number animation DISABLED for now — number baked into new
+           Pallavi SVG. Markup kept for re-enabling later. -->
+      <div class="f-num-stage f6-num-stage" style="display:none;"
            data-num-end="99" data-num-suffix="%"
-           data-num-duration="1300" data-num-font-factor="0.86"
-           data-anim-delay="300">
+           data-num-duration="1300" data-num-font-factor="0.86">
         <img class="f-num-svg" src="assets/illustrations/separated/finding-06/number.svg" alt="100% of corrections staff recommended free communication" />
         <span class="f-num-counter">0%</span>
       </div>
@@ -5448,13 +5308,12 @@ main { padding-top: var(--header-h); }
   <article id="finding-08" class="finding f8-locked" data-finding="7" data-area="Reentry" data-nav-tone="light">
     <div class="f8-wrap">
       <img class="f8-base" src="assets/illustrations/separated/finding-08/finding-08-locked.svg" alt="Finding 8: Reentry Planning and Success. Free communication helps incarcerated people plan for life after release." data-anim="fade-up" loading="lazy" />
-      <!-- Video click target over baked thumbnail. TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
               aria-label="Play documentary clip — Finding 8 (Donald)"
               data-target="f8-video"></button>
       <div id="f8-video" class="f-video-player" aria-hidden="true">
         <iframe class="f-video-frame"
-                data-src=""
+                data-src="https://player.vimeo.com/video/1188849398?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63"
                 title="Power of Free — Finding 8"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowfullscreen></iframe>
@@ -5473,16 +5332,10 @@ main { padding-top: var(--header-h); }
      user reaches the end of the active finding, slides out when they've moved
      past into Take Action. Two halves matching sub-nav's color zones:
      lavender (explore) + coral (take action). -->
-<div class="finding-end-cta" data-finding-end-cta aria-hidden="true">
-  <a class="end-cta-half end-cta-half--explore" data-cta-explore href="#">
-    Explore more findings in menu below
-  </a>
-  <a class="end-cta-half end-cta-half--takeaction" data-cta-takeaction href="#actions">
-    Or scroll for ways to take action <span aria-hidden="true">&darr;</span>
-  </a>
-</div>
+<!-- (Desktop end-CTA bar removed per client — sub-nav alone now handles
+     end-of-finding navigation.) -->
 
-<!-- Fixed bottom sub-nav (lives outside findings-wrap so it can appear earlier — as user enters Findings Intro). Slides up when in findings region; slides down otherwise. 3 zones: plum prev/counter/next | scrollable tabs | coral skip CTA. -->
+<!-- Fixed bottom sub-nav. Slides up when in findings region; slides down otherwise. 2 zones: coral prev/counter/next | scrollable tabs. -->
 <nav class="findings-subnav" data-subnav aria-label="8 Areas of Measurable Impact" aria-hidden="true">
   <div class="subnav-position">
     <button class="subnav-arrow" data-subnav-prev type="button" aria-label="Previous finding">&larr;</button>
@@ -6045,40 +5898,11 @@ main { padding-top: var(--header-h); }
       tab.addEventListener('click', function () { setActiveFinding(idx); });
     });
 
-    /* Single fixed end-CTA bar (sibling of sub-nav). Slides in above the
-       sub-nav when active finding's bottom approaches the viewport bottom,
-       slides out when user has scrolled into Take Action. */
-    var endCta = document.querySelector('[data-finding-end-cta]');
-
     var findingsIntro = document.getElementById('findings');
     var takeActionEl = document.getElementById('actions');
 
-    /* Skip desktop end-CTA + sub-nav visibility logic on mobile viewports —
-       mobile's own handler manages the same end-CTA element. Without this
-       gate, desktop's logic runs against display:none .finding elements
-       (rect = 0/0) and overrides mobile's correct visibility setting. */
     function isDesktopViewport() {
       return window.matchMedia('(min-width: 768px)').matches;
-    }
-
-    function updateEndCtaVisibility() {
-      if (!endCta || !isDesktopViewport()) return;
-      var activeFinding = findings[currentActiveIdx()];
-      if (!activeFinding) {
-        endCta.classList.remove('is-visible');
-        endCta.setAttribute('aria-hidden', 'true');
-        return;
-      }
-      var rect = activeFinding.getBoundingClientRect();
-      var vh = window.innerHeight;
-      // Show when finding's bottom edge is in viewport (or just below);
-      // hide once Take Action has entered the lower portion of the viewport
-      // OR the finding has scrolled fully past the top.
-      var taTop = takeActionEl ? takeActionEl.getBoundingClientRect().top : Infinity;
-      var taApproaching = taTop < vh * 0.75;
-      var visible = rect.bottom > 0 && rect.bottom < vh * 1.0 && !taApproaching;
-      endCta.classList.toggle('is-visible', visible);
-      endCta.setAttribute('aria-hidden', visible ? 'false' : 'true');
     }
 
     function updateSubnavVisibility() {
@@ -6092,30 +5916,12 @@ main { padding-top: var(--header-h); }
       subnav.setAttribute('aria-hidden', visible ? 'false' : 'true');
     }
 
-    // Wire the end-CTA links
-    document.addEventListener('click', function (e) {
-      var explore = e.target.closest('[data-cta-explore]');
-      if (explore) {
-        e.preventDefault();
-        // Pulse the sub-nav to draw attention to the menu
-        subnav.classList.add('is-pulse');
-        setTimeout(function () { subnav.classList.remove('is-pulse'); }, 1800);
-        return;
-      }
-      var ta = e.target.closest('[data-cta-takeaction]');
-      if (ta) {
-        e.preventDefault();
-        scrollToTakeAction();
-      }
-    });
-
     var subnavTicking = false;
     function onSubnavScroll() {
       if (subnavTicking) return;
       subnavTicking = true;
       requestAnimationFrame(function () {
         updateSubnavVisibility();
-        updateEndCtaVisibility();
         subnavTicking = false;
       });
     }
@@ -6124,7 +5930,6 @@ main { padding-top: var(--header-h); }
     // Initial sync — F1 is active by default (set via .is-active in HTML)
     setActiveTab(0);
     updateSubnavVisibility();
-    updateEndCtaVisibility();
   }
 
   /* ---------- Finding 01 v2: Prisons / Jails PNG toggle ----------

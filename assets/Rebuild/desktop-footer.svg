@@ -1,0 +1,51 @@
+<svg width="1440" height="380" viewBox="0 0 1440 380" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+  <!-- Plum background -->
+  <rect width="1440" height="380" fill="#4B0F63"/>
+  <!-- Coral brand strip across top -->
+  <rect width="1440" height="4" fill="#E4572E"/>
+
+  <!-- ============ LEFT — sign up block ============ -->
+  <!-- Heading: "Sign up to receive news and updates." (Inter ExtraBold 36 + Concrette italic accent) -->
+  <text x="71" y="160" fill="#FFFFFF" font-size="36" font-weight="800" letter-spacing="-0.36">Sign up to receive</text>
+  <text x="71" y="206" font-size="36" letter-spacing="-0.36">
+    <tspan font-style="italic" font-family="Fraunces, ConcretteXL, serif" font-weight="500" fill="#D6B4FC">news and updates</tspan>
+    <tspan fill="#FFFFFF" font-weight="800">.</tspan>
+  </text>
+
+  <!-- Email input field -->
+  <text x="75" y="266" fill="rgba(255,255,255,0.5)" font-size="16" font-weight="500">Email Address</text>
+  <line x1="71" y1="284" x2="475" y2="284" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"/>
+
+  <!-- Coral Sign Up button (right-aligned with input) -->
+  <rect x="487" y="248" width="124" height="48" fill="#E4572E"/>
+  <text x="549" y="278" fill="#FFFFFF" font-size="13" font-weight="700" letter-spacing="1.82" text-anchor="middle">SIGN UP</text>
+
+  <!-- ============ RIGHT — meta column (right-aligned at x=1369) ============ -->
+  <!-- "© 2026 WORTH RISES" small caps -->
+  <text x="1369" y="160" fill="rgba(255,255,255,0.55)" font-size="12" font-weight="800" letter-spacing="2.16" text-anchor="end">© 2026 WORTH RISES</text>
+
+  <!-- info@worthrises.com email link -->
+  <text x="1369" y="218" fill="#FFFFFF" font-size="20" font-weight="500" text-anchor="end">info@worthrises.com</text>
+  <line x1="1175" y1="226" x2="1369" y2="226" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+
+  <!-- Social icons: 3 circle outlines, 42×42, 10px gap, right-aligned at 1369 -->
+  <!-- X (Twitter) — rightmost -->
+  <circle cx="1348" cy="282" r="20" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+  <g transform="translate(1340 274)" fill="#FFFFFF">
+    <path d="M12.163 1.5h2.205l-4.818 5.507 5.668 7.493h-4.439l-3.476-4.545L3.327 14.5H1.12l5.153-5.89L.836 1.5H5.387l3.142 4.154L12.163 1.5Zm-.774 11.68h1.222L4.722 2.752H3.411l7.978 10.428Z"/>
+  </g>
+
+  <!-- Instagram -->
+  <circle cx="1296" cy="282" r="20" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+  <g transform="translate(1288 274)" fill="none" stroke="#FFFFFF" stroke-width="1.33">
+    <rect x="2" y="2" width="12" height="12" rx="3.33"/>
+    <circle cx="8" cy="8" r="2.67"/>
+    <circle cx="11.67" cy="4.33" r="0.33" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Facebook — leftmost -->
+  <circle cx="1244" cy="282" r="20" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+  <g transform="translate(1236 274)" fill="#FFFFFF">
+    <path d="M14.667 8c0-3.682-2.985-6.667-6.667-6.667S1.333 4.318 1.333 8c0 3.327 2.438 6.085 5.625 6.585V9.927H5.265V8h1.693V6.531c0-1.671.995-2.594 2.518-2.594.73 0 1.493.13 1.493.13v1.64h-.84c-.829 0-1.087.515-1.087 1.042V8h1.85l-.296 1.927h-1.554v4.658c3.187-.5 5.625-3.258 5.625-6.585Z"/>
+  </g>
+</svg>
