@@ -1014,26 +1014,71 @@ main { padding-top: var(--header-h); }
 
 
 /* ============================================================
-   QUOTES — full-bleed strip, infinite carousel, hover-reveal
-   Pattern ported from squarespace-quotes.html (final SQS version).
+   QUOTES — full-bleed strip, infinite carousel, hover-reveal.
+   Header typography updated per new Figma spec; section colors,
+   spacing, and card sizing kept on the original live-site values.
 ============================================================ */
 .quotes {
   background: var(--soft-lavender);
-  padding: var(--top-pad) 0 0;
+  /* Figma: eyebrow top = 120 from top of section */
+  padding: 120px 0 0;
   overflow: hidden;
 }
 .quotes-head {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start; /* buttons top-align with the top of the headline */
   justify-content: space-between;
   gap: 24px;
-  padding: 0 var(--gutter) clamp(24px, 4vh, 40px);
+  /* 80px side margins per Pallavi spec — eyebrow/title flush left at 80px,
+     buttons flush right at 80px. */
+  padding: 0 80px clamp(24px, 4vh, 40px);
 }
-.quotes-head .h-display { margin: 0; max-width: 18ch; }
-.quotes-eyebrow { margin-bottom: 14px; }
-.quotes-arrows { display: flex; gap: 8px; }
+.quotes-head .h-display {
+  /* Figma: Inter Display ExtraBold 70 / 100% / -3% */
+  margin: 0;
+  max-width: 18ch;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(40px, 4.86vw, 70px); /* 4.86vw hits 70px at 1440 viewport */
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.quotes-head .h-display em {
+  /* "A Phone Call" — Figma: Concrette Italic 74 / 100% / -3%, coral */
+  color: var(--warm-coral);
+  font-family: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(44px, 5.14vw, 74px); /* 5.14vw hits 74px at 1440 viewport */
+  text-transform: none;
+  letter-spacing: -0.03em;
+}
+.quotes-eyebrow {
+  /* Figma: Inter Display Bold 15 / 110% / 5% */
+  display: block;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--deep-plum);
+  margin: 0 0 20px;
+  background: transparent;
+  padding: 0;
+}
+.quotes-arrows {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  /* Aligned with the top of "MORE THAN JUST" — eyebrow line-box 16.5 +
+     margin-bottom 20 + title's line-box ascender padding ~6 = 42.5. */
+  margin-top: 42px;
+}
 .qbtn {
-  width: 64px; height: 64px;
+  width: 44px; height: 44px;
   border-radius: 0;
   border: 0;
   background: transparent;
@@ -1042,18 +1087,20 @@ main { padding-top: var(--header-h); }
   transition: filter .2s ease, transform .2s ease;
   padding: 0;
 }
-.qbtn svg { width: 28px; height: 28px; display: block; }
-/* Both arrows on coral now — section bg flipped to lavender, prev arrow's
-   lavender bg disappeared into the section. Coral on lavender reads strongly. */
-.qbtn[data-q-prev]      { background: var(--warm-coral); }
-.qbtn[data-q-prev] svg  { stroke: #fff; }
+.qbtn svg { width: 20px; height: 20px; display: block; }
+/* Prev (left): cream bg with coral arrow.
+   Next (right): coral bg with white arrow. */
+.qbtn[data-q-prev]      { background: var(--cloud-neutral); }
+.qbtn[data-q-prev] svg path { stroke: var(--warm-coral); }
 .qbtn[data-q-next]      { background: var(--warm-coral); }
-.qbtn[data-q-next] svg  { stroke: #fff; }
+.qbtn[data-q-next] svg path { stroke: #fff; }
 .qbtn:hover  { filter: brightness(.92); }
 .qbtn:active { transform: scale(.96); }
 
 .quotes-strip {
   display: flex;
+  gap: 20px; /* Pallavi spec, measured in Figma */
+  margin-top: 30px; /* extra breathing room below the title block */
   width: 100%;
   height: clamp(420px, 56vh, 560px);
   overflow-x: auto;
@@ -1087,7 +1134,8 @@ main { padding-top: var(--header-h); }
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  padding: 24px;
+  /* Coral name tag flush against the bottom-left corner of the photo */
+  padding: 0;
   z-index: 1;
 }
 .quote-card .qc-tag {
@@ -1100,16 +1148,19 @@ main { padding-top: var(--header-h); }
   font-weight: 700;
   text-transform: uppercase;
   white-space: nowrap;
-  max-width: calc(100% - 24px);
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .quote-card .qc-quote {
-  background: var(--cloud-neutral);
-  padding: 32px 28px;
+  /* White background per spec; text laid out per Figma (X=20, Y=30 from
+     card edges = 20px horizontal + 30px vertical padding). */
+  background: #ffffff;
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 20px;
   opacity: 0;
   z-index: 2;
   overflow-y: auto;
@@ -1120,15 +1171,19 @@ main { padding-top: var(--header-h); }
 .quote-card:focus-visible .qc-quote { opacity: 1; }
 
 .qc-text {
-  font-family: var(--accent);
-  font-style: italic;
-  font-size: clamp(14px, 1vw, 17px);
-  font-weight: 500;
-  line-height: 1.45;
+  /* Inter Display Regular. Figma spec is 18/140 in a 307-wide column;
+     our cards render ~280px wide, so 16px reads at the same density. */
+  font-family: var(--display);
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
   color: var(--ink);
   margin: 0;
 }
 .qc-attr-name {
+  /* Bold uppercase name — Inter Display ExtraBold */
   font-family: var(--display);
   font-size: 13px;
   font-weight: 800;
@@ -1138,10 +1193,13 @@ main { padding-top: var(--header-h); }
   margin: 0 0 4px;
 }
 .qc-attr-meta {
+  /* Role/state line — Inter Display Regular */
   font-family: var(--display);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  color: var(--ink-soft);
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--ink);
   margin: 0;
 }
 @media (max-width: 800px) {
@@ -4964,7 +5022,7 @@ main { padding-top: var(--header-h); }
 <section class="quotes" aria-label="Voices from the people most affected" data-nav-tone="light">
   <div class="quotes-head">
     <div>
-      <span class="eyebrow eyebrow-plum quotes-eyebrow" data-anim="fade-up">Testimonials</span>
+      <span class="eyebrow quotes-eyebrow" data-anim="fade-up">Testimonials</span>
       <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">More Than Just<br><em>A Phone Call</em></h2>
     </div>
     <div class="quotes-arrows">
@@ -4984,7 +5042,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 1. Michael (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Michael, formerly incarcerated, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-michael.jpg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-michael.jpg'); background-position: center calc(50% + 3px);">
         <span class="qc-tag">Michael &middot; New York</span>
       </div>
       <div class="qc-quote">
@@ -4998,7 +5056,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 2. Saul (illustration) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Saul, currently incarcerated, California">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-saul.png');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-saul.png'); background-position: center calc(50% + 18px); box-shadow: inset 0 19px 0 0 var(--deep-plum);">
         <span class="qc-tag">Saul &middot; California</span>
       </div>
       <div class="qc-quote">
@@ -5012,7 +5070,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 3. Felix (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Felix, prison counselor, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-felix.jpg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-felix.jpg'); background-position: center calc(50% + 30px); background-color: #A7A6A1;">
         <span class="qc-tag">Felix &middot; New York</span>
       </div>
       <div class="qc-quote">
@@ -5026,7 +5084,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 4. Angel (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="240" data-quote href="#" tabindex="0" aria-label="Quote from Angel, wife, California">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-angel.jpg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-angel.jpg'); background-position: center calc(50% - 10px);">
         <span class="qc-tag">Angel &middot; California</span>
       </div>
       <div class="qc-quote">
@@ -5040,7 +5098,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 5. Tricia (illustration) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Tricia, sister, federal">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-tricia.png');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-tricia.png'); background-position: center calc(50% - 5px);">
         <span class="qc-tag">Tricia &middot; Federal</span>
       </div>
       <div class="qc-quote">
@@ -5054,7 +5112,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 6. Sgt. Mitchell (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Sergeant Mitchell, corrections sergeant, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-mitchell.jpg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-mitchell.jpg'); background-position: center calc(50% - 15px);">
         <span class="qc-tag">Sgt. Mitchell &middot; New York</span>
       </div>
       <div class="qc-quote">
@@ -5068,7 +5126,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 7. Marc (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Marc, formerly incarcerated, New York">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-marc.jpg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-marc.jpg'); background-position: center calc(50% + 10px);">
         <span class="qc-tag">Marc &middot; New York</span>
       </div>
       <div class="qc-quote">
@@ -5082,7 +5140,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 8. Shelene (illustration) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="240" data-quote href="#" tabindex="0" aria-label="Quote from Shelene, mother, Minnesota">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-shelene.png');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-shelene.png'); background-position: center calc(50% - 73px); background-color: #43353A;">
         <span class="qc-tag">Shelene &middot; Minnesota</span>
       </div>
       <div class="qc-quote">
@@ -5096,7 +5154,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 9. Dwayne (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="0" data-quote href="#" tabindex="0" aria-label="Quote from Dwayne, currently incarcerated, Connecticut">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-dwayne.png');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-dwayne.png'); background-position: center calc(50% - 12px); background-color: #B1A49B;">
         <span class="qc-tag">Dwayne &middot; Connecticut</span>
       </div>
       <div class="qc-quote">
@@ -5110,7 +5168,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 10. Nia (photo) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="80" data-quote href="#" tabindex="0" aria-label="Quote from Nia, wife, Massachusetts">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-nia.png');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-nia.png'); background-position: center calc(50% - 3px);">
         <span class="qc-tag">Nia &middot; Massachusetts</span>
       </div>
       <div class="qc-quote">
@@ -5124,7 +5182,7 @@ main { padding-top: var(--header-h); }
 
     <!-- 11. Jasmeel (illustration) -->
     <a class="quote-card" data-anim="fade-up" data-anim-delay="160" data-quote href="#" tabindex="0" aria-label="Quote from Jasmeel, currently incarcerated, California">
-      <div class="qc-image" style="background-image: url('assets/quotes/quote-jasmeel.svg');">
+      <div class="qc-image" style="background-image: url('assets/quotes/quote-jasmeel.svg'); background-position: center calc(50% + 18px); box-shadow: inset 0 21px 0 0 var(--deep-plum);">
         <span class="qc-tag">Jasmeel &middot; California</span>
       </div>
       <div class="qc-quote">
@@ -5875,8 +5933,15 @@ main { padding-top: var(--header-h); }
     function getCardWidth() {
       return strip.children[0].getBoundingClientRect().width;
     }
+    /* Stride = how far you scroll to advance one card slot. Includes the
+       80px flex gap between cards (computed from the strip's actual gap
+       in case CSS changes). */
+    function getCardStride() {
+      var gap = parseFloat(getComputedStyle(strip).columnGap || getComputedStyle(strip).gap || '0') || 0;
+      return getCardWidth() + gap;
+    }
     function getMiddleStart() {
-      return getCardWidth() * nOrig;
+      return getCardStride() * nOrig;
     }
 
     // Park at the start of the middle (real) set after layout settles.
@@ -5889,14 +5954,15 @@ main { padding-top: var(--header-h); }
     var wrapping = false;
     strip.addEventListener('scroll', function () {
       if (wrapping) return;
-      var setWidth   = getCardWidth() * nOrig;
+      var stride     = getCardStride();
+      var setWidth   = stride * nOrig;
       var middleStart = setWidth;
       var middleEnd   = setWidth * 2;
-      if (strip.scrollLeft < middleStart - getCardWidth() * 2) {
+      if (strip.scrollLeft < middleStart - stride * 2) {
         wrapping = true;
         strip.scrollLeft += setWidth;
         requestAnimationFrame(function () { wrapping = false; });
-      } else if (strip.scrollLeft > middleEnd + getCardWidth()) {
+      } else if (strip.scrollLeft > middleEnd + stride) {
         wrapping = true;
         strip.scrollLeft -= setWidth;
         requestAnimationFrame(function () { wrapping = false; });
@@ -5912,10 +5978,10 @@ main { padding-top: var(--header-h); }
     var prevBtn = document.querySelector('[data-q-prev]');
     var nextBtn = document.querySelector('[data-q-next]');
     if (prevBtn) prevBtn.addEventListener('click', function () {
-      strip.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+      strip.scrollBy({ left: -getCardStride(), behavior: 'smooth' });
     });
     if (nextBtn) nextBtn.addEventListener('click', function () {
-      strip.scrollBy({ left:  getCardWidth(), behavior: 'smooth' });
+      strip.scrollBy({ left:  getCardStride(), behavior: 'smooth' });
     });
   }
 
