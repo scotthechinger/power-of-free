@@ -6287,7 +6287,11 @@ main { padding-top: var(--header-h); }
     heroCord.style.strokeDashoffset = len;
 
     var heroIllusImg = document.querySelector('.hero-illustration img');
+    var cordStarted = false;
     var startCord = function () {
+      if (cordStarted) return;
+      cordStarted = true;
+      // Two rAFs so the hidden state paints first, THEN transition kicks in.
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
           heroCord.style.transition = 'stroke-dashoffset 2400ms cubic-bezier(0.22, 1, 0.36, 1) 200ms';
@@ -6295,10 +6299,26 @@ main { padding-top: var(--header-h); }
         });
       });
     };
-    if (heroIllusImg && !heroIllusImg.complete) {
-      // Wait for illustration to load + decode before the cord starts drawing
-      heroIllusImg.addEventListener('load', startCord, { once: true });
-      // Failsafe in case 'load' never fires (cached / error)
+    if (heroIllusImg) {
+      // Use img.decode() — Promise resolves when image is fully decoded and
+      // ready to paint. Catches both fresh and cached cases. Plain `load`
+      // event + `complete` flag fire too early on cached SVGs (network done,
+      // but browser hasn't painted yet).
+      var afterDecode = function () {
+        // Add a small extra delay so the painted illustration has at least
+        // one frame to display before the cord starts drawing on top.
+        requestAnimationFrame(function () {
+          requestAnimationFrame(startCord);
+        });
+      };
+      if (typeof heroIllusImg.decode === 'function') {
+        heroIllusImg.decode().then(afterDecode).catch(afterDecode);
+      } else if (heroIllusImg.complete) {
+        afterDecode();
+      } else {
+        heroIllusImg.addEventListener('load', afterDecode, { once: true });
+      }
+      // Failsafe in case decode + load both fail
       setTimeout(startCord, 3000);
     } else {
       startCord();
