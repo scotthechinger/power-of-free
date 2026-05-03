@@ -6297,18 +6297,31 @@ main { padding-top: var(--header-h); }
         });
       });
     };
-    // Wait for window.load + 300ms buffer so the people + text are painted
-    // first, then the cord draws on top.
-    var triggerOnLoad = function () {
-      setTimeout(startCord, 300);
+    // Wait for the hero illustration img specifically (not window.load,
+    // which waits for ALL page assets including the heavy F1 SVG and
+    // testimonial photos). Decode resolves when the SVG is ready to paint.
+    var heroIllusImg = document.querySelector('.hero-illustration img');
+    var afterDecode = function () {
+      // Two rAFs so the painted illustration shows BEFORE cord transition.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(startCord);
+      });
     };
-    if (document.readyState === 'complete') {
-      triggerOnLoad();
+    if (heroIllusImg) {
+      if (heroIllusImg.complete && heroIllusImg.naturalWidth > 0) {
+        afterDecode();
+      } else if (typeof heroIllusImg.decode === 'function') {
+        heroIllusImg.decode().then(afterDecode).catch(function () {
+          heroIllusImg.addEventListener('load', afterDecode, { once: true });
+        });
+      } else {
+        heroIllusImg.addEventListener('load', afterDecode, { once: true });
+      }
     } else {
-      window.addEventListener('load', triggerOnLoad, { once: true });
+      afterDecode();
     }
-    // Hard failsafe — start no later than 4s even if load never fires
-    setTimeout(startCord, 4000);
+    // Hard failsafe in case load/decode never fire
+    setTimeout(startCord, 3000);
   }
 
   /* ---------- Hero video title card fly-in ----------
