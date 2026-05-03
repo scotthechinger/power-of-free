@@ -1159,6 +1159,89 @@ main { padding-top: var(--header-h); }
 
 .findings-wrap { position: relative; }
 
+/* === Single-finding view (2026-05-02) ===
+   Only the .is-active finding renders. F1 starts active by default. */
+.finding:not(.is-active) { display: none !important; }
+.m-finding:not(.is-active) { display: none !important; }
+
+/* End-of-finding CTA — single fixed bar that slides in ABOVE the sub-nav
+   when the user reaches the end of the active finding, slides out when
+   they've scrolled into Take Action. Mirrors the sub-nav design language:
+   2 colored halves matching sub-nav's tab-active (lavender) and skip-cta
+   (coral) zones, same 60px height, same border-top + drop shadow.
+   Slide animation matches sub-nav (transform translateY 0.32s var(--ease-out)).  */
+.finding-end-cta {
+  position: fixed;
+  /* Sit just above the sub-nav. When sub-nav is visible (60px tall), this
+     sits at viewport bottom + 60. Total when both visible = 120px stacked. */
+  bottom: var(--subnav-h);
+  left: 0; right: 0;
+  z-index: 39;       /* below sub-nav z-index 40 so it visually attaches under it */
+  height: var(--subnav-h);
+  display: flex;
+  align-items: stretch;
+  background: #ffffff;
+  border-top: 1px solid var(--rule);
+  box-shadow: 0 -8px 24px -16px rgba(0,0,0,.18);
+  font-family: var(--display);
+  /* Hidden by default — translate down past sub-nav. */
+  transform: translateY(calc(100% + var(--subnav-h)));
+  transition: transform 0.32s var(--ease-out);
+  pointer-events: none;
+}
+.finding-end-cta.is-visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.end-cta-half {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 22px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+.end-cta-half--explore {
+  background: var(--soft-lavender);
+  color: var(--deep-plum);
+  border-right: 1px solid var(--rule);
+}
+.end-cta-half--explore:hover {
+  background: var(--deep-plum);
+  color: #ffffff;
+}
+.end-cta-half--takeaction {
+  background: var(--warm-coral);
+  color: #ffffff;
+}
+.end-cta-half--takeaction:hover {
+  background: #ffffff;
+  color: var(--warm-coral);
+}
+@media (prefers-reduced-motion: reduce) {
+  .finding-end-cta { transition: none; }
+}
+@media (max-width: 767px) {
+  /* Mobile sizing: smaller font, condensed layout */
+  .finding-end-cta {
+    font-family: 'Inter', sans-serif;
+  }
+  .end-cta-half {
+    font-size: 11px;
+    padding: 0 14px;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+  }
+}
+
 .finding {
   min-height: calc(100vh - var(--header-h));
   padding: var(--top-pad) var(--gutter) calc(var(--subnav-h) + var(--top-pad));
@@ -1397,7 +1480,7 @@ main { padding-top: var(--header-h); }
   bottom: 0; left: 0; right: 0;
   z-index: 40;
   background: #ffffff;
-  border-top: 1px solid var(--rule);
+  border-top: 0;
   display: flex;
   align-items: stretch;
   width: 100%;
@@ -1412,8 +1495,20 @@ main { padding-top: var(--header-h); }
   transform: translateY(0);
   pointer-events: auto;
 }
+/* Pulse animation when end-of-finding "explore another" link is clicked —
+   draws user attention to the sub-nav as the place to pick another finding. */
+.findings-subnav.is-pulse,
+.m-subnav.is-pulse {
+  animation: subnavPulse 1.8s ease 0s 2;
+}
+@keyframes subnavPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(228, 87, 46, 0); }
+  50%      { box-shadow: 0 0 0 6px rgba(228, 87, 46, 0.4); }
+}
 @media (prefers-reduced-motion: reduce) {
   .findings-subnav { transition: none; }
+  .findings-subnav.is-pulse,
+  .m-subnav.is-pulse { animation: none; }
 }
 
 /* LEFT zone — plum bg, white text: prev / counter / next */
@@ -1452,17 +1547,17 @@ main { padding-top: var(--header-h); }
   text-align: center;
 }
 
-/* MIDDLE zone — scrollable tab strip */
+/* MIDDLE zone — 8 tabs, equal width filling all remaining space (no Skip
+   button anymore, so tabs span the rest of the bar from the position-zone
+   to the right edge). flex: 1 1 0 = each tab takes 1/8 of available width. */
 .subnav-tabs {
   display: flex;
   flex: 1 1 auto;
   min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: hidden;
 }
-.subnav-tabs::-webkit-scrollbar { display: none; }
 .subnav-tab {
-  flex: 1 0 auto;
+  flex: 1 1 0;
   min-width: 0;
   padding: 0 16px;
   display: inline-flex;
@@ -2969,8 +3064,9 @@ main { padding-top: var(--header-h); }
   #m-shell { display: none; }
 
   @media (max-width: 767px) {
-    /* Hide every other top-level body child on mobile. */
-    body > *:not(#m-shell):not(script):not(style):not(#m-shell-styles) {
+    /* Hide every other top-level body child on mobile, EXCEPT the
+       finding-end-cta which is shared between desktop + mobile. */
+    body > *:not(#m-shell):not(script):not(style):not(#m-shell-styles):not([data-finding-end-cta]) {
       display: none !important;
     }
     html, body { margin: 0; padding: 0; background: #fff; overflow-x: hidden; }
@@ -3521,6 +3617,64 @@ main { padding-top: var(--header-h); }
       box-shadow: 0 -4px 18px -4px rgba(0,0,0,.25);
     }
     .m-subnav.is-visible { transform: translateY(0); }
+
+    /* Mobile end-of-finding bar — sits ABOVE the .m-subnav at bottom: 60px.
+       Matches m-subnav style (plum bg, white text, fixed at bottom of
+       viewport, slide in/out animation). Independent element from the
+       desktop end-CTA. */
+    .m-finding-end-bar {
+      position: fixed;
+      left: 0; right: 0; bottom: 60px;       /* above the 60px-tall m-subnav */
+      height: 60px;
+      z-index: 39;                            /* below m-subnav z-index 40 */
+      background: var(--deep-plum);
+      color: #ffffff;
+      display: flex;
+      align-items: stretch;
+      box-shadow: 0 -4px 18px -4px rgba(0,0,0,.25);
+      transform: translateY(120px);           /* hidden — push down past m-subnav */
+      transition: transform .3s cubic-bezier(.7,0,.3,1);
+      pointer-events: none;
+      font-family: 'Inter', sans-serif;
+    }
+    .m-finding-end-bar.is-visible {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .m-finding-end-half {
+      flex: 1 1 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #ffffff;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .m-finding-end-half--explore {
+      background: var(--soft-lavender);
+      color: var(--deep-plum);
+      border-right: 1px solid rgba(0,0,0,.12);
+    }
+    .m-finding-end-half--explore:active {
+      background: var(--deep-plum);
+      color: #ffffff;
+    }
+    .m-finding-end-half--takeaction {
+      background: var(--warm-coral);
+      color: #ffffff;
+    }
+    .m-finding-end-half--takeaction:active {
+      background: #ffffff;
+      color: var(--warm-coral);
+    }
     .m-subnav-arrow {
       flex: 0 0 auto;
       width: 44px;
@@ -4014,7 +4168,7 @@ main { padding-top: var(--header-h); }
 
     <!-- FINDINGS region — 8 standalone SVGs stacked. Sub-nav appears here. -->
     <div class="m-findings" data-m-findings>
-      <article class="m-finding" id="m-f1" data-finding-idx="0" data-finding-area="Connection">
+      <article class="m-finding is-active" id="m-f1" data-finding-idx="0" data-finding-area="Connection">
         <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" fetchpriority="high" />
         <div class="m-finding-titlebar" style="top: 96.05%; height: 1.66%;">
           <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
@@ -4203,6 +4357,18 @@ main { padding-top: var(--header-h); }
       </div>
     </footer>
 
+    <!-- Mobile end-of-finding CTA — separate element from desktop. Sits above
+         the .m-subnav (bottom: 60px). Plum bg matching m-subnav style. Two
+         halves: "Explore more findings" left + "Scroll to take action" right. -->
+    <div class="m-finding-end-bar" data-m-finding-end-bar aria-hidden="true">
+      <a class="m-finding-end-half m-finding-end-half--explore" href="#" data-m-end-explore>
+        Explore more findings <span aria-hidden="true">&darr;</span>
+      </a>
+      <a class="m-finding-end-half m-finding-end-half--takeaction" href="#m-action-center" data-m-end-takeaction>
+        Scroll to take action
+      </a>
+    </div>
+
     <!-- Mobile findings sub-nav: appears when in findings region -->
     <nav class="m-subnav" data-m-subnav aria-hidden="true" aria-label="Findings navigation">
       <button class="m-subnav-arrow" type="button" data-m-subnav-prev aria-label="Previous finding">&larr;</button>
@@ -4211,9 +4377,6 @@ main { padding-top: var(--header-h); }
         <span class="m-subnav-area" data-m-subnav-area>Connection</span>
       </div>
       <button class="m-subnav-arrow" type="button" data-m-subnav-next aria-label="Next finding">&rarr;</button>
-      <button class="m-subnav-skip" type="button" data-m-subnav-skip aria-label="Skip past findings to Take Action">
-        Skip <span class="m-subnav-skip-arrow">&darr;</span>
-      </button>
     </nav>
   </main>
 
@@ -4425,7 +4588,10 @@ main { padding-top: var(--header-h); }
     });
   }
 
-  /* ---------- Mobile findings sub-nav ---------- */
+  /* ---------- Mobile findings sub-nav: single-finding view (2026-05-02) ----
+     Same UX as desktop: one finding visible at a time, sub-nav clicks toggle
+     which is active. F1 starts active. End-of-finding CTA appended to each
+     finding via JS. */
   var subnav = document.querySelector('[data-m-subnav]');
   var findingArticles = Array.prototype.slice.call(document.querySelectorAll('.m-finding'));
   var findingsRegion = document.querySelector('[data-m-findings]');
@@ -4435,10 +4601,14 @@ main { padding-top: var(--header-h); }
     var counterEl = subnav.querySelector('[data-m-subnav-current]');
     var areaEl = subnav.querySelector('[data-m-subnav-area]');
     var skipBtn = subnav.querySelector('[data-m-subnav-skip]');
-    var currentIdx = 0;
 
+    function currentActiveIdx() {
+      for (var i = 0; i < findingArticles.length; i++) {
+        if (findingArticles[i].classList.contains('is-active')) return i;
+      }
+      return 0;
+    }
     function updateNav(idx){
-      currentIdx = idx;
       if (counterEl) counterEl.textContent = (idx + 1);
       if (areaEl && findingArticles[idx]) {
         var area = findingArticles[idx].getAttribute('data-finding-area');
@@ -4447,63 +4617,92 @@ main { padding-top: var(--header-h); }
       if (prevBtn) prevBtn.disabled = (idx <= 0);
       if (nextBtn) nextBtn.disabled = (idx >= findingArticles.length - 1);
     }
-    function scrollToFinding(idx){
-      idx = Math.max(0, Math.min(findingArticles.length - 1, idx));
-      var target = findingArticles[idx];
-      if (!target) return;
-      var topbar = document.querySelector('.m-topbar');
-      var off = topbar ? topbar.offsetHeight + 4 : 60;
-      // +4px extra to kill the tiny sliver of previous section showing above target
-      var y = target.getBoundingClientRect().top + window.scrollY - off + 4;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-    if (prevBtn) prevBtn.addEventListener('click', function(){ scrollToFinding(currentIdx - 1); });
-    if (nextBtn) nextBtn.addEventListener('click', function(){ scrollToFinding(currentIdx + 1); });
-    if (skipBtn) skipBtn.addEventListener('click', function(){
+    function scrollToTakeAction(){
       var ac = document.getElementById('m-action-center');
       if (!ac) return;
       var topbar = document.querySelector('.m-topbar');
-      var off = topbar ? topbar.offsetHeight + 4 : 60;
+      var off = topbar ? topbar.offsetHeight : 56;
       var y = ac.getBoundingClientRect().top + window.scrollY - off;
       window.scrollTo({ top: y, behavior: 'smooth' });
-    });
-
-    // Show/hide subnav based on whether findings region is in view
-    if ('IntersectionObserver' in window) {
-      var visObs = new IntersectionObserver(function(entries){
-        entries.forEach(function(en){
-          subnav.classList.toggle('is-visible', en.isIntersecting);
-          subnav.setAttribute('aria-hidden', en.isIntersecting ? 'false' : 'true');
-        });
-      }, {
-        // Only show subnav when the findings region overlaps the middle 40% of viewport.
-        // When user scrolls past last finding into Action Center, region's bottom is
-        // above this slice → not intersecting → subnav hides.
-        rootMargin: '-30% 0px -30% 0px',
-        threshold: 0
-      });
-      visObs.observe(findingsRegion);
-
-      // Track which finding is currently dominant in viewport.
-      // Each article is much taller than viewport, so threshold-based detection
-      // doesn't fire reliably — instead, detect when each article's bbox
-      // crosses a thin horizontal slice in the middle of viewport.
-      var trackObs = new IntersectionObserver(function(entries){
-        entries.forEach(function(en){
-          if (en.isIntersecting) {
-            var idx = parseInt(en.target.getAttribute('data-finding-idx'), 10);
-            if (!isNaN(idx)) updateNav(idx);
-          }
-        });
-      }, {
-        rootMargin: '-45% 0px -45% 0px',  // 10% middle slice
-        threshold: 0
-      });
-      findingArticles.forEach(function(a){ trackObs.observe(a); });
-    } else {
-      subnav.classList.add('is-visible');
     }
-    updateNav(0);
+    function setActiveFinding(idx){
+      idx = Math.max(0, Math.min(findingArticles.length - 1, idx));
+      findingArticles.forEach(function(f, i){ f.classList.toggle('is-active', i === idx); });
+      updateNav(idx);
+      var target = findingArticles[idx];
+      if (!target) return;
+      var topbar = document.querySelector('.m-topbar');
+      var off = topbar ? topbar.offsetHeight : 56;
+      var y = target.getBoundingClientRect().top + window.scrollY - off;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function(){ setActiveFinding(currentActiveIdx() - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function(){ setActiveFinding(currentActiveIdx() + 1); });
+    if (skipBtn) skipBtn.addEventListener('click', scrollToTakeAction);
+
+    /* Mobile end-of-finding bar — separate element from desktop. */
+    var mEndBar = document.querySelector('[data-m-finding-end-bar]');
+    var mExploreLink = document.querySelector('[data-m-end-explore]');
+    var mTakeActionLink = document.querySelector('[data-m-end-takeaction]');
+
+    if (mExploreLink) {
+      mExploreLink.addEventListener('click', function(e){
+        e.preventDefault();
+        // Pulse the sub-nav so user sees where to pick another finding
+        subnav.classList.add('is-pulse');
+        setTimeout(function(){ subnav.classList.remove('is-pulse'); }, 1800);
+      });
+    }
+    if (mTakeActionLink) {
+      mTakeActionLink.addEventListener('click', function(e){
+        e.preventDefault();
+        scrollToTakeAction();
+      });
+    }
+
+    /* Show/hide subnav + end-CTA based on scroll position. */
+    var mTakeAction = document.getElementById('m-action-center');
+    function updateMVisibility(){
+      var regionRect = findingsRegion.getBoundingClientRect();
+      var taRect = mTakeAction ? mTakeAction.getBoundingClientRect() : null;
+      var vh = window.innerHeight;
+      var entered = regionRect.top < vh * 0.7;
+      // Hide sub-nav when Take Action top is in upper 75% of viewport.
+      var stillInside = taRect ? taRect.top > vh * 0.75 : true;
+      if (regionRect.bottom < 0) stillInside = false;
+      var subnavVis = entered && stillInside;
+      subnav.classList.toggle('is-visible', subnavVis);
+      subnav.setAttribute('aria-hidden', subnavVis ? 'false' : 'true');
+
+      // Mobile end-bar: show when active finding's bottom is visible in
+      // viewport (= user is near end of finding). Hide once Take Action
+      // approaches OR finding has scrolled past / hasn't reached end yet.
+      if (mEndBar) {
+        var activeFinding = findingArticles[currentActiveIdx()];
+        var barVis = false;
+        if (activeFinding) {
+          var rect = activeFinding.getBoundingClientRect();
+          var taApproaching = taRect ? taRect.top < vh * 0.75 : false;
+          barVis = rect.bottom > 0 && rect.bottom < vh * 1.0 && !taApproaching;
+        }
+        mEndBar.classList.toggle('is-visible', barVis);
+        mEndBar.setAttribute('aria-hidden', barVis ? 'false' : 'true');
+      }
+    }
+    var mSubnavTicking = false;
+    function onMSubnavScroll(){
+      if (mSubnavTicking) return;
+      mSubnavTicking = true;
+      requestAnimationFrame(function(){
+        updateMVisibility();
+        mSubnavTicking = false;
+      });
+    }
+    window.addEventListener('scroll', onMSubnavScroll, { passive: true });
+    window.addEventListener('resize', onMSubnavScroll, { passive: true });
+    updateMVisibility();
+    updateNav(currentActiveIdx());
   }
 })();
 </script>
@@ -4876,7 +5075,7 @@ main { padding-top: var(--header-h); }
        - 6.4 BILLION number.svg with slide-in-from-right animation
        - two invisible click overlays for prisons/jails toggle (still using PNG
          swap of base; state PNGs in cropped/ folder remain). -->
-  <article id="finding-01" class="finding f1-locked" data-finding="0" data-area="Connection" data-nav-tone="dark">
+  <article id="finding-01" class="finding f1-locked is-active" data-finding="0" data-area="Connection" data-nav-tone="dark">
     <div class="f1-wrap" data-debug="0">
       <img id="f1-img" class="f1-base"
            src="assets/illustrations/separated/finding-01/finding-01-no-number.svg"
@@ -5124,6 +5323,19 @@ main { padding-top: var(--header-h); }
 
 </div>
 
+<!-- End-of-finding CTA — fixed bar that slides in above the sub-nav when the
+     user reaches the end of the active finding, slides out when they've moved
+     past into Take Action. Two halves matching sub-nav's color zones:
+     lavender (explore) + coral (take action). -->
+<div class="finding-end-cta" data-finding-end-cta aria-hidden="true">
+  <a class="end-cta-half end-cta-half--explore" data-cta-explore href="#">
+    Explore more findings in menu below
+  </a>
+  <a class="end-cta-half end-cta-half--takeaction" data-cta-takeaction href="#actions">
+    Or scroll for ways to take action <span aria-hidden="true">&darr;</span>
+  </a>
+</div>
+
 <!-- Fixed bottom sub-nav (lives outside findings-wrap so it can appear earlier — as user enters Findings Intro). Slides up when in findings region; slides down otherwise. 3 zones: plum prev/counter/next | scrollable tabs | coral skip CTA. -->
 <nav class="findings-subnav" data-subnav aria-label="8 Areas of Measurable Impact" aria-hidden="true">
   <div class="subnav-position">
@@ -5141,9 +5353,6 @@ main { padding-top: var(--header-h); }
     <button class="subnav-tab" data-go="6">Rehabilitation</button>
     <button class="subnav-tab" data-go="7">Reentry</button>
   </div>
-  <button class="subnav-skip" data-subnav-skip type="button" aria-label="Skip past findings to Take Action section">
-    Skip to Take Action <span class="subnav-skip-arrow">&darr;</span>
-  </button>
 </nav>
 
 
@@ -5607,7 +5816,11 @@ main { padding-top: var(--header-h); }
     });
   }
 
-  /* ---------- Findings sub-nav: click-to-scroll + scroll-position-based active highlight ---------- */
+  /* ---------- Findings sub-nav: single-finding view (2026-05-02) ----------
+     New UX: only ONE finding visible at a time (.is-active). Sub-nav clicks
+     swap which finding is active and scroll to its top. Default is F1.
+     Hidden findings have display:none so the page doesn't have to load
+     thousands of pixels of off-screen content — keeps DOM small in viewport. */
   var subnav = document.querySelector('[data-subnav]');
   var findings = Array.prototype.slice.call(document.querySelectorAll('.finding'));
   if (subnav && findings.length) {
@@ -5635,38 +5848,7 @@ main { padding-top: var(--header-h); }
       if (nextArrow) nextArrow.disabled = (idx >= tabs.length - 1);
     }
 
-    function scrollToFinding(idx) {
-      idx = Math.max(0, Math.min(tabs.length - 1, idx));
-      var target = findings[idx];
-      if (!target) return;
-      var headerEl = document.querySelector('.site-header');
-      var off = headerEl ? headerEl.offsetHeight : 72;
-      // Each section has -5.56vw negative margin-bottom to overlap next.
-      // Add that overlap (80px on 1440-wide) so we land at the visual top of
-      // the target's content, not at its geometric box top (which is INSIDE
-      // the previous section's visible area).
-      var overlap = window.innerWidth * 0.0556;
-      var y = target.getBoundingClientRect().top + window.pageYOffset - off + overlap;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-
-    function currentActiveIdx() {
-      for (var i = 0; i < tabs.length; i++) {
-        if (tabs[i].classList.contains('is-active')) return i;
-      }
-      return 0;
-    }
-
-    if (prevArrow) prevArrow.addEventListener('click', function () {
-      scrollToFinding(currentActiveIdx() - 1);
-    });
-    if (nextArrow) nextArrow.addEventListener('click', function () {
-      scrollToFinding(currentActiveIdx() + 1);
-    });
-    if (skipBtn) skipBtn.addEventListener('click', function () {
-      // Skip to Take Action — #actions follows finding-08 which has -5.56vw
-      // negative margin, so we need to add that overlap to land past finding-08's
-      // visible content into #actions.
+    function scrollToTakeAction() {
       var target = document.getElementById('actions')
                 || document.getElementById('aboutproject')
                 || document.getElementById('take-action');
@@ -5676,78 +5858,123 @@ main { padding-top: var(--header-h); }
       var overlap = window.innerWidth * 0.0556;
       var y = target.getBoundingClientRect().top + window.pageYOffset - off + overlap;
       window.scrollTo({ top: y, behavior: 'smooth' });
-    });
-
-    /* Active tab tracking via scroll position. The trigger line sits ~80% down the
-       viewport so the active tab flips the *moment* the next finding's top edge
-       (and its headline immediately below) starts entering view from the bottom —
-       matches "shift the moment I see the start of the next section". */
-    var findingsIntro = document.getElementById('findings');
-    var lastFinding = findings[findings.length - 1];
-
-    function updateActiveTabFromScroll() {
-      var triggerLine = window.innerHeight * 0.8;
-      var bestIdx = 0;
-      // Iterate top-down; track the last (= most recent) finding whose top has
-      // crossed below the trigger line. Findings are stacked, so we can break
-      // as soon as we see one still below the trigger.
-      for (var i = 0; i < findings.length; i++) {
-        var top = findings[i].getBoundingClientRect().top;
-        if (top <= triggerLine) {
-          bestIdx = i;
-        } else {
-          break;
-        }
-      }
-      setActiveTab(bestIdx);
     }
 
-    /* Sub-nav slides up when user enters Findings Intro and stays visible through the
-       last finding. Slides down (off-screen) otherwise. */
-    function updateSubnavVisibility() {
-      if (!findingsIntro || !lastFinding) return;
-      var introTop = findingsIntro.getBoundingClientRect().top;
-      var lastBottom = lastFinding.getBoundingClientRect().bottom;
+    function setActiveFinding(idx) {
+      idx = Math.max(0, Math.min(findings.length - 1, idx));
+      // Toggle is-active class so only the chosen finding renders
+      findings.forEach(function (f, i) { f.classList.toggle('is-active', i === idx); });
+      setActiveTab(idx);
+      // Scroll to the top of the new active finding
+      var target = findings[idx];
+      if (!target) return;
       var headerEl = document.querySelector('.site-header');
-      var headerH = headerEl ? headerEl.offsetHeight : 72;
-      // Show as soon as findings-intro starts entering the viewport (top < 85% of viewport).
-      // Hide once the last finding has fully scrolled above the header.
+      var off = headerEl ? headerEl.offsetHeight : 72;
+      var overlap = window.innerWidth * 0.0556;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - off + overlap;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    function currentActiveIdx() {
+      for (var i = 0; i < findings.length; i++) {
+        if (findings[i].classList.contains('is-active')) return i;
+      }
+      return 0;
+    }
+
+    if (prevArrow) prevArrow.addEventListener('click', function () {
+      setActiveFinding(currentActiveIdx() - 1);
+    });
+    if (nextArrow) nextArrow.addEventListener('click', function () {
+      setActiveFinding(currentActiveIdx() + 1);
+    });
+    if (skipBtn) skipBtn.addEventListener('click', scrollToTakeAction);
+
+    // Tab clicks switch which finding is active
+    tabs.forEach(function (tab, idx) {
+      tab.addEventListener('click', function () { setActiveFinding(idx); });
+    });
+
+    /* Single fixed end-CTA bar (sibling of sub-nav). Slides in above the
+       sub-nav when active finding's bottom approaches the viewport bottom,
+       slides out when user has scrolled into Take Action. */
+    var endCta = document.querySelector('[data-finding-end-cta]');
+
+    var findingsIntro = document.getElementById('findings');
+    var takeActionEl = document.getElementById('actions');
+
+    /* Skip desktop end-CTA + sub-nav visibility logic on mobile viewports —
+       mobile's own handler manages the same end-CTA element. Without this
+       gate, desktop's logic runs against display:none .finding elements
+       (rect = 0/0) and overrides mobile's correct visibility setting. */
+    function isDesktopViewport() {
+      return window.matchMedia('(min-width: 768px)').matches;
+    }
+
+    function updateEndCtaVisibility() {
+      if (!endCta || !isDesktopViewport()) return;
+      var activeFinding = findings[currentActiveIdx()];
+      if (!activeFinding) {
+        endCta.classList.remove('is-visible');
+        endCta.setAttribute('aria-hidden', 'true');
+        return;
+      }
+      var rect = activeFinding.getBoundingClientRect();
+      var vh = window.innerHeight;
+      // Show when finding's bottom edge is in viewport (or just below);
+      // hide once Take Action has entered the lower portion of the viewport
+      // OR the finding has scrolled fully past the top.
+      var taTop = takeActionEl ? takeActionEl.getBoundingClientRect().top : Infinity;
+      var taApproaching = taTop < vh * 0.75;
+      var visible = rect.bottom > 0 && rect.bottom < vh * 1.0 && !taApproaching;
+      endCta.classList.toggle('is-visible', visible);
+      endCta.setAttribute('aria-hidden', visible ? 'false' : 'true');
+    }
+
+    function updateSubnavVisibility() {
+      if (!findingsIntro || !isDesktopViewport()) return;
+      var introTop = findingsIntro.getBoundingClientRect().top;
+      var taTop = takeActionEl ? takeActionEl.getBoundingClientRect().top : Infinity;
       var entered = introTop < window.innerHeight * 0.85;
-      var stillInside = lastBottom > headerH + 50;
+      var stillInside = taTop > window.innerHeight * 0.75;
       var visible = entered && stillInside;
       subnav.classList.toggle('is-visible', visible);
       subnav.setAttribute('aria-hidden', visible ? 'false' : 'true');
     }
 
-    // Click-to-jump
-    tabs.forEach(function (tab, idx) {
-      tab.addEventListener('click', function () {
-        var target = findings[idx];
-        if (!target) return;
-        var headerH = document.querySelector('.site-header');
-        var off = headerH ? headerH.offsetHeight : 72;
-        var overlap = window.innerWidth * 0.0556;
-        var y = target.getBoundingClientRect().top + window.pageYOffset - off + overlap;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      });
+    // Wire the end-CTA links
+    document.addEventListener('click', function (e) {
+      var explore = e.target.closest('[data-cta-explore]');
+      if (explore) {
+        e.preventDefault();
+        // Pulse the sub-nav to draw attention to the menu
+        subnav.classList.add('is-pulse');
+        setTimeout(function () { subnav.classList.remove('is-pulse'); }, 1800);
+        return;
+      }
+      var ta = e.target.closest('[data-cta-takeaction]');
+      if (ta) {
+        e.preventDefault();
+        scrollToTakeAction();
+      }
     });
 
-    // Track on every scroll (passive). Throttle with requestAnimationFrame.
     var subnavTicking = false;
     function onSubnavScroll() {
       if (subnavTicking) return;
       subnavTicking = true;
       requestAnimationFrame(function () {
         updateSubnavVisibility();
-        updateActiveTabFromScroll();
+        updateEndCtaVisibility();
         subnavTicking = false;
       });
     }
     window.addEventListener('scroll', onSubnavScroll, { passive: true });
     window.addEventListener('resize', onSubnavScroll, { passive: true });
-    // Initial sync
+    // Initial sync — F1 is active by default (set via .is-active in HTML)
+    setActiveTab(0);
     updateSubnavVisibility();
-    updateActiveTabFromScroll();
+    updateEndCtaVisibility();
   }
 
   /* ---------- Finding 01 v2: Prisons / Jails PNG toggle ----------
