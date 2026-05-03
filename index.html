@@ -3715,6 +3715,25 @@ main { padding-top: var(--header-h); }
       text-overflow: ellipsis;
       max-width: 100%;
     }
+    /* "Next Up" mode — sub-nav center morphs to a forward-looking prompt
+       once user reaches end of a finding. Center info area becomes a
+       tappable button that advances to the next finding (or to Take
+       Action on the last finding). */
+    .m-subnav-info.is-clickable {
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.18s ease;
+    }
+    .m-subnav-info.is-clickable:active {
+      background: rgba(255,255,255,0.10);
+    }
+    .m-subnav-counter.is-next-up-label {
+      color: var(--warm-coral);
+      opacity: 1;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+    }
     .m-subnav-skip {
       flex: 0 0 auto;
       padding: 0 16px;
@@ -4601,6 +4620,9 @@ main { padding-top: var(--header-h); }
     var counterEl = subnav.querySelector('[data-m-subnav-current]');
     var areaEl = subnav.querySelector('[data-m-subnav-area]');
     var skipBtn = subnav.querySelector('[data-m-subnav-skip]');
+    var counterParent = subnav.querySelector('.m-subnav-counter');
+    var infoEl = subnav.querySelector('.m-subnav-info');
+    var subnavNextUpMode = false; // tracks whether sub-nav is in "next up" preview state
 
     function currentActiveIdx() {
       for (var i = 0; i < findingArticles.length; i++) {
@@ -4608,12 +4630,39 @@ main { padding-top: var(--header-h); }
       }
       return 0;
     }
-    function updateNav(idx){
-      if (counterEl) counterEl.textContent = (idx + 1);
-      if (areaEl && findingArticles[idx]) {
-        var area = findingArticles[idx].getAttribute('data-finding-area');
+    function setSubnavMode(nextUp){
+      var idx = currentActiveIdx();
+      if (!counterParent || !areaEl || !infoEl) return;
+      if (nextUp) {
+        var isLast = idx >= findingArticles.length - 1;
+        counterParent.classList.add('is-next-up-label');
+        if (isLast) {
+          counterParent.textContent = 'READY TO ACT?';
+          areaEl.textContent = 'Take Action ↓';
+        } else {
+          var nextArea = findingArticles[idx + 1].getAttribute('data-finding-area') || '';
+          counterParent.textContent = 'NEXT UP →';
+          areaEl.textContent = nextArea;
+        }
+        infoEl.classList.add('is-clickable');
+        infoEl.setAttribute('role', 'button');
+        infoEl.setAttribute('tabindex', '0');
+      } else {
+        counterParent.classList.remove('is-next-up-label');
+        counterParent.innerHTML = '<span data-m-subnav-current>' + (idx + 1) + '</span> / 8';
+        counterEl = counterParent.querySelector('[data-m-subnav-current]');
+        var area = findingArticles[idx] ? findingArticles[idx].getAttribute('data-finding-area') : '';
         if (area) areaEl.textContent = area;
+        infoEl.classList.remove('is-clickable');
+        infoEl.removeAttribute('role');
+        infoEl.removeAttribute('tabindex');
       }
+      subnavNextUpMode = !!nextUp;
+    }
+    function updateNav(idx){
+      // Always reset to normal mode on finding change; updateMVisibility
+      // will re-apply next-up mode on the next scroll frame if applicable.
+      setSubnavMode(false);
       if (prevBtn) prevBtn.disabled = (idx <= 0);
       if (nextBtn) nextBtn.disabled = (idx >= findingArticles.length - 1);
     }
@@ -4640,6 +4689,32 @@ main { padding-top: var(--header-h); }
     if (prevBtn) prevBtn.addEventListener('click', function(){ setActiveFinding(currentActiveIdx() - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function(){ setActiveFinding(currentActiveIdx() + 1); });
     if (skipBtn) skipBtn.addEventListener('click', scrollToTakeAction);
+    // Center info area is tappable in "next up" mode — advance to next
+    // finding (or scroll to Take Action on the last finding).
+    if (infoEl) {
+      infoEl.addEventListener('click', function(e){
+        if (!subnavNextUpMode) return;
+        e.preventDefault();
+        var idx = currentActiveIdx();
+        if (idx >= findingArticles.length - 1) {
+          scrollToTakeAction();
+        } else {
+          setActiveFinding(idx + 1);
+        }
+      });
+      infoEl.addEventListener('keydown', function(e){
+        if (!subnavNextUpMode) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          var idx = currentActiveIdx();
+          if (idx >= findingArticles.length - 1) {
+            scrollToTakeAction();
+          } else {
+            setActiveFinding(idx + 1);
+          }
+        }
+      });
+    }
 
     /* Mobile end-of-finding bar — separate element from desktop. */
     var mEndBar = document.querySelector('[data-m-finding-end-bar]');
@@ -4678,16 +4753,25 @@ main { padding-top: var(--header-h); }
       // Mobile end-bar: show when active finding's bottom is visible in
       // viewport (= user is near end of finding). Hide once Take Action
       // approaches OR finding has scrolled past / hasn't reached end yet.
+      var barVis = false;
+      var activeFinding = findingArticles[currentActiveIdx()];
+      if (activeFinding) {
+        var rect = activeFinding.getBoundingClientRect();
+        var taApproaching = taRect ? taRect.top < vh * 0.75 : false;
+        barVis = rect.bottom > 0 && rect.bottom < vh * 1.0 && !taApproaching;
+      }
       if (mEndBar) {
-        var activeFinding = findingArticles[currentActiveIdx()];
-        var barVis = false;
-        if (activeFinding) {
-          var rect = activeFinding.getBoundingClientRect();
-          var taApproaching = taRect ? taRect.top < vh * 0.75 : false;
-          barVis = rect.bottom > 0 && rect.bottom < vh * 1.0 && !taApproaching;
-        }
         mEndBar.classList.toggle('is-visible', barVis);
         mEndBar.setAttribute('aria-hidden', barVis ? 'false' : 'true');
+      }
+      // Sub-nav center text morphs into "Next Up: [next area]" when at
+      // end of finding. Only run when subnav itself is visible — otherwise
+      // we'd be morphing offscreen text.
+      if (subnavVis && barVis !== subnavNextUpMode) {
+        setSubnavMode(barVis);
+      } else if (!subnavVis && subnavNextUpMode) {
+        // When subnav slides out, reset back to normal mode
+        setSubnavMode(false);
       }
     }
     var mSubnavTicking = false;
