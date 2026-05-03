@@ -658,15 +658,34 @@ main { padding-top: var(--header-h); }
 
 
 /* ============================================================
-   ABOUT THE REPORT — split (deep-plum / soft-lavender)
+   ABOUT THE REPORT — locked Figma block (1440 × 877)
 ============================================================ */
 .about {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* Tightened so the whole block fits in viewport without scrolling */
-  min-height: clamp(440px, 64vh, 640px);
+  width: 100%;
+  display: block;
+  margin: 0;
   padding: 0;
+  /* Sits flush against hero block above and hero-video block below. */
+}
+.about-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.about-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* transparent area passes through */
+}
+.about-overlay rect { pointer-events: all; cursor: pointer; }
+.about-overlay a:focus { outline: 0; }
+.about-overlay a:focus-visible rect {
+  stroke: var(--warm-coral);
+  stroke-width: 4;
+  fill: rgba(228,87,46,0.10);
 }
 .about-copy {
   /* Reduced vertical padding (was var(--top-pad) ≈ 16vh each side, now ~6vh).
@@ -4880,27 +4899,22 @@ main { padding-top: var(--header-h); }
      ABOUT THE REPORT — split (deep-plum / soft-lavender)
 ============================================================ -->
 <section id="aboutreport" class="about" aria-label="About the Report" data-nav-tone="dark">
-  <div class="about-copy">
-    <span class="eyebrow eyebrow-plum" data-anim="fade-up">About the Report</span>
-    <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">
-      <span class="line">FREE COMMUNICATION</span>
-      <span class="line"><em>Changes Everything</em></span>
-    </h2>
-    <p data-anim="fade-up" data-anim-delay="200">Correctional telecom is a $1.5 billion industry built on charging incarcerated people and their families exorbitant rates to stay connected. When families can't afford to call, communication gets rationed — conversations cut short, contact limited to urgent matters, relationships fracture or never form. That isolation doesn't stay inside the walls. It weakens the ties that matter most to rehabilitation, reentry, and public safety.</p>
-    <p data-anim="fade-up" data-anim-delay="300">The national Connecting Families campaign is making communication in prisons and jails entirely free across the country. This report is the first to document the results — and the evidence is clear: when the cost barrier is removed, connection increases, relationships strengthen, and families are better able to navigate incarceration together toward a promising free future that makes us all safer.</p>
-  </div>
-  <div class="about-visual" aria-hidden="true">
-    <img class="about-visual-svg" src="assets/illustrations/about-report-illustration.svg" alt="" data-anim="fade-up" data-anim-delay="200" />
-  </div>
-  <!-- Circular CTA button — positioned absolutely centered on the divider, near bottom.
-       NOTE: no data-anim here because scale-in's transform would override our
-       translateX(-50%) and break horizontal centering. -->
-  <a href="assets/resources/report.pdf" target="_blank" rel="noopener" class="about-cta-circle" aria-label="Read the Report">
-    <svg class="about-cta-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="about-cta-circle-text">Read the<br>Report</span>
-  </a>
+  <!-- Locked Figma block — entire section is a single 1440×877 SVG (text,
+       illustration, eyebrow, headline, body copy, and circular CTA button
+       all baked in for pixel-perfect design fidelity). -->
+  <img class="about-img" src="assets/illustrations/about-report-v2.svg" alt="" />
+  <!-- Inline SVG overlay with the same 1440×877 viewBox so the circular
+       click zone stays locked to the SVG's coral CTA at (666, 753) regardless
+       of viewport width. -->
+  <svg class="about-overlay" viewBox="0 0 1440 877" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="false">
+    <a href="assets/resources/report.pdf" target="_blank" rel="noopener" aria-label="Read the Report (PDF)">
+      <rect x="666" y="626" width="108" height="108" rx="54" fill="transparent" />
+    </a>
+  </svg>
+  <!-- Semantic content for SEO + screen readers -->
+  <h2 class="sr-only">Free Communication Changes Everything</h2>
+  <p class="sr-only">Correctional telecom is a $1.5 billion industry built on charging incarcerated people and their families exorbitant rates to stay connected. When families can't afford to call, communication gets rationed — conversations cut short, contact limited to urgent matters, relationships fracture or never form. That isolation doesn't stay inside the walls. It weakens the ties that matter most to rehabilitation, reentry, and public safety.</p>
+  <p class="sr-only">The national Connecting Families campaign is making communication in prisons and jails entirely free across the country. This report is the first to document the results — and the evidence is clear: when the cost barrier is removed, connection increases, relationships strengthen, and families are better able to navigate incarceration together toward a promising free future that makes us all safer.</p>
 </section>
 
 
@@ -6212,8 +6226,11 @@ main { padding-top: var(--header-h); }
   /* ---------- Hero cord draw-on (getTotalLength approach) ----------
      pathLength="1" + stroke-dasharray:1 wasn't reliably honored across
      browsers (the cord rendered as a static line). Using getTotalLength()
-     bypasses that quirk — works in all browsers. Two nested rAFs paint the
-     hidden state before the transition kicks in. */
+     bypasses that quirk — works in all browsers.
+
+     Timing: cord stays hidden until the heavy illustration SVG has loaded
+     and decoded — otherwise on slow connections you'd see the cord drawing
+     against a blank cream background before the people/text show up. */
   var heroCord = document.getElementById('hero-cord');
   if (heroCord) {
     var len;
@@ -6221,12 +6238,24 @@ main { padding-top: var(--header-h); }
     if (!len || isNaN(len)) len = 3000;
     heroCord.style.strokeDasharray  = len;
     heroCord.style.strokeDashoffset = len;
-    requestAnimationFrame(function () {
+
+    var heroIllusImg = document.querySelector('.hero-illustration img');
+    var startCord = function () {
       requestAnimationFrame(function () {
-        heroCord.style.transition = 'stroke-dashoffset 2400ms cubic-bezier(0.22, 1, 0.36, 1) 400ms';
-        heroCord.style.strokeDashoffset = '0';
+        requestAnimationFrame(function () {
+          heroCord.style.transition = 'stroke-dashoffset 2400ms cubic-bezier(0.22, 1, 0.36, 1) 200ms';
+          heroCord.style.strokeDashoffset = '0';
+        });
       });
-    });
+    };
+    if (heroIllusImg && !heroIllusImg.complete) {
+      // Wait for illustration to load + decode before the cord starts drawing
+      heroIllusImg.addEventListener('load', startCord, { once: true });
+      // Failsafe in case 'load' never fires (cached / error)
+      setTimeout(startCord, 3000);
+    } else {
+      startCord();
+    }
   }
 
   /* ---------- Hero video title card fly-in ----------
