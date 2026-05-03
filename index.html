@@ -2540,9 +2540,9 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* New Pallavi SVG: 1440×2204 natural. Bottom 80px cropped (extra plum
-     padding below content). Effective ratio = 1440:2124. */
-  aspect-ratio: 1440 / 2124;
+  /* Pallavi v2 SVG: 1440×2184 natural (smaller photo block + new section
+     spacing). Bottom 80px cropped. Effective ratio = 1440:2104. */
+  aspect-ratio: 1440 / 2104;
   margin: 0;
   overflow: hidden;
 }
@@ -2575,14 +2575,14 @@ main { padding-top: var(--header-h); }
 }
 /* Video click overlay — sits over the entire video+quote block at the
    bottom of F1. Photo (left) + lavender quote (right) both clipped to
-   y=1400-2124 in the SVG, full width. → top 65.91%, height 34.08%,
-   100% width. Click anywhere in the block to play. */
+   y=1404-2104 in the new SVG (700 tall, full width). In cropped 2104
+   frame: top 66.73%, height 33.27%. */
 .f-video-click {
   position: absolute;
-  top: 65.91%;
+  top: 66.73%;
   left: 0;
   width: 100%;
-  height: 34.08%;
+  height: 33.27%;
   background: transparent;
   border: 0;
   padding: 0;
@@ -2592,10 +2592,10 @@ main { padding-top: var(--header-h); }
 }
 .f-video-player {
   position: absolute;
-  top: 65.91%;
+  top: 66.73%;
   left: 0;
   width: 100%;
-  height: 34.08%;
+  height: 33.27%;
   background: #000;
   z-index: 20;
   display: none;
@@ -3018,11 +3018,11 @@ main { padding-top: var(--header-h); }
 }
 /* Click-zone positions — recalibrated for smaller-illust SVG (1440×2324).
    Toggle dots now at cy=852 (prisons) / cy=884 (jails), cx=78. */
-/* Toggle hit-targets centered on the radio circles (cx=88, cy=856 prisons /
-   cy=892 jails in 1440×2124 frame). Width covers radio + "IN PRISONS"
-   label (~170px). Height padded for finger/cursor margin. */
-.f1-tog-prisons { top: 39.45%; left: 5.56%; width: 14%;  height: 1.7%; }
-.f1-tog-jails   { top: 41.15%; left: 5.56%; width: 14%;  height: 1.7%; }
+/* Toggle hit-targets centered on the radio circles. New SVG positions:
+   cx=88, cy=820 (PRISONS) / cy=856 (JAILS) in cropped 1440×2104 frame.
+   Width covers radio + label (~170px). Height padded for cursor margin. */
+.f1-tog-prisons { top: 38.12%; left: 5.56%; width: 14%;  height: 1.71%; }
+.f1-tog-jails   { top: 39.83%; left: 5.56%; width: 14%;  height: 1.71%; }
 
 /* ----- Top-right block overlay (covers the baked block in the PNG) ----- */
 /* Position values derived from the F1 PNG layout. The baked top-right block
