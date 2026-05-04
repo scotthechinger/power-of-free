@@ -2882,22 +2882,21 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* New F2 v2 SVG (with-graph variant): 1440×2259 natural. Bottom 80px
-     cropped via overflow:hidden + cover/top — same pattern as F1 v2. */
-  aspect-ratio: 1440 / 2179;
+  /* Final QA F2 SVG: 1440×2187 natural (was 2212; content shifted up 25). */
+  aspect-ratio: 1440 / 2187;
   margin: 0;
   overflow: hidden;
 }
 .f2-wrap .f2-base { object-fit: cover; object-position: top; }
-/* F2 chart container — Rebuild 5.3 desktop chart (560×560), fixed-design
-   re-export. New F2 SVG (1440×2212): chart slot starts y=797.
-   560×560 → 38.89% wide, 25.32% tall, top 36.03%, left 4.93%. */
+/* F2 chart container — Rebuild 5.3 desktop chart (560×560).
+   Final QA F2 SVG (1440×2187): chart slot at native y=772 (content shifted
+   up 25 in this re-export). 772/2187 = 35.30%; 560/2187 = 25.61%. */
 .f2-chart-container {
   position: absolute;
-  top: 36.03%;
+  top: 35.30%;
   left: 4.93%;
   width: 38.89%;
-  height: 25.32%;
+  height: 25.61%;
   z-index: 3;
 }
 .f2-chart {
@@ -3115,9 +3114,9 @@ main { padding-top: var(--header-h); }
    720×700 video photo at (0, varies) along the bottom of each finding.
    Calibrated to cropped wraps (F1, F3, F4, F5, F7, F8: bottom 83 cropped;
    F2, F6: full natural). Per-finding QA nudges baked in. */
-/* F2: locked to photo exact position. Photo y=1432, h=700 in 2212 wrap. */
+/* F2: locked to photo exact position. Photo y=1407, h=700 in 2187 wrap. */
 .f2-wrap .f-video-click,
-.f2-wrap .f-video-player { top: 64.74%; height: 31.65%; left: 0; width: 100%; }
+.f2-wrap .f-video-player { top: 64.34%; height: 32.01%; left: 0; width: 100%; }
 
 .f3-wrap .f-video-click,
 .f3-wrap .f-video-player { top: 67.00%; height: 33.14%; left: 0; width: 100%; }
@@ -3817,25 +3816,22 @@ main { padding-top: var(--header-h); }
        around F2 because the page got taller after lazy images loaded. */
     /* All 8 findings on Rebuild 5.3 mobile dimensions. */
     #m-f1 .m-finding-img { aspect-ratio: 402 / 3182; }
-    #m-f2 .m-finding-img { aspect-ratio: 402 / 3452; }
+    #m-f2 .m-finding-img { aspect-ratio: 402 / 3430; }
     #m-f3 .m-finding-img { aspect-ratio: 402 / 3467; }
     #m-f4 .m-finding-img { aspect-ratio: 402 / 3181; }
     #m-f5 .m-finding-img { aspect-ratio: 402 / 3447; }
     #m-f6 .m-finding-img { aspect-ratio: 402 / 3213; }
     #m-f7 .m-finding-img { aspect-ratio: 402 / 3490; }
     #m-f8 .m-finding-img { aspect-ratio: 402 / 3344; }
-    /* Mobile F2 chart container — Rebuild 5.3 chart (323×604) overlays the
-       empty cream space in mobile-finding-02.svg between body text ending
-       "have dominated the industry" and the green quote block.
-       Top pushed down so chart title sits ~40px below body text bottom.
-       54% × 3452 ≈ y=1864, chart bottom ≈ y=2468, ~48px above green quote.
-       Chart 323 wide centered in 402 → left=39.5 → 9.83% / width 80.35%. */
+    /* Mobile F2 chart container — Rebuild 5.3 chart (323×604). Final QA
+       F2 SVG (402×3430, was 3452, content shifted up 22). Chart slot at
+       native y=1842 (was 1864). 1842/3430 = 53.70%; 604/3430 = 17.61%. */
     .m-f2-chart-container {
       position: absolute;
-      top: 54%;
+      top: 53.70%;
       left: 9.83%;
       width: 80.35%;
-      height: 17.50%;
+      height: 17.61%;
       z-index: 3;
     }
     .m-f2-chart {
@@ -4524,7 +4520,7 @@ main { padding-top: var(--header-h); }
         <button class="m-tap m-f1-tog" type="button" data-m-f1-state="jails"
                 style="top: calc(100vw * 1704 / 402); left: calc(100vw * 126 / 402); width: calc(100vw * 90 / 402); height: calc(100vw * 40 / 402);" aria-label="Show jails data"></button>
       </article>
-      <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Financial">
+      <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Money">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" loading="lazy" />
         <!-- 6-state chart toggle (Rebuild 5.3 mobile charts, 323×604).
              Radios baked into chart SVG at:
@@ -4543,10 +4539,10 @@ main { padding-top: var(--header-h); }
           <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 19.87%; left: 50%;   width: 50%;" aria-label="Show Minnesota data"></button>
           <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 25.83%; left: 50%;   width: 50%;" aria-label="Show New York data"></button>
         </div>
-        <!-- F2 Rebuild 5.3 (402×3452): video thumb y=2972,h=400 → top 86.10%, h 11.59%
-             Title bar baked into SVG (y=3316, h=56) — no HTML overlay needed. -->
+        <!-- F2 Final QA (402×3430): video thumb y=2950,h=400 → top 86.01%, h 11.66%
+             Title bar baked into SVG — no HTML overlay needed. -->
         <button class="m-tap" type="button" data-m-video="1188574671"
-                style="top: 86.10%; left: 9.95%; width: 80.10%; height: 11.59%;" aria-label="Play Finding 2 video"></button>
+                style="top: 86.01%; left: 9.95%; width: 80.10%; height: 11.66%;" aria-label="Play Finding 2 video"></button>
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" loading="lazy" />
@@ -5642,7 +5638,7 @@ main { padding-top: var(--header-h); }
   </div>
   <div class="subnav-tabs">
     <button class="subnav-tab is-active" data-go="0">Connection</button>
-    <button class="subnav-tab" data-go="1">Financial</button>
+    <button class="subnav-tab" data-go="1">Money</button>
     <button class="subnav-tab" data-go="2">Families</button>
     <button class="subnav-tab" data-go="3">Parenting</button>
     <button class="subnav-tab" data-go="4">Health</button>
