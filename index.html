@@ -2659,14 +2659,13 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* Pallavi v2 SVG: 1440×2184 natural (smaller photo block + new section
-     spacing). Bottom 80px cropped. Effective ratio = 1440:2104. */
-  aspect-ratio: 1440 / 2104;
+  /* Rebuild 5.3 prisons v2: 1440×2068 natural. Bottom 80px cropped. */
+  aspect-ratio: 1440 / 1988;
   margin: 0;
   overflow: hidden;
 }
 .f1-wrap .f1-base {
-  /* cover + position top so the bottom 80px of natural SVG is clipped */
+  /* cover + position top so the bottom 83px of natural SVG is clipped */
   object-fit: cover;
   object-position: top;
 }
@@ -2692,16 +2691,14 @@ main { padding-top: var(--header-h); }
   display: block;
   pointer-events: none;
 }
-/* Video click overlay — sits over the entire video+quote block at the
-   bottom of F1. Photo (left) + lavender quote (right) both clipped to
-   y=1404-2104 in the new SVG (700 tall, full width). In cropped 2104
-   frame: top 66.73%, height 33.27%. */
+/* Video click overlay — F1 default. Locked to photo exact position:
+   y=1288, h=700 in cropped 1988 frame → top 64.79%, height 35.21%. */
 .f-video-click {
   position: absolute;
-  top: 66.73%;
+  top: 64.79%;
   left: 0;
   width: 100%;
-  height: 33.27%;
+  height: 35.21%;
   background: transparent;
   border: 0;
   padding: 0;
@@ -2711,10 +2708,10 @@ main { padding-top: var(--header-h); }
 }
 .f-video-player {
   position: absolute;
-  top: 66.73%;
+  top: 64.79%;
   left: 0;
   width: 100%;
-  height: 33.27%;
+  height: 35.21%;
   background: #000;
   z-index: 20;
   display: none;
@@ -2877,15 +2874,15 @@ main { padding-top: var(--header-h); }
   overflow: hidden;
 }
 .f2-wrap .f2-base { object-fit: cover; object-position: top; }
-/* F2 chart container — middle-LEFT of the F2 desktop layout. Reverted
-   to the original positioning (chart was correctly placed before; the
-   y=1579 white rect was the video area, not the chart blank). */
+/* F2 chart container — Rebuild 5.3 desktop chart (560×560), fixed-design
+   re-export. New F2 SVG (1440×2212): chart slot starts y=797.
+   560×560 → 38.89% wide, 25.32% tall, top 36.03%, left 4.93%. */
 .f2-chart-container {
   position: absolute;
-  top: 32.73%;    /* 797 / 2435 */
-  left: 4.93%;    /* 71 / 1440 — same gutter as body text */
-  width: 45.42%;  /* 654 / 1440 — chart natural width */
-  height: 28.83%; /* 702 / 2435 — chart natural height */
+  top: 36.03%;
+  left: 4.93%;
+  width: 38.89%;
+  height: 25.32%;
   z-index: 3;
 }
 .f2-chart {
@@ -2897,13 +2894,12 @@ main { padding-top: var(--header-h); }
   pointer-events: none;
   user-select: none;
 }
-/* Invisible click zones over each radio in the chart SVG. Chart natural is
-   654×702 with radios at cx=8 cy=135,167,199,231,263,295 (32px row spacing). */
+/* Rebuild 5.3 chart (560×560) with radios at cx=8 cy=144/176/208/240/272/304. */
 .f2-chart-radio {
   position: absolute;
   left: 0;
-  width: 38%;        /* covers radio + label text */
-  height: 4.56%;     /* 32 / 702 */
+  width: 50%;        /* covers radio + label text */
+  height: 5.71%;     /* 32 / 560 */
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -2974,10 +2970,15 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* New F6 v2 SVG: 1440×2198 natural; bottom 80px cropped. */
-  aspect-ratio: 1440 / 2118;
+  /* Rebuild 5.3 F6 SVG: 1440×2137 natural. F6 not in 83-crop QA list. */
+  aspect-ratio: 1440 / 2137;
   margin: 0;
   overflow: hidden;
+}
+.f6-wrap .f6-base {
+  /* keep cover + top in case future crop is needed */
+  object-fit: cover;
+  object-position: top;
 }
 .f6-base {
   position: absolute;
@@ -3029,13 +3030,49 @@ main { padding-top: var(--header-h); }
   margin: 0;
   overflow: hidden;
 }
-/* New v2 SVG aspect ratios (natural − 80px bottom crop):
-   F3 2239→2159, F4 2219→2139, F5 2214→2134, F7 2137→2057, F8 2244→2164. */
-.f3-wrap { aspect-ratio: 1440 / 2159; }
-.f4-wrap { aspect-ratio: 1440 / 2139; }
-.f5-wrap { aspect-ratio: 1440 / 2134; }
-.f7-wrap { aspect-ratio: 1440 / 2057; }
-.f8-wrap { aspect-ratio: 1440 / 2164; }
+/* Rebuild 5.3 desktop SVG aspect ratios — bottom 83px cropped per QA:
+   F3 2195→2112, F4 2175→2092, F5 2170→2087, F7 2094→2011, F8 2198→2115. */
+.f3-wrap { aspect-ratio: 1440 / 2112; }
+.f4-wrap { aspect-ratio: 1440 / 2019; }   /* Rebuild 5.3 v2: 2102 native − 83 crop */
+.f5-wrap { aspect-ratio: 1440 / 2087; }
+.f7-wrap { aspect-ratio: 1440 / 2011; }
+.f8-wrap { aspect-ratio: 1440 / 2115; }
+
+/* F4/5/6/8 top-right illustrations — flush against right edge of section.
+   Spec from designer (top from top of block, in SVG units):
+     F4 510×447 at top 170 → top 8.13% in 2092-tall wrap
+     F5 674×447 at top 178 → top 8.53% in 2087-tall wrap
+     F6 673×442 at top 110 → top 5.15% in 2137-tall wrap
+     F8 674×447 at top 181 → top 8.56% in 2115-tall wrap */
+.f-illust-tr {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 4;
+  display: block;
+  pointer-events: none;
+  user-select: none; -webkit-user-drag: none;
+}
+.f4-wrap .f-illust-tr { top: 8.13%; width: 35.42%; height: auto; }
+.f5-wrap .f-illust-tr { top: 8.53%; width: 46.81%; height: auto; }
+.f6-wrap .f-illust-tr { top: 5.15%; width: 46.74%; height: auto; }
+.f8-wrap .f-illust-tr { top: 8.56%; width: 46.81%; height: auto; }
+
+/* F3 cord — wavy orange line baked over the top-right embracing figures.
+   Per Figma: Vector 683 is 595×243 at Y=-128 (extends 128 above F3 top).
+   Width 595/1440 = 41.32%; Y -128/2112 = -6.06%; flush right. */
+.f3-wrap .f3-cord {
+  position: absolute;
+  right: 0;
+  top: -6.06%;
+  width: 41.32%;
+  height: auto;
+  z-index: 4;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
 
 /* (Old F5/F8 right-mask pseudo-elements removed — new v2 SVGs don't have
    the 130px right margin anymore.) */
@@ -3059,30 +3096,33 @@ main { padding-top: var(--header-h); }
    higher specificity. Calibrate by toggling data-debug="1" on the
    wrap div (highlights click zones in pink).
    ============================================================ */
-/* Video click + player overrides — v2 SVGs all use the same photo+quote
-   block layout at the bottom (720×700 photo on left + 720×700 quote on
-   right). Player covers the entire block, full width, matching block top
-   and height in the cropped frame. */
+/* Video click + player overrides — Rebuild 5.3 desktop SVGs all have
+   720×700 video photo at (0, varies) along the bottom of each finding.
+   Calibrated to cropped wraps (F1, F3, F4, F5, F7, F8: bottom 83 cropped;
+   F2, F6: full natural). Per-finding QA nudges baked in. */
+/* F2: locked to photo exact position. Photo y=1432, h=700 in 2212 wrap. */
 .f2-wrap .f-video-click,
-.f2-wrap .f-video-player { top: 67.88%; height: 32.12%; left: 0; width: 100%; }
+.f2-wrap .f-video-player { top: 64.74%; height: 31.65%; left: 0; width: 100%; }
 
 .f3-wrap .f-video-click,
-.f3-wrap .f-video-player { top: 67.58%; height: 32.42%; left: 0; width: 100%; }
+.f3-wrap .f-video-player { top: 67.00%; height: 33.14%; left: 0; width: 100%; }
 
+/* F4 v2: photo y=1322 in cropped 2019 wrap → top 65.48%, h 34.67% */
 .f4-wrap .f-video-click,
-.f4-wrap .f-video-player { top: 67.27%; height: 32.73%; left: 0; width: 100%; }
+.f4-wrap .f-video-player { top: 65.48%; height: 34.67%; left: 0; width: 100%; }
 
 .f5-wrap .f-video-click,
-.f5-wrap .f-video-player { top: 67.20%; height: 32.80%; left: 0; width: 100%; }
+.f5-wrap .f-video-player { top: 66.60%; height: 33.54%; left: 0; width: 100%; }
 
+/* F6: locked to photo exact position. Photo y=1357, h=700 in 2137 wrap. */
 .f6-wrap .f-video-click,
-.f6-wrap .f-video-player { top: 66.95%; height: 33.05%; left: 0; width: 100%; }
+.f6-wrap .f-video-player { top: 63.50%; height: 32.76%; left: 0; width: 100%; }
 
 .f7-wrap .f-video-click,
-.f7-wrap .f-video-player { top: 65.97%; height: 34.03%; left: 0; width: 100%; }
+.f7-wrap .f-video-player { top: 65.34%; height: 34.81%; left: 0; width: 100%; }
 
 .f8-wrap .f-video-click,
-.f8-wrap .f-video-player { top: 67.65%; height: 32.35%; left: 0; width: 100%; }
+.f8-wrap .f-video-player { top: 67.05%; height: 33.10%; left: 0; width: 100%; }
 
 /* Debug zones for click target calibration */
 .f2-wrap[data-debug="1"] .f-video-click,
@@ -3112,8 +3152,12 @@ main { padding-top: var(--header-h); }
 /* Toggle hit-targets centered on the radio circles. New SVG positions:
    cx=88, cy=820 (PRISONS) / cy=856 (JAILS) in cropped 1440×2104 frame.
    Width covers radio + label (~170px). Height padded for cursor margin. */
-.f1-tog-prisons { top: 38.12%; left: 5.56%; width: 14%;  height: 1.71%; }
-.f1-tog-jails   { top: 39.83%; left: 5.56%; width: 14%;  height: 1.71%; }
+/* Rebuild 5.3 prisons v2 (cropped wrap 1440×1988): radios at cx=88,
+   cy=840 / cy=876 in source 2068-tall SVG.
+     Prisons: top (840-18)/1988 = 41.35%, height 36/1988 = 1.81%
+     Jails:   top (876-18)/1988 = 43.16%, height 1.81% */
+.f1-tog-prisons { top: 41.35%; left: 5.56%; width: 14%; height: 1.81%; }
+.f1-tog-jails   { top: 43.16%; left: 5.56%; width: 14%; height: 1.81%; }
 
 /* ----- Top-right block overlay (covers the baked block in the PNG) ----- */
 /* Position values derived from the F1 PNG layout. The baked top-right block
@@ -5369,7 +5413,7 @@ main { padding-top: var(--header-h); }
   <article id="finding-02" class="finding f2-locked" data-finding="1" data-area="Financial Relief" data-nav-tone="light">
     <div class="f2-wrap">
       <img class="f2-base"
-           src="assets/illustrations/separated/finding-02/finding-02-no-number.svg"
+           src="assets/illustrations/separated/finding-02/finding-02-locked.svg"
            alt="Finding 2 — Financial Relief. $622 million saved by families to date, with 73% flowing to Black and brown families. Savings ranged from $244 to $2,927 per year per incarcerated loved one. Communication costs fell dramatically when the burden shifted off families."
            data-anim="fade-up" loading="lazy" />
       <!-- F2 number animation DISABLED for now — number is baked into the new
@@ -5381,18 +5425,24 @@ main { padding-top: var(--header-h); }
         <img class="f-num-svg" src="assets/illustrations/separated/finding-02/number.svg" alt="$622 million saved by families to date" />
         <span class="f-num-counter">$0</span>
       </div>
-      <!-- 6-state chart toggle. The chart SVG itself draws the 6 radio buttons
-           (Federal, Massachusetts, Connecticut, California, Minnesota, New York
-           at cx=8, cy=135/167/199/231/263/295). Invisible buttons overlay each
-           radio; click → swap chart src to that state's chart. -->
+      <!-- 6-state chart toggle (Rebuild 5.3 chart 560×560, fixed-design re-export).
+           Radios at cx=8, cy=144/176/208/240/272/304 — single column, 32px row spacing.
+           Tap row 32 tall → top = (cy-16)/560.
+             Federal:        cy=144 → 22.86%
+             California:     cy=176 → 28.57%
+             Connecticut:    cy=208 → 34.29%
+             Massachusetts:  cy=240 → 40.00%
+             Minnesota:      cy=272 → 45.71%
+             New York:       cy=304 → 51.43%
+           Connecticut is default. -->
       <div class="f2-chart-container" data-f2-chart-wrap>
         <img class="f2-chart" data-f2-chart src="assets/charts/desktop/Connecticut.svg" alt="Connecticut chart — Financial Relief by state" />
-        <button type="button" class="f2-chart-radio" data-state="Federal"        style="top: 16.95%;" aria-label="Show Federal data"></button>
-        <button type="button" class="f2-chart-radio" data-state="California"     style="top: 21.51%;" aria-label="Show California data"></button>
-        <button type="button" class="f2-chart-radio" data-state="Connecticut"    style="top: 26.07%;" aria-label="Show Connecticut data"></button>
-        <button type="button" class="f2-chart-radio" data-state="Massachusetts"  style="top: 30.63%;" aria-label="Show Massachusetts data"></button>
-        <button type="button" class="f2-chart-radio" data-state="Minnesota"      style="top: 35.18%;" aria-label="Show Minnesota data"></button>
-        <button type="button" class="f2-chart-radio" data-state="New York"       style="top: 39.74%;" aria-label="Show New York data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Federal"        style="top: 22.86%;" aria-label="Show Federal data"></button>
+        <button type="button" class="f2-chart-radio" data-state="California"     style="top: 28.57%;" aria-label="Show California data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Connecticut"    style="top: 34.29%;" aria-label="Show Connecticut data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Massachusetts"  style="top: 40.00%;" aria-label="Show Massachusetts data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Minnesota"      style="top: 45.71%;" aria-label="Show Minnesota data"></button>
+        <button type="button" class="f2-chart-radio" data-state="New York"       style="top: 51.43%;" aria-label="Show New York data"></button>
       </div>
       <!-- Video click target over baked thumbnail (bottom-left). TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
@@ -5485,7 +5535,7 @@ main { padding-top: var(--header-h); }
   <!-- FINDING 06 — Less Violence & Operational Disruption (locked SVG + animated 100%) -->
   <article id="finding-06" class="finding f6-locked" data-finding="5" data-area="Safety" data-nav-tone="light">
     <div class="f6-wrap">
-      <img class="f6-base" src="assets/illustrations/separated/finding-06/finding-06-no-number.svg" alt="Finding 6: Less Violence and Operational Disruption" data-anim="fade-up" loading="lazy" />
+      <img class="f6-base" src="assets/illustrations/separated/finding-06/finding-06-locked.svg" alt="Finding 6: Less Violence and Operational Disruption" data-anim="fade-up" loading="lazy" />
       <!-- F6 number animation DISABLED for now — number baked into new
            Pallavi SVG. Markup kept for re-enabling later. -->
       <div class="f-num-stage f6-num-stage" style="display:none;"
@@ -6116,7 +6166,10 @@ main { padding-top: var(--header-h); }
       var introTop = findingsIntro.getBoundingClientRect().top;
       var taTop = takeActionEl ? takeActionEl.getBoundingClientRect().top : Infinity;
       var entered = introTop < window.innerHeight * 0.85;
-      var stillInside = taTop > window.innerHeight * 0.75;
+      // Hide desktop subnav as soon as Take Action top crosses into the
+      // bottom 8% of viewport — disappears earlier per QA (don't wait
+      // until Take Action is mid-screen).
+      var stillInside = taTop > window.innerHeight * 0.92;
       var visible = entered && stillInside;
       subnav.classList.toggle('is-visible', visible);
       subnav.setAttribute('aria-hidden', visible ? 'false' : 'true');
