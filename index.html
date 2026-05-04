@@ -3756,25 +3756,27 @@ main { padding-top: var(--header-h); }
        y-position based on a document that's still missing F2-F8's heights —
        scroll lands at what was action-center's old y but is now somewhere
        around F2 because the page got taller after lazy images loaded. */
-    #m-f1 .m-finding-img { aspect-ratio: 402 / 3491; }
-    #m-f2 .m-finding-img { aspect-ratio: 402 / 3805; }
-    #m-f3 .m-finding-img { aspect-ratio: 402 / 3705; }
-    #m-f4 .m-finding-img { aspect-ratio: 402 / 3475; }
-    #m-f5 .m-finding-img { aspect-ratio: 402 / 3588; }
-    #m-f6 .m-finding-img { aspect-ratio: 402 / 3645; }
-    #m-f7 .m-finding-img { aspect-ratio: 402 / 3867; }
-    #m-f8 .m-finding-img { aspect-ratio: 402 / 3610; }
-    /* Mobile F2 chart container — base SVG is the Graph Blank version
-       (402×3805), with a 594.5-tall empty rectangle reserved for the chart
-       at y=2138 to y=2732.5. Chart fits exactly into the blank space —
-       no cream masks needed (no baked chart underneath). Designer intent:
-       80px gap from chart bottom to green quote start (y=2811.91). */
+    /* All 8 findings on Rebuild 5.3 mobile dimensions. */
+    #m-f1 .m-finding-img { aspect-ratio: 402 / 3182; }
+    #m-f2 .m-finding-img { aspect-ratio: 402 / 3452; }
+    #m-f3 .m-finding-img { aspect-ratio: 402 / 3467; }
+    #m-f4 .m-finding-img { aspect-ratio: 402 / 3181; }
+    #m-f5 .m-finding-img { aspect-ratio: 402 / 3447; }
+    #m-f6 .m-finding-img { aspect-ratio: 402 / 3213; }
+    #m-f7 .m-finding-img { aspect-ratio: 402 / 3490; }
+    #m-f8 .m-finding-img { aspect-ratio: 402 / 3344; }
+    /* Mobile F2 chart container — Rebuild 5.3 chart (323×604) overlays the
+       empty cream space in mobile-finding-02.svg between body text ending
+       "have dominated the industry" and the green quote block.
+       Top pushed down so chart title sits ~40px below body text bottom.
+       54% × 3452 ≈ y=1864, chart bottom ≈ y=2468, ~48px above green quote.
+       Chart 323 wide centered in 402 → left=39.5 → 9.83% / width 80.35%. */
     .m-f2-chart-container {
       position: absolute;
-      top: 56.19%;     /* 2138 / 3805 — top of designer's blank space */
-      left: 4.98%;     /* 20 / 402 */
-      width: 90.05%;   /* 362 / 402 */
-      height: 15.62%;  /* 594.5 / 3805 — chart natural height */
+      top: 54%;
+      left: 9.83%;
+      width: 80.35%;
+      height: 17.50%;
       z-index: 3;
     }
     .m-f2-chart {
@@ -3788,7 +3790,7 @@ main { padding-top: var(--header-h); }
     }
     .m-f2-chart-radio {
       position: absolute;
-      height: 5.38%;    /* 32 / 595 — radio row spacing in 595-tall container */
+      height: 5.30%;    /* 32 / 604 — radio tap-row height in 604-tall chart */
       background: transparent;
       border: 0;
       cursor: pointer;
@@ -4448,97 +4450,83 @@ main { padding-top: var(--header-h); }
     <div class="m-findings" data-m-findings>
       <article class="m-finding is-active" id="m-f1" data-finding-idx="0" data-finding-area="Connection">
         <img id="m-f1-img" class="m-finding-img" src="assets/mobile/mobile-finding-01.svg" alt="Finding 1: Increased Connection" fetchpriority="high" />
-        <div class="m-finding-titlebar" style="top: 96.05%; height: 1.66%;">
-          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="m-finding-titlebar-text">More &ldquo;I Love Yous&rdquo;</span>
-        </div>
+        <!-- Video thumbnail: bottom photo y=2702, h=400 in 3182 → top 84.92%, h 12.57% -->
         <button class="m-tap" type="button" data-m-video="1188574670"
-                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 1 video"></button>
-        <!-- Toggle dots: cy=1973 in BOTH SVGs (prisons 402×3491, jails 402×3431).
-             Using vw-based positioning so the tap zone stays locked to y=1973 in SVG units
+                style="top: 84.92%; left: 9.95%; width: 80.10%; height: 12.57%;" aria-label="Play Finding 1 video"></button>
+        <!-- Play-button overlay positioned over LEFT side of baked-in title bar.
+             Title bar at SVG y=3046, h=56. Play circle 32×32, centered at x=64, y=3074.
+             top (3074-16)/3182 = 96.04%, h 32/3182 = 1.01%. -->
+        <!-- Jails/Prisons toggle: radios at cy=1724 in both SVGs (402×3182).
+             Using vw-based positioning so the tap zone stays locked to y=1724 in SVG units
              regardless of which image is loaded — % alone drifts because the article height
-             changes when the IMG src swaps to a shorter SVG. -->
+             could change. Radios at cx=48 (LEFT, "PRISONS" label) and cx=174 (RIGHT, "JAILS"). -->
         <button class="m-tap m-f1-tog" type="button" data-m-f1-state="prisons"
-                style="top: calc(100vw * 1953 / 402); left: 0; width: calc(100vw * 80 / 402); height: calc(100vw * 40 / 402);" aria-label="Show prisons data"></button>
+                style="top: calc(100vw * 1704 / 402); left: 0; width: calc(100vw * 90 / 402); height: calc(100vw * 40 / 402);" aria-label="Show prisons data"></button>
         <button class="m-tap m-f1-tog" type="button" data-m-f1-state="jails"
-                style="top: calc(100vw * 1953 / 402); left: calc(100vw * 126 / 402); width: calc(100vw * 90 / 402); height: calc(100vw * 40 / 402);" aria-label="Show jails data"></button>
+                style="top: calc(100vw * 1704 / 402); left: calc(100vw * 126 / 402); width: calc(100vw * 90 / 402); height: calc(100vw * 40 / 402);" aria-label="Show jails data"></button>
       </article>
       <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Financial">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" loading="lazy" />
-        <!-- 6-state chart toggle. Mobile chart has 2-col radio layout: left col
-             cx=8 cy=135/167/199 (Federal/MA/CT), right col cx=172 cy=135/171/207
-             (CA/MN/NY). Invisible click overlays on each. -->
+        <!-- 6-state chart toggle (Rebuild 5.3 mobile charts, 323×604).
+             Radios baked into chart SVG at:
+               LEFT col cx=8:   cy=100 (Federal), 136 (California), 172 (Connecticut)
+               RIGHT col cx=172: cy=100 (Massachusetts), 136 (Minnesota), 172 (New York)
+             Each tap row 32px tall centered on cy → top = (cy-16)/604.
+             Connecticut is the default state. -->
         <div class="m-f2-chart-container" data-f2-chart-wrap-mobile>
           <img class="m-f2-chart" data-f2-chart-mobile src="assets/charts/mobile/Connecticut.svg" alt="Connecticut chart" />
-          <!-- Left column: cx=8, cy=115/147/179 in 595-tall container -->
-          <button type="button" class="m-f2-chart-radio" data-state="Federal"       style="top: 16.64%; left: 0;     width: 44%;" aria-label="Show Federal data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="California"    style="top: 22.02%; left: 0;     width: 44%;" aria-label="Show California data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="Connecticut"   style="top: 27.39%; left: 0;     width: 44%;" aria-label="Show Connecticut data"></button>
-          <!-- Right column: cx=172, cy=115/151/187 -->
-          <button type="button" class="m-f2-chart-radio" data-state="Massachusetts" style="top: 16.64%; left: 44%;   width: 56%;" aria-label="Show Massachusetts data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 22.69%; left: 44%;   width: 56%;" aria-label="Show Minnesota data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 28.74%; left: 44%;   width: 56%;" aria-label="Show New York data"></button>
+          <!-- Left column (cx=8) -->
+          <button type="button" class="m-f2-chart-radio" data-state="Federal"       style="top: 13.91%; left: 0;     width: 50%;" aria-label="Show Federal data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="California"    style="top: 19.87%; left: 0;     width: 50%;" aria-label="Show California data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Connecticut"   style="top: 25.83%; left: 0;     width: 50%;" aria-label="Show Connecticut data"></button>
+          <!-- Right column (cx=172) -->
+          <button type="button" class="m-f2-chart-radio" data-state="Massachusetts" style="top: 13.91%; left: 50%;   width: 50%;" aria-label="Show Massachusetts data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 19.87%; left: 50%;   width: 50%;" aria-label="Show Minnesota data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 25.83%; left: 50%;   width: 50%;" aria-label="Show New York data"></button>
         </div>
-        <div class="m-finding-titlebar" style="top: 96.62%; height: 1.42%;">
-          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="m-finding-titlebar-text">A Weight&rsquo;s Been Lifted</span>
-        </div>
+        <!-- F2 Rebuild 5.3 (402×3452): video thumb y=2972,h=400 → top 86.10%, h 11.59%
+             Title bar baked into SVG (y=3316, h=56) — no HTML overlay needed. -->
         <button class="m-tap" type="button" data-m-video="1188574671"
-                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 2 video"></button>
+                style="top: 86.10%; left: 9.95%; width: 80.10%; height: 11.59%;" aria-label="Play Finding 2 video"></button>
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" loading="lazy" />
-        <div class="m-finding-titlebar" style="top: 96.27%; height: 1.57%;">
-          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="m-finding-titlebar-text">Mutual Support</span>
-        </div>
+        <!-- Video thumb: bottom photo y=2987, h=400 in 3467 → top 86.16%, h 11.54% -->
         <button class="m-tap" type="button" data-m-video="1188574901"
-                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 3 video"></button>
+                style="top: 86.16%; left: 9.95%; width: 80.10%; height: 11.54%;" aria-label="Play Finding 3 video"></button>
       </article>
       <article class="m-finding" id="m-f4" data-finding-idx="3" data-finding-area="Parenting">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-04.svg" alt="Finding 4: Parenting and Child Development" loading="lazy" />
-        <div class="m-finding-titlebar" style="top: 96.03%; height: 1.67%;">
-          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="m-finding-titlebar-text">I Raised My Daughter Over the Phone</span>
-        </div>
+        <!-- Video thumb: bottom photo y=2701, h=400 in 3181 → top 84.91%, h 12.57% -->
         <button class="m-tap" type="button" data-m-video="1188574923"
-                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 4 video"></button>
+                style="top: 84.91%; left: 9.95%; width: 80.10%; height: 12.57%;" aria-label="Play Finding 4 video"></button>
+        <!-- Play-button overlay over baked title bar (y=3045, h=56). Center y=3073 → top 96.04%. -->
       </article>
       <article class="m-finding" id="m-f5" data-finding-idx="4" data-finding-area="Health">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-05.svg" alt="Finding 5: Improved Mental and Physical Health" loading="lazy" />
-        <div class="m-finding-titlebar" style="top: 96.15%; height: 1.62%;">
-          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="m-finding-titlebar-text">Connection as Medicine</span>
-        </div>
+        <!-- F5 Rebuild 5.3 (402×3447): video thumb y=2967,h=400 → top 86.07%, h 11.60%
+             Title bar baked into SVG (y=3311, h=56). -->
         <button class="m-tap" type="button" data-m-video="1188574952"
-                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 5 video"></button>
+                style="top: 86.07%; left: 9.95%; width: 80.10%; height: 11.60%;" aria-label="Play Finding 5 video"></button>
       </article>
       <article class="m-finding" id="m-f6" data-finding-idx="5" data-finding-area="Safety">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-06.svg" alt="Finding 6: Less Violence and Operational Disruption" loading="lazy" />
-        <div class="m-finding-titlebar" style="top: 95.72%; height: 2.08%;">
-          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="m-finding-titlebar-text">If They&rsquo;re Having a Good Day, We&rsquo;re Having a Good Day</span>
-        </div>
+        <!-- Video thumb: bottom photo y=2733, h=400 in 3213 → top 85.06%, h 12.45% -->
         <button class="m-tap" type="button" data-m-video="1188646485"
-                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 6 video"></button>
+                style="top: 85.06%; left: 9.95%; width: 80.10%; height: 12.45%;" aria-label="Play Finding 6 video"></button>
       </article>
       <article class="m-finding" id="m-f7" data-finding-idx="6" data-finding-area="Rehabilitation">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-07.svg" alt="Finding 7: Rehabilitation" loading="lazy" />
-        <div class="m-finding-titlebar" style="top: 96.43%; height: 1.50%;">
-          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="m-finding-titlebar-text">Hope Has a Phone Number</span>
-        </div>
+        <!-- F7 Rebuild 5.3 (402×3490): video thumb y=3010,h=400 → top 86.25%, h 11.46%
+             Title bar baked into SVG (y=3354, h=56). -->
         <button class="m-tap" type="button" data-m-video="1188574993"
-                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 7 video"></button>
+                style="top: 86.25%; left: 9.95%; width: 80.10%; height: 11.46%;" aria-label="Play Finding 7 video"></button>
       </article>
       <article class="m-finding" id="m-f8" data-finding-idx="7" data-finding-area="Reentry">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-08.svg" alt="Finding 8: Reentry Planning and Success" loading="lazy" />
-        <div class="m-finding-titlebar" style="top: 96.18%; height: 1.61%;">
-          <span class="m-finding-titlebar-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-          <span class="m-finding-titlebar-text">The Calls That Come Before Freedom</span>
-        </div>
+        <!-- Video thumb: bottom photo y=2864, h=400 in 3344 → top 85.65%, h 11.96% -->
         <button class="m-tap" type="button" data-m-video="1188849398"
-                style="top: 88%; left: 5%; width: 90%; height: 10%;" aria-label="Play Finding 8 video"></button>
+                style="top: 85.65%; left: 9.95%; width: 80.10%; height: 11.96%;" aria-label="Play Finding 8 video"></button>
       </article>
     </div>
 
