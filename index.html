@@ -680,12 +680,27 @@ main { padding-top: var(--header-h); }
   height: 100%;
   pointer-events: none; /* transparent area passes through */
 }
-.about-overlay rect { pointer-events: all; cursor: pointer; }
-.about-overlay a:focus { outline: 0; }
-.about-overlay a:focus-visible rect {
+.about-overlay rect {
+  pointer-events: all;
+  cursor: pointer;
+  /* Hover/focus: subtle tilt + scale + coral ring. transform-box: fill-box
+     pins the rotation/scale origin to the rect's own center (the button's
+     center) instead of the SVG's (0,0). Springy easing for a tactile feel. */
+  transform-box: fill-box;
+  transform-origin: center;
   stroke: var(--warm-coral);
-  stroke-width: 4;
-  fill: rgba(228,87,46,0.10);
+  stroke-width: 0;
+  transition:
+    stroke-width 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 360ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    fill 240ms ease;
+}
+.about-overlay a:focus { outline: 0; }
+.about-overlay a:hover rect,
+.about-overlay a:focus-visible rect {
+  stroke-width: 5;
+  transform: scale(1.06) rotate(-3deg);
+  fill: rgba(228, 87, 46, 0.10);
 }
 .about-copy {
   /* Reduced vertical padding (was var(--top-pad) ≈ 16vh each side, now ~6vh).
