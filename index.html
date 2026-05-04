@@ -1035,9 +1035,9 @@ main { padding-top: var(--header-h); }
 ============================================================ */
 .quotes {
   background: var(--soft-lavender);
-  /* Figma: eyebrow top = 120 from top of section.
-     108px lavender pad below the photo strip extends section height. */
-  padding: 120px 0 108px;
+  /* Symmetric vertical padding: 120px top + 120px bottom (matches Figma
+     eyebrow-top distance). */
+  padding: 120px 0;
   overflow: hidden;
 }
 .quotes-head {
