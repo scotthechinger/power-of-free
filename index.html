@@ -4793,13 +4793,17 @@ main { padding-top: var(--header-h); }
   // Vimeo modal
   function openVideo(id){
     if (!frame || !modal || !id) return;
-    frame.src = 'https://player.vimeo.com/video/' + id + '?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63';
+    // Hard-reset src each time so re-open after close always reloads.
+    frame.removeAttribute('src');
+    frame.setAttribute('src', 'https://player.vimeo.com/video/' + id + '?autoplay=1&title=0&byline=0&portrait=0&color=4B0F63');
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden','false');
     document.body.style.overflow = 'hidden';
   }
   function closeVideo(){
-    if (frame) frame.src = '';
+    // removeAttribute (rather than src='') avoids the "current-page URL"
+    // sticky state that prevented the iframe from reloading on next open.
+    if (frame) frame.removeAttribute('src');
     if (modal){ modal.classList.remove('is-open'); modal.setAttribute('aria-hidden','true'); }
     document.body.style.overflow = '';
   }
@@ -5123,12 +5127,12 @@ main { padding-top: var(--header-h); }
   </video>
   <button class="hero-video-poster" type="button"
           aria-label="Play the documentary film"
-          onclick="this.closest('.hero-video-section').classList.add('is-playing'); var f=this.closest('.hero-video-section').querySelector('.hero-video-frame'); f.src=f.dataset.src;"></button>
+          onclick="this.closest('.hero-video-section').classList.add('is-playing'); var f=this.closest('.hero-video-section').querySelector('.hero-video-frame'); f.removeAttribute('src'); f.setAttribute('src', f.dataset.src);"></button>
   <span class="hero-video-card-sentinel" aria-hidden="true"></span>
   <div class="hero-video-card hero-video-card-flyin">
     <button class="hero-video-card-play" type="button"
             aria-label="Play the documentary film"
-            onclick="this.closest('.hero-video-section').classList.add('is-playing'); var f=this.closest('.hero-video-section').querySelector('.hero-video-frame'); f.src=f.dataset.src;">
+            onclick="this.closest('.hero-video-section').classList.add('is-playing'); var f=this.closest('.hero-video-section').querySelector('.hero-video-frame'); f.removeAttribute('src'); f.setAttribute('src', f.dataset.src);">
       <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M7 5.14v13.72c0 .79.87 1.27 1.54.84l10.78-6.86a1 1 0 0 0 0-1.68L8.54 4.3C7.87 3.87 7 4.35 7 5.14z"/>
       </svg>
@@ -5144,7 +5148,7 @@ main { padding-top: var(--header-h); }
           allow="autoplay; fullscreen; picture-in-picture"
           allowfullscreen></iframe>
   <button class="hero-video-close" type="button" aria-label="Close video"
-          onclick="var s=this.closest('.hero-video-section'); s.classList.remove('is-playing'); var f=s.querySelector('.hero-video-frame'); f.src='';">
+          onclick="var s=this.closest('.hero-video-section'); s.classList.remove('is-playing'); var f=s.querySelector('.hero-video-frame'); f.removeAttribute('src');">
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </svg>
@@ -6329,8 +6333,16 @@ main { padding-top: var(--header-h); }
       if (!player) return;
       var iframe = player.querySelector('.f-video-frame');
       // Skip silently if no Vimeo URL has been configured yet
-      if (iframe && !iframe.src && !iframe.dataset.src) return;
-      if (iframe && !iframe.src) iframe.src = iframe.dataset.src;
+      if (iframe && !iframe.dataset.src) return;
+      // Always force a fresh load — after close we cleared the src, but
+      // some browsers report iframe.src as the current page URL (not empty)
+      // so a `!iframe.src` check fails and the video never reloads on the
+      // second click. Setting the attribute unconditionally guarantees
+      // re-open works every time.
+      if (iframe) {
+        iframe.removeAttribute('src');
+        iframe.setAttribute('src', iframe.dataset.src);
+      }
       player.classList.add('is-open');
       player.setAttribute('aria-hidden', 'false');
     });
@@ -6340,7 +6352,13 @@ main { padding-top: var(--header-h); }
       var player = btn.closest('.f-video-player');
       if (!player) return;
       var iframe = player.querySelector('.f-video-frame');
-      if (iframe) iframe.src = ''; // unload to stop playback
+      if (iframe) {
+        // Hard-unload so playback stops AND a subsequent open re-loads
+        // cleanly. Removing the attribute (rather than setting src='')
+        // avoids the "current-page URL" sticky state that caused the
+        // black-screen-on-second-click bug.
+        iframe.removeAttribute('src');
+      }
       player.classList.remove('is-open');
       player.setAttribute('aria-hidden', 'true');
     });
