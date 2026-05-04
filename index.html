@@ -3255,19 +3255,26 @@ main { padding-top: var(--header-h); }
     }
     .m-crop-top1 .m-bg-svg { top: calc(-100vw * 60 / 402); }
 
-    /* Mobile about-report illustration overlay — covers the older illustration
-       baked into mobile-homepage-full.svg around y≈2286. New illustration is
-       402×768 (full mobile width × ~191vw tall). top % = (1891-60)/2594. */
-    .m-about-report-overlay {
-      position: absolute;
-      top: 70.59%;
-      left: 0;
-      width: 100vw;
-      height: auto;
-      z-index: 2;
+    /* ===== Rebuild 5.3 mobile blocks (header / about / data) =====
+       Each section renders one full-bleed SVG at native aspect, with
+       transparent click overlays positioned in % of the SVG's height
+       (computed from the SVG's native artboard coordinates). */
+    .m-header-block,
+    .m-about-block,
+    .m-data-block {
+      position: relative;
+      width: 100%;
       display: block;
-      pointer-events: none;
-      user-select: none; -webkit-user-drag: none;
+      overflow: hidden;
+    }
+    .m-header-img,
+    .m-about-img,
+    .m-data-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     /* Custom mobile hero video block — replaces baked video section in Mobile.svg.
@@ -3386,6 +3393,14 @@ main { padding-top: var(--header-h); }
       max-width: 399px;
       height: auto;
       margin: 0 auto;
+      user-select: none; -webkit-user-drag: none;
+      pointer-events: none;
+    }
+    /* Rebuild 5.3 single-SVG findings intro */
+    .m-findings-intro-img {
+      display: block;
+      width: 100%;
+      height: auto;
       user-select: none; -webkit-user-drag: none;
       pointer-events: none;
     }
@@ -3543,6 +3558,23 @@ main { padding-top: var(--header-h); }
       height: auto;
       /* Warm wheat (#DED6C1) — matches the desktop .actions-stack section bg */
       background: #DED6C1;
+    }
+
+    /* Rebuild 5.3 Action Center — header + locked-SVG buttons */
+    .m-action-center-header,
+    .m-action-buttons {
+      position: relative;
+      width: 100%;
+      display: block;
+      overflow: hidden;
+    }
+    .m-action-center-header-img,
+    .m-action-buttons-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
     }
     /* Take Action / Resources cards (custom HTML) */
     .m-action-cards {
@@ -4131,26 +4163,32 @@ main { padding-top: var(--header-h); }
   <!-- ===== Mobile page — top crop + 8 finding SVGs + bottom crop ===== -->
   <main class="m-page" id="m-top">
 
-    <!-- TOP 1: Mobile.svg y=60–2200 (hero + About the Report only) -->
-    <div class="m-crop m-crop-top1">
-      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Power of Free — hero + About the Report" />
-      <!-- Hero CTAs (scroll, no modal). Positions are % of crop height (2594 in SVG units, y=60→2654).
-           READ THE REPORT pill: SVG y=534–584 → top 18.27%, height 1.93%
-           WATCH THE STORY pill:   SVG y=594–644 → top 20.59%, height 1.93%
-           About-the-Report inline READ button: SVG y=1756–1806 → top 65.38%, height 1.93% -->
+    <!-- HEADER (Rebuild 5.3 — May 3 Mobile). Native 402×917.
+         Two CTA pills baked into the SVG:
+           READ THE REPORT (coral): y=425+50, x=20+362  → top 46.35%, h 5.45%
+           WATCH THE STORY (plum):  y=485+50, x=20+362  → top 52.89%, h 5.45% -->
+    <section class="m-header-block">
+      <img class="m-header-img" src="assets/mobile/mobile-header.svg" alt="Power of Free — More than just a phone call." />
       <a class="m-tap is-link" href="assets/resources/report.pdf" target="_blank" rel="noopener"
-         style="top: 18.27%; left: 5%; right: 5%; height: 1.93%;" aria-label="Read the report"></a>
+         style="top: 46.35%; left: 4.98%; width: 90.05%; height: 5.45%;" aria-label="Read the report"></a>
       <a class="m-tap is-link" href="#m-video" data-m-scroll
-         style="top: 20.59%; left: 5%; right: 5%; height: 1.93%;" aria-label="Watch the hero story video"></a>
+         style="top: 52.89%; left: 4.98%; width: 90.05%; height: 5.45%;" aria-label="Watch the hero story video"></a>
+    </section>
+
+    <!-- ABOUT THE REPORT — intro text (Rebuild 5.3). Native 402×847.
+         One CTA: coral READ THE REPORT pill at y=757+50, x=40+215
+         → top 89.37%, h 5.90%, left 9.95%, width 53.48% -->
+    <section class="m-about-block">
+      <span class="m-anchor" id="m-about-report"></span>
+      <img class="m-about-img" src="assets/mobile/mobile-about.svg" alt="About the Report — drawing on quantitative and qualitative research across multiple states." />
       <a class="m-tap is-link" href="assets/resources/report.pdf" target="_blank" rel="noopener"
-         style="top: 65.38%; left: 5%; width: 56%; height: 1.93%;" aria-label="Read the report"></a>
-      <!-- Anchor at top of About-the-Report band (deep plum starts at SVG y=1041 → 37.82% of crop) -->
-      <span class="m-anchor" id="m-about-report" style="position:absolute; top: 37.82%; left:0;"></span>
-      <!-- About-the-Report illustration overlay (new, 2026-05-02). The composite
-           SVG has the OLD illustration baked in around y=2286; this overlay covers
-           it with the new 402x768 design. Top y=1891 in source = 70.59% of crop. -->
-      <img class="m-about-report-overlay" src="assets/illustrations/about-report-mobile.svg" alt="" aria-hidden="true" />
-    </div>
+         style="top: 89.37%; left: 9.95%; width: 53.48%; height: 5.90%;" aria-label="Read the report"></a>
+    </section>
+
+    <!-- ABOUT THE REPORT — data block (Rebuild 5.3). Native 402×760, no clicks. -->
+    <section class="m-data-block">
+      <img class="m-data-img" src="assets/mobile/mobile-data.svg" alt="Data illustration — the eight areas of measurable impact." />
+    </section>
 
     <!-- HERO VIDEO BLOCK — custom, mobile-optimized. Ambient mp4 loops in background;
          deep-plum title bar at bottom with coral play button. Tap → Vimeo modal. -->
@@ -4293,15 +4331,13 @@ main { padding-top: var(--header-h); }
       </div>
     </section>
 
-    <!-- KEY FINDINGS INTRO — replaced (2026-05-02). The old baked content in
-         mobile-homepage-full.svg is no longer rendered here; new copy + new
-         illustration are stacked as two SVGs (text on top, illust below).
-         id="m-key-findings" lives on the outer block (not an inner absolute
-         span) so getBoundingClientRect returns a stable y-position even
-         before lazy-loaded findings below have laid out. -->
+    <!-- KEY FINDINGS INTRO — Rebuild 5.3 single SVG (402×771).
+         The previous two-image stack (text + illust) is now a single locked
+         SVG. id="m-key-findings" stays on the outer block — sub-nav comes
+         alive when this block enters the viewport (handled by the existing
+         IntersectionObserver targeting #m-key-findings). -->
     <div class="m-findings-intro-block" id="m-key-findings">
-      <img class="m-findings-intro-text" src="assets/illustrations/findings-intro-text-mobile.svg" alt="Key Findings — 8 Areas of Measurable Impact. Drawing on quantitative and qualitative data across multiple jurisdictions, eight areas of meaningful, measurable change emerged — for incarcerated people, their families, corrections staff, and the broader public." />
-      <img class="m-findings-intro-illust" src="assets/illustrations/findings-intro-illust-mobile.svg" alt="" aria-hidden="true" />
+      <img class="m-findings-intro-img" src="assets/mobile/mobile-key-findings.svg" alt="Key Findings — 8 Areas of Measurable Impact. Drawing on quantitative and qualitative data across multiple jurisdictions, eight areas of meaningful, measurable change emerged — for incarcerated people, their families, corrections staff, and the broader public." />
       <span class="m-anchor" id="m-findings-intro" style="position:absolute; top: 60%;"></span>
     </div>
 
@@ -4403,70 +4439,51 @@ main { padding-top: var(--header-h); }
       </article>
     </div>
 
-    <!-- ACTION CENTER: Mobile.svg y=8800–9450 (just the headline + handshake illustration).
-         id="m-action-center" on the outer crop div (not an inner absolute span)
-         so menu link "Take Action" lands here reliably even on first click —
-         outer div's position is computed from document flow rather than
-         relative-% which can be miscalculated before lazy images settle. -->
-    <div class="m-crop m-crop-actioncenter" id="m-action-center">
-      <img class="m-bg-svg" src="assets/mobile/mobile-homepage-full.svg" alt="Action Center" />
-    </div>
-
-    <!-- TAKE ACTION title -->
-    <img class="m-section-title" src="assets/mobile/mobile-title-take-action.svg" alt="Take Action" />
-    <!-- TAKE ACTION cards — custom HTML, lavender bg per spec -->
-    <section class="m-action-cards">
-      <a class="m-action-card m-action-card--lavender" href="assets/resources/report.pdf" target="_blank" rel="noopener">
-        <div class="m-action-card-title">Read &amp; Share the Report</div>
-        <div class="m-action-card-body">Download the full report and share it with anyone who needs to see what's possible — and what is actively being withheld where these policies haven't yet been adopted.</div>
-        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
-      </a>
-      <a class="m-action-card m-action-card--lavender" href="https://worthrises.org/take-action" target="_blank" rel="noopener">
-        <div class="m-action-card-title">Contact Your Legislators</div>
-        <div class="m-action-card-body">Free prison and jails communication is advancing state by state and county by county. Tell your elected officials it's time to act.</div>
-        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
-      </a>
-      <a class="m-action-card m-action-card--lavender" href="https://worthrises.org/donate" target="_blank" rel="noopener">
-        <div class="m-action-card-title">Support the Movement</div>
-        <div class="m-action-card-body">Worth Rises is working to end the correctional telecom industry's exploitation of incarcerated people and their families. Support our work.</div>
-        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
-      </a>
+    <!-- ACTION CENTER HEADER — Rebuild 5.3 (402×577). Headline + body, no
+         baked-in CTAs. id="m-action-center" preserved on outer block so the
+         "Take Action" menu link still lands here reliably (uses document
+         flow rather than fragile relative-% positioning). -->
+    <section class="m-action-center-header" id="m-action-center">
+      <img class="m-action-center-header-img" src="assets/mobile/mobile-action-center-header.svg" alt="Action Center — Communication is a Lifeline." />
     </section>
 
-    <!-- RESOURCES title -->
-    <img class="m-section-title" src="assets/mobile/mobile-title-resources.svg" alt="Resources" />
-    <!-- RESOURCES cards — custom HTML, plum bg per spec -->
-    <section class="m-action-cards">
+    <!-- ACTION CENTER BUTTONS — Rebuild 5.3 (402×1468).
+         6 cards baked in. Click positions, computed from SVG rects (y/h):
+           Card 1 Read & Share Report:  y=118.5,  h=211 → top  8.07%, h 14.37%
+           Card 2 Contact Legislators:  y=330.5,  h=235 → top 22.51%, h 16.01%
+           Card 3 Support the Movement: y=566.5,  h=189 → top 38.59%, h 12.87%
+           Card 4 Report Fact Sheet:    y=874.5,  h=189 → top 59.57%, h 12.87%
+           Card 5 Implementation Guide: y=1064.5, h=213 → top 72.51%, h 14.51%
+           Card 6 Ultimate Campaign:    y=1278.5, h=189 → top 87.10%, h 12.87% -->
+    <section class="m-action-buttons">
       <span class="m-anchor" id="m-resources"></span>
-      <a class="m-action-card m-action-card--plum" href="assets/resources/fact-sheet.pdf" target="_blank" rel="noopener">
-        <div class="m-action-card-title">Report Fact Sheet</div>
-        <div class="m-action-card-body">Two-pager covering the eight areas of measurable impact.</div>
-        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
-      </a>
-      <a class="m-action-card m-action-card--plum" href="#" target="_blank" rel="noopener">
-        <div class="m-action-card-title">Implementation Guide</div>
-        <div class="m-action-card-body">A practical guide for agencies, legislators, and advocates designing, procuring, and rolling out free communication in prisons and jails.</div>
-        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
-      </a>
-      <a class="m-action-card m-action-card--plum" href="assets/resources/campaign-guide.pdf" target="_blank" rel="noopener">
-        <div class="m-action-card-title">Ultimate Campaign Guide</div>
-        <div class="m-action-card-body">A guide for advocates, organizers, and campaigns working to win free communication in their community.</div>
-        <span class="m-action-card-arrow" aria-hidden="true">↗</span>
-      </a>
+      <img class="m-action-buttons-img" src="assets/mobile/mobile-action-center-buttons.svg" alt="Take Action and Resources" />
+      <a class="m-tap is-link" href="assets/resources/report.pdf" target="_blank" rel="noopener"
+         style="top: 8.07%; left: 0; right: 0; height: 14.37%;" aria-label="Read &amp; Share the Report"></a>
+      <a class="m-tap is-link" href="https://worthrises.org/take-action" target="_blank" rel="noopener"
+         style="top: 22.51%; left: 0; right: 0; height: 16.01%;" aria-label="Contact Your Legislators"></a>
+      <a class="m-tap is-link" href="https://worthrises.org/donate" target="_blank" rel="noopener"
+         style="top: 38.59%; left: 0; right: 0; height: 12.87%;" aria-label="Support the Movement"></a>
+      <a class="m-tap is-link" href="assets/resources/fact-sheet.pdf" target="_blank" rel="noopener"
+         style="top: 59.57%; left: 0; right: 0; height: 12.87%;" aria-label="Report Fact Sheet"></a>
+      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
+         style="top: 72.51%; left: 0; right: 0; height: 14.51%;" aria-label="Implementation Guide"></a>
+      <a class="m-tap is-link" href="assets/resources/campaign-guide.pdf" target="_blank" rel="noopener"
+         style="top: 87.10%; left: 0; right: 0; height: 12.87%;" aria-label="Ultimate Campaign Guide"></a>
     </section>
 
-    <!-- METHODOLOGY: Frame 2117131592 SVG (self-contained, 402×1978) -->
+    <!-- METHODOLOGY / ACKNOWLEDGEMENTS — Rebuild 5.3 (402×1848).
+         Two pills baked in (both 322 wide × 84 tall, x=40):
+           Worth Rises pill:           y=1098,  h=84 → top 59.42%, h 4.55%
+           Connecting Families (plum): y=1202,  h=84 → top 65.04%, h 4.55%
+         Pills span x=40-362 → left 9.95%, width 80.10%. -->
     <section class="m-methodology">
       <span class="m-anchor" id="m-about-project"></span>
-      <img class="m-methodology-img" src="assets/mobile/mobile-methodology.svg" alt="About This Report — Acknowledgments" />
-      <!-- Click overlays for the two baked-in pills (updated methodology SVG).
-           SVG is 402×1918. Worth Rises bar: y=1749.71, h=84 → top 91.22%, height 4.38%.
-           Connecting Families bar: y=1833.71, h=84 → top 95.60%, height 4.38%.
-           Both span full width of the SVG. -->
+      <img class="m-methodology-img" src="assets/mobile/mobile-acknowledgements.svg" alt="About This Report — Acknowledgments" />
       <a class="m-tap is-link" href="https://worthrises.org" target="_blank" rel="noopener"
-         style="top: 91.22%; left: 0; right: 0; height: 4.38%;" aria-label="Visit Worth Rises"></a>
+         style="top: 59.42%; left: 9.95%; width: 80.10%; height: 4.55%;" aria-label="Visit Worth Rises"></a>
       <a class="m-tap is-link" href="https://connectfamiliesnow.com/" target="_blank" rel="noopener"
-         style="top: 95.60%; left: 0; right: 0; height: 4.38%;" aria-label="Connecting Families campaign"></a>
+         style="top: 65.04%; left: 9.95%; width: 80.10%; height: 4.55%;" aria-label="Connecting Families campaign"></a>
     </section>
 
     <!-- Custom mobile footer — mirrors desktop brand identity -->
