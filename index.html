@@ -1020,8 +1020,9 @@ main { padding-top: var(--header-h); }
 ============================================================ */
 .quotes {
   background: var(--soft-lavender);
-  /* Figma: eyebrow top = 120 from top of section */
-  padding: 120px 0 0;
+  /* Figma: eyebrow top = 120 from top of section.
+     108px lavender pad below the photo strip extends section height. */
+  padding: 120px 0 108px;
   overflow: hidden;
 }
 .quotes-head {
@@ -1046,8 +1047,8 @@ main { padding-top: var(--header-h); }
   text-transform: uppercase;
 }
 .quotes-head .h-display em {
-  /* "A Phone Call" — Figma: Concrette Italic 74 / 100% / -3%, coral */
-  color: var(--warm-coral);
+  /* "A Phone Call" — Concrette Italic 74 / 100% / -3%, plum */
+  color: var(--deep-plum);
   font-family: var(--accent);
   font-style: italic;
   font-weight: 500;
@@ -1151,6 +1152,8 @@ main { padding-top: var(--header-h); }
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Lifted 12px so a sliver of photo shows below the coral plate */
+  margin-bottom: 12px;
 }
 .quote-card .qc-quote {
   /* White background per spec; text laid out per Figma (X=20, Y=30 from
@@ -1693,14 +1696,12 @@ main { padding-top: var(--header-h); }
    intentional. Live HTML text is overlaid in the upper-middle area; the
    figures' shoulders/arms intentionally overlap with the text region (Scott
    approved this — gives the compact "framed by figures" feel). */
-/* Action Center hero — locked Figma 1440×908 SVG, full-bleed.
-   Bottom 70px cropped (illustrations sit higher in the new design;
-   trimming the empty space below). Effective rendered ratio = 1440:838. */
+/* Action Center hero — Pallavi v3 SVG, native 1440×800 (no baked padding).
+   Renders at natural ratio, full-bleed, sits flush against the next section. */
 .action-center {
   position: relative;
   background: var(--cloud-neutral);
   width: 100%;
-  aspect-ratio: 1440 / 838;
   display: block;
   margin: 0;
   padding: 0;
@@ -1710,8 +1711,6 @@ main { padding-top: var(--header-h); }
   display: block;
   width: 100%;
   height: auto;
-  /* Image renders at natural 1440:908 ratio; bottom 70px (≈7.7% of img
-     height) extends past the 838-tall container and gets clipped. */
 }
 
 
@@ -1737,7 +1736,7 @@ main { padding-top: var(--header-h); }
   width: 100%;
   position: relative;
   font-family: var(--display);
-  background: #DED6C1;
+  background: #8FBF3D;  /* lime green from brand palette */
   padding: 80px 80px;
 }
 .actions-stack {
@@ -1745,15 +1744,18 @@ main { padding-top: var(--header-h); }
   margin: 0 auto;
 }
 .actions-section + .actions-section { margin-top: 40px; }
+/* When a heading follows a section (Resources after Take Action grid),
+   sit it 40px below the previous block. */
+.actions-section + .actions-heading { margin-top: 40px; }
 .actions-heading {
-  /* Inter Display ExtraBold 32 / 120% / -3% */
+  /* Inter Display ExtraBold 32 / 120% / -3% — white on green section bg */
   font-family: var(--display);
   font-size: 32px;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.03em;
   text-transform: uppercase;
-  color: #000000;
+  color: #ffffff;
   margin: 0 0 40px;
   padding-left: 40px; /* 40 inside box → 120 from page edge */
 }
@@ -1764,25 +1766,27 @@ main { padding-top: var(--header-h); }
 }
 .actions-card {
   position: relative;
-  min-height: 238px;
+  height: 238px;          /* explicit height — both rows match exactly */
   padding: 47px 40px 39px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   text-decoration: none;
   transition: background 0.25s ease, color 0.25s ease;
-  border-right: 1px solid #F0EEE9;
+  /* Plum-tinted divider — visible against both cream (Take Action) and
+     white (Resources) backgrounds. */
+  border-right: 1px solid rgba(75, 15, 99, 0.18);
 }
 .actions-card:last-child { border-right: 0; }
 
-/* TAKE ACTION — default = lavender bg + plum text; hover = plum bg + white text */
+/* TAKE ACTION — default = cloud-neutral bg + ink text; hover = plum bg + white text */
 .actions-section--take .actions-card {
-  background: var(--soft-lavender);
-  color: var(--deep-plum);
+  background: var(--cloud-neutral);
+  color: var(--ink);
 }
 .actions-section--take .actions-card .actions-card-body {
-  color: var(--deep-plum);
-  opacity: 0.78;
+  color: var(--ink);
+  opacity: 0.85;
 }
 .actions-section--take .actions-card:hover,
 .actions-section--take .actions-card:focus-visible {
@@ -1835,9 +1839,12 @@ main { padding-top: var(--header-h); }
   color: inherit;
 }
 .actions-card-body {
-  /* Inter Display Regular 18 / 140% / 0 */
+  /* Inter Display Regular 17/140 — Figma spec is 18 but our font rendering
+     is slightly wider per character; 17px lands the text at the same line-
+     wrap pattern as Pallavi's mockup (4 lines for the longest body string
+     instead of 5). Keeps padding/margins/positions identical to spec. */
   font-family: var(--display);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: 0;
@@ -1871,6 +1878,88 @@ main { padding-top: var(--header-h); }
     border-bottom: 1.5px solid rgba(34,34,34,0.18);
   }
   .actions-card:last-child { border-bottom: 0; }
+}
+
+/* ============================================================
+   ACTION CENTER — LOCKED SVG VARIANT
+   ============================================================
+   Native artboard: 1440×914 (lime-green bg + Take Action heading +
+   2 rows × 3 cards, all text/dividers baked in).
+   Card geometry, computed from SVG rects:
+     width  = 425.667 / 1440 = 29.5602%
+     height = 237 / 914     = 25.9300%
+     row 1 y = 198.5 / 914  = 21.7178%   (Take Action)
+     row 2 y = 554.5 / 914  = 60.6674%   (Resources)
+     col 1 x = 80.5 / 1440  = 5.5903%
+     col 2 x = 507.167/1440 = 35.2199%
+     col 3 x = 933.833/1440 = 64.8495%
+   Hover overlay = deep-plum bg + 40×40 white arrow at top:40 right:40
+   (40/914 = 4.376% top, 40/425.667 = 9.398% right within the card).
+============================================================ */
+.actions-wrap-locked {
+  padding: 0;                    /* SVG carries its own padding */
+  background: #8FBF3D;
+}
+.actions-locked {
+  position: relative;
+  width: 100%;
+  line-height: 0;                /* kill stray inline gap below img */
+}
+.actions-base {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* Six click overlays — one per card. Each clips a slice of the full
+   hover-state SVG and fades that slice in on hover. */
+.ac-tap {
+  position: absolute;
+  width: 29.5602%;
+  height: 25.93%;
+  text-decoration: none;
+  z-index: 5;
+  overflow: hidden;     /* clips .ac-hover-overlay to the card frame */
+  outline-offset: -3px;
+}
+.ac-tap--1 { top: 21.7178%; left: 5.5903%; }
+.ac-tap--2 { top: 21.7178%; left: 35.2199%; }
+.ac-tap--3 { top: 21.7178%; left: 64.8495%; }
+.ac-tap--4 { top: 60.6674%; left: 5.5903%; }
+.ac-tap--5 { top: 60.6674%; left: 35.2199%; }
+.ac-tap--6 { top: 60.6674%; left: 64.8495%; }
+
+/* Each card's hover-image overlay is the FULL hover SVG, scaled so it
+   covers the entire action-center artwork (1440×914 in artboard units).
+   The card itself is 425.667×237 — so the overlay is 338.21% wide and
+   385.65% tall relative to its tap-card parent. We then offset the
+   image's top-left so the relevant card slice sits at (0,0) of the tap. */
+.ac-hover-overlay {
+  position: absolute;
+  width: 338.21%;        /* 1440 / 425.667 */
+  height: 385.65%;       /* 914 / 237 — explicit so global `img{max-width:100%}` doesn't clamp */
+  max-width: none;       /* override the global cap so the overlay can extend past card */
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+/* Per-card translate: shift the full overlay so each card's slice
+   lines up with the tap's (0,0). Values are negative offsets,
+   computed as (svg_x / card_width) and (svg_y / card_height). */
+.ac-tap--1 .ac-hover-overlay { left: -18.91%;  top: -83.76%; }   /* (80.5,    198.5) */
+.ac-tap--2 .ac-hover-overlay { left: -119.14%; top: -83.76%; }   /* (507.167, 198.5) */
+.ac-tap--3 .ac-hover-overlay { left: -219.39%; top: -83.76%; }   /* (933.833, 198.5) */
+.ac-tap--4 .ac-hover-overlay { left: -18.91%;  top: -233.97%; }  /* (80.5,    554.5) */
+.ac-tap--5 .ac-hover-overlay { left: -119.14%; top: -233.97%; }  /* (507.167, 554.5) */
+.ac-tap--6 .ac-hover-overlay { left: -219.39%; top: -233.97%; }  /* (933.833, 554.5) */
+
+.ac-tap:hover .ac-hover-overlay,
+.ac-tap:focus-visible .ac-hover-overlay { opacity: 1; }
+
+/* Mobile: hide the locked desktop SVG entirely — the mobile shell renders
+   its own action center elsewhere. */
+@media (max-width: 800px) {
+  .actions-wrap-locked { display: none; }
 }
 
 /* ---------- legacy take-action / resources styles (kept for safety) ---------- */
@@ -1977,10 +2066,13 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   margin: 0;
-  /* SVG rendered at natural 1440:971 ratio — no crop, full fidelity to
-     Pallavi's Acknowledgements.svg. Height grows naturally from width. */
+  /* Pallavi v3 Acknowledgements SVG: 1440×971 natural. Renders at natural
+     ratio — no crop, no baked padding. SVG itself owns its own breathing
+     room; we don't add any. */
 }
-/* Click overlays — percentages relative to the natural 971-tall image. */
+/* Click overlays — percentages relative to the natural 971-tall image.
+   WR row at SVG y=675 (88-tall), CF plum bar at y=763 (88-tall),
+   both x=730 width=630, arrows at x=1308. */
 .meth-btn-link {
   position: absolute;
   z-index: 5;
@@ -1989,14 +2081,12 @@ main { padding-top: var(--header-h); }
   background: transparent;
 }
 .meth-btn-link.is-worthrises {
-  /* 675/971 */
   top: 69.52%;
   left: 50.69%;
   width: 43.75%;
   height: 9.06%;
 }
 .meth-btn-link.is-connectingfamilies {
-  /* 763/971 */
   top: 78.58%;
   left: 50.69%;
   width: 43.75%;
@@ -3339,7 +3429,7 @@ main { padding-top: var(--header-h); }
       font-family: 'ConcretteXL', 'Fraunces', serif;
       font-weight: 500;
       font-style: italic;
-      color: var(--warm-coral);
+      color: var(--deep-plum);
       text-transform: none;
       font-size: 32px;
       letter-spacing: -0.01em;
@@ -4085,7 +4175,7 @@ main { padding-top: var(--header-h); }
     <section class="m-quotes-section" aria-label="Testimonials">
       <div class="m-quotes-header">
         <p class="m-quotes-eyebrow">Testimonials</p>
-        <h2 class="m-quotes-title">More Than Just <em>A Phone Call</em></h2>
+        <h2 class="m-quotes-title">More Than <em>A Phone Call</em></h2>
         <div class="m-quotes-arrows" aria-label="Carousel navigation">
           <button type="button" class="m-quotes-arrow" data-m-quotes-prev aria-label="Previous quote">&larr;</button>
           <button type="button" class="m-quotes-arrow" data-m-quotes-next aria-label="Next quote">&rarr;</button>
@@ -4776,7 +4866,7 @@ main { padding-top: var(--header-h); }
        #hero-cord. -->
   <div class="hero-cord-layer" aria-hidden="true">
     <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g transform="translate(161.5 362.5)">
+      <g transform="translate(161.5 314.5)">
         <path id="hero-cord"
               d="M0.629807 33.3574C22.9265 29.8024 104.91 85.5953 136.172 133.286C189.769 215.051 164.183 297.832 108.162 273.963C66.1545 256.065 56.757 90.6786 121.63 81.3573C225.618 66.4158 206.63 221.857 316.167 295.647C424.603 368.695 520.657 265.424 597.63 266.357C674.603 267.291 744.012 306.628 857.563 295.691C998.211 282.144 980.982 45.4815 1132.63 3.85734"
               stroke="#E4572E" stroke-width="8" stroke-miterlimit="8.20551" stroke-linecap="round" />
@@ -4871,7 +4961,7 @@ main { padding-top: var(--header-h); }
   <div class="quotes-head">
     <div>
       <span class="eyebrow quotes-eyebrow" data-anim="fade-up">Testimonials</span>
-      <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">More Than Just<br><em>A Phone Call</em></h2>
+      <h2 class="h-display" data-anim="fade-up" data-anim-delay="100">More Than<br><em>A Phone Call</em></h2>
     </div>
     <div class="quotes-arrows">
       <button class="qbtn" data-q-prev type="button" aria-label="Previous quote">
@@ -5378,79 +5468,61 @@ main { padding-top: var(--header-h); }
 <section class="actions-wrap" aria-labelledby="actions-heading" data-nav-tone="light">
   <div class="actions-stack">
 
-    <!-- TAKE ACTION -->
-    <div class="actions-section actions-section--take">
-      <h2 id="actions-heading" class="actions-heading" data-anim="fade-up">Take Action</h2>
+    <!-- TAKE ACTION row -->
+    <h2 id="actions-heading" class="actions-heading">Take Action</h2>
+    <section class="actions-section actions-section--take">
       <div class="actions-grid">
-        <a href="assets/resources/report.pdf" target="_blank" rel="noopener" class="actions-card" data-anim="fade-up">
-          <span class="actions-card-arrow" aria-hidden="true">
-            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </span>
+        <a class="actions-card" href="assets/resources/report.pdf" target="_blank" rel="noopener">
           <h3 class="actions-card-title">Read &amp; Share the Report</h3>
-          <p class="actions-card-body">Download the full report and share it with anyone who needs to see what's possible — and what is actively being withheld where these policies haven't yet been adopted.</p>
-        </a>
-        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="100">
+          <p class="actions-card-body">Download the full report and share it with anyone who needs to see what's possible &mdash; and what is actively being withheld where these policies haven't yet been adopted.</p>
           <span class="actions-card-arrow" aria-hidden="true">
-            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 28L28 12M28 12H14M28 12V26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
+        </a>
+        <a class="actions-card" href="https://worthrises.org/take-action" target="_blank" rel="noopener">
           <h3 class="actions-card-title">Contact Your Legislators</h3>
           <p class="actions-card-body">Free prison and jails communication is advancing state by state and county by county. Tell your elected officials it's time to act.</p>
-        </a>
-        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="200">
           <span class="actions-card-arrow" aria-hidden="true">
-            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 28L28 12M28 12H14M28 12V26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
+        </a>
+        <a class="actions-card" href="https://worthrises.org/donate" target="_blank" rel="noopener">
           <h3 class="actions-card-title">Support the Movement</h3>
           <p class="actions-card-body">Worth Rises is working to end the correctional telecom industry's exploitation of incarcerated people and their families. Support our work.</p>
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 28L28 12M28 12H14M28 12V26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
         </a>
       </div>
-    </div>
+    </section>
 
-    <!-- RESOURCES -->
-    <div class="actions-section actions-section--resources">
-      <h2 class="actions-heading" data-anim="fade-up">Resources</h2>
+    <!-- RESOURCES row -->
+    <h2 class="actions-heading">Resources</h2>
+    <section class="actions-section actions-section--resources">
       <div class="actions-grid">
-        <a href="assets/resources/fact-sheet.pdf" target="_blank" rel="noopener" class="actions-card" data-anim="fade-up">
-          <span class="actions-card-arrow" aria-hidden="true">
-            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </span>
+        <a class="actions-card" href="assets/resources/fact-sheet.pdf" target="_blank" rel="noopener">
           <h3 class="actions-card-title">Report Fact Sheet</h3>
           <p class="actions-card-body">Two-pager covering the eight areas of measurable impact.</p>
-        </a>
-        <a href="#" class="actions-card" data-anim="fade-up" data-anim-delay="100">
           <span class="actions-card-arrow" aria-hidden="true">
-            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 28L28 12M28 12H14M28 12V26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
+        </a>
+        <a class="actions-card" href="#" target="_blank" rel="noopener">
           <h3 class="actions-card-title">Implementation Guide</h3>
           <p class="actions-card-body">A practical guide for agencies, legislators, and advocates designing, procuring, and rolling out free communication in prisons and jails.</p>
-        </a>
-        <a href="assets/resources/campaign-guide.pdf" target="_blank" rel="noopener" class="actions-card" data-anim="fade-up" data-anim-delay="200">
           <span class="actions-card-arrow" aria-hidden="true">
-            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
-              <path d="M5 17L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M7.5 5H17V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 28L28 12M28 12H14M28 12V26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
+        </a>
+        <a class="actions-card" href="assets/resources/campaign-guide.pdf" target="_blank" rel="noopener">
           <h3 class="actions-card-title">Ultimate Campaign Guide</h3>
           <p class="actions-card-body">A guide for advocates, organizers, and campaigns working to win free communication in their community.</p>
+          <span class="actions-card-arrow" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 28L28 12M28 12H14M28 12V26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
         </a>
       </div>
-    </div>
+    </section>
 
   </div>
 </section>
