@@ -4916,8 +4916,11 @@ main { padding-top: var(--header-h); }
       var taRect = mTakeAction ? mTakeAction.getBoundingClientRect() : null;
       var vh = window.innerHeight;
       var entered = regionRect.top < vh * 0.7;
-      // Hide sub-nav when Take Action top is in upper 75% of viewport.
-      var stillInside = taRect ? taRect.top > vh * 0.75 : true;
+      // Hide sub-nav as soon as Take Action top crosses into the bottom
+      // 8% of viewport — sub-nav disappears before the action-center hero
+      // gets prominently visible (per QA: don't wait until headline is
+      // mid-viewport, hide while it's still entering from the bottom).
+      var stillInside = taRect ? taRect.top > vh * 0.92 : true;
       if (regionRect.bottom < 0) stillInside = false;
       var subnavVis = entered && stillInside;
       subnav.classList.toggle('is-visible', subnavVis);
