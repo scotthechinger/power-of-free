@@ -1047,8 +1047,8 @@ main { padding-top: var(--header-h); }
   text-transform: uppercase;
 }
 .quotes-head .h-display em {
-  /* "A Phone Call" — Concrette Italic 74 / 100% / -3%, plum */
-  color: var(--deep-plum);
+  /* "A Phone Call" — Concrette Italic 74 / 100% / -3%, royal aubergine */
+  color: var(--royal-aubergine);
   font-family: var(--accent);
   font-style: italic;
   font-weight: 500;
@@ -2259,6 +2259,35 @@ main { padding-top: var(--header-h); }
   padding: clamp(72px, 11vh, 132px) var(--gutter) clamp(56px, 8vh, 96px);
   position: relative;
 }
+
+/* ===== Locked-SVG desktop footer (Rebuild 5.3) ===== */
+.site-footer-locked {
+  position: relative;
+  width: 100%;
+  display: block;
+  padding: 0;
+  background: var(--deep-plum);
+  overflow: hidden;
+}
+.site-footer-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.footer-tap {
+  position: absolute;
+  background: transparent;
+  text-decoration: none;
+  z-index: 5;
+  outline-offset: -3px;
+}
+@media (max-width: 800px) {
+  /* Hide the desktop locked footer on mobile — the m-footer-locked block
+     handles mobile rendering. */
+  .site-footer-locked { display: none; }
+}
 /* Full-width coral accent line at the top of the footer — brand divider */
 .site-footer::before {
   content: '';
@@ -3372,7 +3401,8 @@ main { padding-top: var(--header-h); }
       position: relative;
       width: 100%;
       background: var(--cloud-neutral);
-      padding: 0 0 40px;
+      /* No bottom padding — illustration sits flush against the next finding. */
+      padding: 0;
       display: block;
       /* z-index: 2 covers the .m-quotes-section's -10px margin-bottom overlap
          (which sits at z-index: 1). Without this, quotes' lavender bg leaked
@@ -3407,17 +3437,18 @@ main { padding-top: var(--header-h); }
 
     /* ---------- Mobile quotes section (custom HTML carousel) ---------- */
     .m-quotes-section {
-      /* Lavender per QA. No bottom padding so the section flushes into the next.
-         margin-bottom: -10px guarantees the lavender bg overlaps any subpixel
-         rounding gap that creates a white sliver above the next section. */
+      /* Lavender bg with 40px padding-bottom so the section "closes" with
+         a strip of lavender below the cards before the next section. */
       background: var(--soft-lavender);
-      padding: 56px 0 0;
+      padding: 0 0 40px;
       margin-bottom: -10px;
       position: relative;
       z-index: 1;
     }
     .m-quotes-header {
-      padding: 0 24px 28px;
+      /* Eyebrow 40 from top, all text 40 from right (and left for symmetry).
+         Bottom 40 = "buttons 40 above top of photos" per spec. */
+      padding: 40px 40px 40px;
     }
     .m-quotes-eyebrow {
       font-family: 'Inter', sans-serif;
@@ -3444,7 +3475,7 @@ main { padding-top: var(--header-h); }
       font-family: 'ConcretteXL', 'Fraunces', serif;
       font-weight: 500;
       font-style: italic;
-      color: var(--deep-plum);
+      color: var(--royal-aubergine);
       text-transform: none;
       font-size: 32px;
       letter-spacing: -0.01em;
@@ -3452,24 +3483,32 @@ main { padding-top: var(--header-h); }
     }
     .m-quotes-arrows {
       display: flex;
-      gap: 10px;
-      margin-top: 16px;
+      gap: 8px;
+      /* "A Phone Call" should be 20 above buttons */
+      margin-top: 20px;
     }
+    /* Square arrow buttons — match desktop quote-block treatment:
+       prev = cream bg + coral arrow, next = coral bg + white arrow. */
     .m-quotes-arrow {
       width: 44px;
       height: 44px;
-      background: var(--warm-coral);
-      color: #fff;
       border: 0;
-      border-radius: 50%;
-      font-size: 20px;
-      font-weight: 700;
+      border-radius: 0;
       display: grid;
       place-items: center;
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease;
+      padding: 0;
+      transition: transform 0.15s ease, filter 0.15s ease;
     }
-    .m-quotes-arrow:hover { filter: brightness(0.92); }
+    .m-quotes-arrow[data-m-quotes-prev] {
+      background: var(--cloud-neutral, #F0EEE9);
+      color: var(--warm-coral);
+    }
+    .m-quotes-arrow[data-m-quotes-next] {
+      background: var(--warm-coral);
+      color: #ffffff;
+    }
+    .m-quotes-arrow svg { width: 18px; height: 18px; display: block; }
     .m-quotes-arrow:active { transform: scale(0.95); }
     .m-quotes-carousel {
       display: flex;
@@ -3485,11 +3524,13 @@ main { padding-top: var(--header-h); }
     .m-quote-card {
       flex: 0 0 290px;
       scroll-snap-align: center;
-      background: var(--cloud-neutral);   /* was white */
+      background: var(--cloud-neutral);
       display: flex;
       flex-direction: column;
       box-shadow: 0 4px 18px -8px rgba(0,0,0,0.18);
-      min-height: 600px;                  /* uniform card height across all quotes */
+      /* Tall enough to fit Angel's longest quote with 40px padding below.
+         All cards stretch to this height for a uniform bottom edge. */
+      min-height: 680px;
     }
     .m-quote-photo {
       width: 100%;
@@ -3500,29 +3541,28 @@ main { padding-top: var(--header-h); }
       background: #eee;
     }
     .m-quote-text {
-      padding: 18px 22px 22px;
+      /* 40px bottom padding ensures every card closes 40px below its quote
+         text — uniform with Angel's longest quote since min-height pegs all
+         cards to the same overall height. */
+      padding: 18px 22px 40px;
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;          /* push text to the bottom */
     }
-    .m-q-mark {
-      font-family: 'ConcretteXL', 'Fraunces', serif;
-      font-style: italic;
-      font-size: 36px;
-      line-height: 1;
-      color: var(--deep-plum);
-      margin: 14px 0 10px;
-      display: block;
-    }
+    /* Quote body — wrapped in matching-color curly quotes via ::before/::after.
+       Sits 18px below the role/title line so the quote and attribution
+       don't overlap. */
     .m-q-quote {
       font-family: 'Inter', sans-serif;
       font-size: 14px;
       line-height: 1.55;
       color: var(--ink);
-      margin: 0 0 22px;
+      margin: 18px 0 22px;
       flex: 1;
     }
+    .m-q-quote::before { content: '\201C'; }
+    .m-q-quote::after  { content: '\201D'; }
     .m-q-name {
       font-family: 'Inter', sans-serif;
       font-weight: 800;
@@ -3535,8 +3575,7 @@ main { padding-top: var(--header-h); }
     .m-q-role {
       font-family: 'Inter', sans-serif;
       font-size: 12px;
-      color: var(--ink);
-      opacity: 0.7;
+      color: #000000;
       margin: 0;
     }
     .m-crop-actioncenter {
@@ -3575,6 +3614,66 @@ main { padding-top: var(--header-h); }
       height: auto;
       user-select: none;
       -webkit-user-drag: none;
+    }
+
+    /* ===== HTML action center buttons (May 2026 — replaces locked SVG) ===== */
+    .m-actions-html {
+      width: 100%;
+      display: block;
+    }
+    /* Section title boxes (Take Action / Resources) — lime green, 40px pad
+       all sides. Title text is Inter Display ExtraBold 32 / 120% / -2%
+       uppercase, white. */
+    .m-actions-section-title-box {
+      position: relative;
+      background: #8FBF3D;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+    .m-actions-section-title {
+      font-family: var(--display);
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin: 0;
+    }
+    /* Cards — 40px padding all sides; title 16/120 ExtraBold uppercase,
+       body 16/140 Regular, 20px gap between title and body. */
+    .m-actions-card {
+      display: block;
+      padding: 40px;
+      text-decoration: none;
+      color: var(--ink);
+      box-sizing: border-box;
+    }
+    .m-actions-card--cream { background: var(--cloud-neutral); }
+    .m-actions-card--white { background: #ffffff; }
+    /* Thin warm-wheat divider between consecutive cards (matches #DED6C1
+       stroke from Pallavi's SVG). Only between adjacent cards — title boxes
+       don't trigger the rule. */
+    .m-actions-card + .m-actions-card {
+      border-top: 1px solid #DED6C1;
+    }
+    .m-actions-card-title {
+      font-family: var(--display);
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin: 0 0 20px;
+    }
+    .m-actions-card-body {
+      font-family: var(--display);
+      font-size: 16px;
+      line-height: 1.4;
+      font-weight: 400;
+      color: var(--ink);
+      margin: 0;
     }
     /* Take Action / Resources cards (custom HTML) */
     .m-action-cards {
@@ -3905,6 +4004,22 @@ main { padding-top: var(--header-h); }
     .m-subnav-skip-arrow { font-size: 14px; }
 
     /* ---------- Mobile footer (custom, matches desktop brand) ---------- */
+    /* Rebuild 5.3 locked-SVG mobile footer */
+    .m-footer-locked {
+      position: relative;
+      width: 100%;
+      display: block;
+      overflow: hidden;
+      background: var(--deep-plum);
+    }
+    .m-footer-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
     .m-footer {
       position: relative;
       background: var(--deep-plum);
@@ -4225,16 +4340,14 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Michael</p>
             <p class="m-q-role">Formerly incarcerated, New York</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">To have free calls now &mdash; it&rsquo;s more than what I think people realize. It&rsquo;s our lifeline to the world. Our lifeline to our families.</p>
           </div>
         </article>
-        <article class="m-quote-card" style="background: #ffffff;">
-          <img class="m-quote-photo" src="assets/quotes/quote-saul.png" alt="Saul" loading="lazy" style="margin-top: 25px; background: #ffffff;" />
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-saul.png" alt="Saul" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Saul</p>
             <p class="m-q-role">Currently incarcerated, California</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">Today, I talk to my mom every day. I call her like three times a day. I read to her, because it&rsquo;s hard for her to read. And we pray together.</p>
           </div>
         </article>
@@ -4243,7 +4356,6 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Felix</p>
             <p class="m-q-role">Prison counselor, New York</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">As a counselor, I give them as much support as I possibly can. But I&rsquo;m not their family. I&rsquo;m not their friend. They still have a guard up against me. Being able to talk to their family, they&rsquo;re able to get guidance that they wouldn&rsquo;t really want to take from me.</p>
           </div>
         </article>
@@ -4252,7 +4364,6 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Angel</p>
             <p class="m-q-role">Wife, California</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">My husband has a daughter. She&rsquo;s 11 years old, and she is autistic. Not being able to call every single day, his calls with her would be sporadic. But now they talk every day. They&rsquo;re able to spend an hour on the phone each night. He reads to her, and she&rsquo;ll read to him. She is being so vocal since she&rsquo;s been able to speak to her dad.</p>
           </div>
         </article>
@@ -4261,7 +4372,6 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Tricia</p>
             <p class="m-q-role">Sister, Federal</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">He doesn&rsquo;t like burdening people. So, I remember the first [free] phone call, him being so excited like, &lsquo;okay, now we can talk about anything you want, and when we hang up, I can just call you back.&rsquo;</p>
           </div>
         </article>
@@ -4270,7 +4380,6 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Officer Walls</p>
             <p class="m-q-role">Corrections officer, New York</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">Having that connection with the outside is important. It&rsquo;s very easy to get lost in the prison environment, so being able to connect as much and as often as you want is very good for them.</p>
           </div>
         </article>
@@ -4279,7 +4388,6 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Shelene</p>
             <p class="m-q-role">Mother, Minnesota</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">I don&rsquo;t have the same resentments towards just communicating with him, which had nothing to do with communicating with him, but the fact that they&rsquo;re taking my money and they&rsquo;re robbing me was the feeling, just so that I can speak to my son. I don&rsquo;t feel any of those things anymore, and it&rsquo;s a far cry different.</p>
           </div>
         </article>
@@ -4288,16 +4396,14 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Marc</p>
             <p class="m-q-role">Formerly incarcerated, New York</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">I got to sit on the phone and do homework with my daughter, which was huge &mdash; just kind of sit there and allow her time to think through the problems and not worry about it costing per minute.</p>
           </div>
         </article>
-        <article class="m-quote-card" style="background: #ffffff;">
-          <img class="m-quote-photo" src="assets/quotes/quote-jasmeel.svg" alt="Jasmeel" loading="lazy" style="margin-top: 25px; background: #ffffff;" />
+        <article class="m-quote-card">
+          <img class="m-quote-photo" src="assets/quotes/quote-jasmeel.svg" alt="Jasmeel" loading="lazy" />
           <div class="m-quote-text">
             <p class="m-q-name">Jasmeel</p>
             <p class="m-q-role">Currently incarcerated, California</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">These conversations create a pathway for empathy and healing and just a healthy relationship with my family and actually just hope for a future when I get out, knowing that I have people that I can go to. Without these [free] phone calls, that would not have been possible.</p>
           </div>
         </article>
@@ -4306,7 +4412,6 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Dwayne</p>
             <p class="m-q-role">Currently incarcerated, Connecticut</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">I [hadn&rsquo;t] heard from my daughter in over 10 years when I got a letter with a phone number. [Then] when I heard her voice, it killed me. I told her I love her, and that I&rsquo;m going to keep in contact with her. I talk to her every day.</p>
           </div>
         </article>
@@ -4315,7 +4420,6 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Nia</p>
             <p class="m-q-role">Wife, Massachusetts</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">When the calls became free, it wasn&rsquo;t just a relief for me. It meant that my son could talk to his dad without me worrying about how much it was costing or how many minutes were left. That changed everything for us.</p>
           </div>
         </article>
@@ -4324,7 +4428,6 @@ main { padding-top: var(--header-h); }
           <div class="m-quote-text">
             <p class="m-q-name">Ransey</p>
             <p class="m-q-role">Daughter, New York</p>
-            <span class="m-q-mark" aria-hidden="true">&ldquo;</span>
             <p class="m-q-quote">The time on the phone is like church.</p>
           </div>
         </article>
@@ -4447,29 +4550,60 @@ main { padding-top: var(--header-h); }
       <img class="m-action-center-header-img" src="assets/mobile/mobile-action-center-header.svg" alt="Action Center — Communication is a Lifeline." />
     </section>
 
-    <!-- ACTION CENTER BUTTONS — Rebuild 5.3 (402×1468).
-         6 cards baked in. Click positions, computed from SVG rects (y/h):
-           Card 1 Read & Share Report:  y=118.5,  h=211 → top  8.07%, h 14.37%
-           Card 2 Contact Legislators:  y=330.5,  h=235 → top 22.51%, h 16.01%
-           Card 3 Support the Movement: y=566.5,  h=189 → top 38.59%, h 12.87%
-           Card 4 Report Fact Sheet:    y=874.5,  h=189 → top 59.57%, h 12.87%
-           Card 5 Implementation Guide: y=1064.5, h=213 → top 72.51%, h 14.51%
-           Card 6 Ultimate Campaign:    y=1278.5, h=189 → top 87.10%, h 12.87% -->
-    <section class="m-action-buttons">
-      <span class="m-anchor" id="m-resources"></span>
-      <img class="m-action-buttons-img" src="assets/mobile/mobile-action-center-buttons.svg" alt="Take Action and Resources" />
-      <a class="m-tap is-link" href="assets/resources/report.pdf" target="_blank" rel="noopener"
-         style="top: 8.07%; left: 0; right: 0; height: 14.37%;" aria-label="Read &amp; Share the Report"></a>
-      <a class="m-tap is-link" href="https://worthrises.org/take-action" target="_blank" rel="noopener"
-         style="top: 22.51%; left: 0; right: 0; height: 16.01%;" aria-label="Contact Your Legislators"></a>
-      <a class="m-tap is-link" href="https://worthrises.org/donate" target="_blank" rel="noopener"
-         style="top: 38.59%; left: 0; right: 0; height: 12.87%;" aria-label="Support the Movement"></a>
-      <a class="m-tap is-link" href="assets/resources/fact-sheet.pdf" target="_blank" rel="noopener"
-         style="top: 59.57%; left: 0; right: 0; height: 12.87%;" aria-label="Report Fact Sheet"></a>
-      <a class="m-tap is-link" href="#" target="_blank" rel="noopener"
-         style="top: 72.51%; left: 0; right: 0; height: 14.51%;" aria-label="Implementation Guide"></a>
-      <a class="m-tap is-link" href="assets/resources/campaign-guide.pdf" target="_blank" rel="noopener"
-         style="top: 87.10%; left: 0; right: 0; height: 12.87%;" aria-label="Ultimate Campaign Guide"></a>
+    <!-- ACTION CENTER BUTTONS — HTML version (May 2026 rebuild).
+         Replaces the locked SVG with native HTML cards so type renders in
+         the right ConcretteXL/Inter Display fonts at all viewport widths.
+         Spec from Pallavi/Figma:
+           Section title boxes (Take Action / Resources): lime-green bg,
+             32px/120% Inter ExtraBold uppercase white, 40px padding all
+             sides (322×38 inside a 402×118 box).
+           Cards: 40px padding all sides; title 16px/120% Inter ExtraBold
+             uppercase ink, body 16px/140% Inter Regular ink, 20px gap
+             between title and body.
+           Top 3 cards: cloud-neutral (#F0EEE9) bg.
+           Bottom 3 cards: white bg.
+         No hover state on mobile per spec. -->
+    <section class="m-actions-html">
+
+      <!-- TAKE ACTION title box -->
+      <div class="m-actions-section-title-box">
+        <h2 class="m-actions-section-title">Take Action</h2>
+      </div>
+
+      <!-- Cream cards 1-3 -->
+      <a class="m-actions-card m-actions-card--cream" href="assets/resources/report.pdf" target="_blank" rel="noopener">
+        <h3 class="m-actions-card-title">Read &amp; Share the Report</h3>
+        <p class="m-actions-card-body">Download the full report and share it with anyone who needs to see what's possible &mdash; and what is actively being withheld where these policies haven't yet been adopted.</p>
+      </a>
+      <a class="m-actions-card m-actions-card--cream" href="https://worthrises.org/take-action" target="_blank" rel="noopener">
+        <h3 class="m-actions-card-title">Contact Your Legislators</h3>
+        <p class="m-actions-card-body">Free prison and jails communication is advancing state by state and county by county. Tell your elected officials it's time to act.</p>
+      </a>
+      <a class="m-actions-card m-actions-card--cream" href="https://worthrises.org/donate" target="_blank" rel="noopener">
+        <h3 class="m-actions-card-title">Support the Movement</h3>
+        <p class="m-actions-card-body">Worth Rises is working to end the correctional telecom industry's exploitation of incarcerated people and their families. Support our work.</p>
+      </a>
+
+      <!-- RESOURCES title box -->
+      <div class="m-actions-section-title-box">
+        <span class="m-anchor" id="m-resources"></span>
+        <h2 class="m-actions-section-title">Resources</h2>
+      </div>
+
+      <!-- White cards 4-6 -->
+      <a class="m-actions-card m-actions-card--white" href="assets/resources/fact-sheet.pdf" target="_blank" rel="noopener">
+        <h3 class="m-actions-card-title">Report Fact Sheet</h3>
+        <p class="m-actions-card-body">Two-pager covering the eight areas of measurable impact.</p>
+      </a>
+      <a class="m-actions-card m-actions-card--white" href="#" target="_blank" rel="noopener">
+        <h3 class="m-actions-card-title">Implementation Guide</h3>
+        <p class="m-actions-card-body">A practical guide for agencies, legislators, and advocates designing, procuring, and rolling out free communication in prisons and jails.</p>
+      </a>
+      <a class="m-actions-card m-actions-card--white" href="assets/resources/campaign-guide.pdf" target="_blank" rel="noopener">
+        <h3 class="m-actions-card-title">Ultimate Campaign Guide</h3>
+        <p class="m-actions-card-body">A guide for advocates, organizers, and campaigns working to win free communication in their community.</p>
+      </a>
+
     </section>
 
     <!-- METHODOLOGY / ACKNOWLEDGEMENTS — Rebuild 5.3 (402×1848).
@@ -4486,31 +4620,31 @@ main { padding-top: var(--header-h); }
          style="top: 65.04%; left: 9.95%; width: 80.10%; height: 4.55%;" aria-label="Connecting Families campaign"></a>
     </section>
 
-    <!-- Custom mobile footer — mirrors desktop brand identity -->
-    <footer class="m-footer">
-      <div class="m-footer-signup">
-        <p class="m-footer-label">Sign up to receive <em>news and updates</em>.</p>
-        <form class="m-footer-form" action="#" method="post" novalidate>
-          <input type="email" name="email" class="m-footer-input"
-                 placeholder="Email Address" aria-label="Email address" required />
-          <button type="submit" class="m-footer-btn">Sign Up</button>
-        </form>
-      </div>
-      <div class="m-footer-meta">
-        <p class="m-footer-copy">&copy; 2026 Worth Rises</p>
-        <a class="m-footer-email" href="mailto:info@worthrises.com">info@worthrises.com</a>
-        <div class="m-footer-social" aria-label="Worth Rises on social media">
-          <a href="https://facebook.com/worthrises" target="_blank" rel="noopener" aria-label="Facebook" class="m-footer-social-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12Z"/></svg>
-          </a>
-          <a href="https://www.instagram.com/worthrises/" target="_blank" rel="noopener" aria-label="Instagram" class="m-footer-social-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
-          </a>
-          <a href="https://twitter.com/WorthRises" target="_blank" rel="noopener" aria-label="X (Twitter)" class="m-footer-social-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
-          </a>
-        </div>
-      </div>
+    <!-- Custom mobile footer — Rebuild 5.3 locked SVG (402×504, plum bg).
+         All visual elements (eyebrow, "News & Updates" italic, email
+         placeholder line, copyright, email text, social icons) baked in
+         as paths. Transparent click overlays positioned in % of SVG.
+         Coordinates from SVG geometry:
+           SIGN UP coral pill: y=222, h=36, x=40, w=93
+             → top 44.05%, h 7.14%, left 9.95%, w 23.13%
+           info@worthrises.com link: y≈320-345, x=40-205
+             → top 63.49%, h 4.96%, left 9.95%, w 41.05%
+           Social icons (3 circles, ~38px Ø, baseline y≈420):
+             Facebook  at center (~60, 420):  top 79.37%, left 9.95%, size 10.45%×8.33%
+             Instagram at center (~120, 420): top 79.37%, left 24.88%, size 10.45%×8.33%
+             X         at center (~180, 420): top 79.37%, left 39.80%, size 10.45%×8.33% -->
+    <footer class="m-footer-locked">
+      <img class="m-footer-img" src="assets/mobile/mobile-footer.svg" alt="Sign up to receive news and updates from Worth Rises." />
+      <a class="m-tap is-link" href="https://worthrises.org/subscribe" target="_blank" rel="noopener"
+         style="top: 44.05%; left: 9.95%; width: 23.13%; height: 7.14%;" aria-label="Sign up for news and updates"></a>
+      <a class="m-tap is-link" href="mailto:info@worthrises.com"
+         style="top: 63.49%; left: 9.95%; width: 41.05%; height: 4.96%;" aria-label="Email Worth Rises"></a>
+      <a class="m-tap is-link" href="https://facebook.com/worthrises" target="_blank" rel="noopener"
+         style="top: 79.37%; left: 9.95%; width: 10.45%; height: 8.33%;" aria-label="Facebook"></a>
+      <a class="m-tap is-link" href="https://www.instagram.com/worthrises/" target="_blank" rel="noopener"
+         style="top: 79.37%; left: 24.88%; width: 10.45%; height: 8.33%;" aria-label="Instagram"></a>
+      <a class="m-tap is-link" href="https://twitter.com/WorthRises" target="_blank" rel="noopener"
+         style="top: 79.37%; left: 39.80%; width: 10.45%; height: 8.33%;" aria-label="X (Twitter)"></a>
     </footer>
 
     <!-- (Mobile end-bar removed per client — sub-nav alone now handles
@@ -5564,37 +5698,29 @@ main { padding-top: var(--header-h); }
 </main>
 
 <!-- ============================================================
-     FOOTER
+     FOOTER — locked SVG (1440×368, plum bg)
+     Click overlays positioned in % of artboard:
+       SIGN UP coral pill: y=240,h=48, x=505,w=124
+         → top 65.22%, h 13.04%, left 35.07%, w 8.61%
+       info@worthrises.com link (right-aligned, ~y=210, x=1175-1369)
+         → top 56%, h 9%, right 4.86%, w 19.44%
+         (Note: re-measured below — old layout had it near top right; new
+          design places it under "© 2026 WORTH RISES" on right.)
+       Social icons (3 circles, cy=282, r=20, cx=1244/1296/1348)
+         → top 71.20%, h 10.87%, w 2.78%, left 85.00% / 88.61% / 92.22%
 ============================================================ -->
-<footer class="site-footer" aria-label="Site footer">
-  <div class="footer-grid">
-    <!-- LEFT: signup -->
-    <div class="footer-signup" data-anim="fade-up">
-      <p class="footer-signup-label">Sign up to receive <em>news and updates</em>.</p>
-      <form class="footer-signup-form" action="#" method="post" novalidate>
-        <input type="email" name="email" class="footer-signup-input"
-               placeholder="Email Address" aria-label="Email address" required />
-        <button type="submit" class="footer-signup-btn">Sign Up</button>
-      </form>
-    </div>
-
-    <!-- RIGHT: copyright + email + socials -->
-    <div class="footer-meta" data-anim="fade-up" data-anim-delay="150">
-      <p class="footer-copyright">&copy; 2026 Worth Rises</p>
-      <a class="footer-email" href="mailto:info@worthrises.com">info@worthrises.com</a>
-      <div class="footer-social" aria-label="Worth Rises on social media">
-        <a href="https://facebook.com/worthrises" target="_blank" rel="noopener" aria-label="Facebook" class="footer-social-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12Z"/></svg>
-        </a>
-        <a href="https://www.instagram.com/worthrises/" target="_blank" rel="noopener" aria-label="Instagram" class="footer-social-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
-        </a>
-        <a href="https://twitter.com/WorthRises" target="_blank" rel="noopener" aria-label="X (Twitter)" class="footer-social-icon">
-          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
-        </a>
-      </div>
-    </div>
-  </div>
+<footer class="site-footer site-footer-locked" aria-label="Site footer">
+  <img class="site-footer-img" src="assets/illustrations/desktop-footer.svg" alt="Sign up to receive news and updates from Worth Rises." data-anim="fade-up" />
+  <a class="footer-tap" href="https://worthrises.org/subscribe" target="_blank" rel="noopener"
+     style="top: 65.22%; left: 35.07%; width: 8.61%; height: 13.04%;" aria-label="Sign up for news and updates"></a>
+  <a class="footer-tap" href="mailto:info@worthrises.com"
+     style="top: 56%; right: 4.86%; width: 19.44%; height: 9%;" aria-label="Email Worth Rises"></a>
+  <a class="footer-tap" href="https://facebook.com/worthrises" target="_blank" rel="noopener"
+     style="top: 70%; left: 84.5%; width: 3.5%; height: 13%;" aria-label="Facebook"></a>
+  <a class="footer-tap" href="https://www.instagram.com/worthrises/" target="_blank" rel="noopener"
+     style="top: 70%; left: 88%; width: 3.5%; height: 13%;" aria-label="Instagram"></a>
+  <a class="footer-tap" href="https://twitter.com/WorthRises" target="_blank" rel="noopener"
+     style="top: 70%; left: 91.5%; width: 3.5%; height: 13%;" aria-label="X (Twitter)"></a>
 </footer>
 
 
