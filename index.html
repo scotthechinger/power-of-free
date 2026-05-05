@@ -3931,26 +3931,27 @@ main { padding-top: var(--header-h); }
     /* All 8 findings on Rebuild 5.3 mobile dimensions. */
     /* New 2026-05-05 mobile assets — see backup files for prior dims. */
     #m-f1 .m-finding-img { aspect-ratio: 402 / 3182; }   /* unchanged */
-    #m-f2 .m-finding-img { aspect-ratio: 402 / 3430; }   /* unchanged (no new F2) */
+    #m-f2 .m-finding-img { aspect-ratio: 402 / 3447; }   /* new mobile base 3527 − 80 crop */
     #m-f3 .m-finding-img { aspect-ratio: 402 / 3390; }   /* was 3467 */
     #m-f4 .m-finding-img { aspect-ratio: 402 / 3026; }   /* was 3181, now PNG */
     #m-f5 .m-finding-img { aspect-ratio: 402 / 3340; }   /* was 3447 */
     #m-f6 .m-finding-img { aspect-ratio: 402 / 3064; }   /* was 3213, now PNG */
     #m-f7 .m-finding-img { aspect-ratio: 402 / 3341; }   /* was 3490 */
     #m-f8 .m-finding-img { aspect-ratio: 402 / 3300; }   /* was 3344 */
-    /* Mobile F2 chart container — final 322×636 chart. Mobile base
-       unchanged at 402×3430. Chart sits 40 below body text (text ends
-       y≈1840), 40 margin each side.
-         left:  40/402   = 9.95%
-         top:   1840/3430 = 53.64%
-         width: 322/402  = 80.10%
-         height: 636/3430 = 18.54% */
+    /* Mobile F2 chart container — chart 322×636. New base 402×3527
+       (cropped wrap 402/3447). Chart sits 40 below body text "what
+       families previously paid" (ends y≈1840 in source), 40 margin
+       each side.
+         left:  40/402    = 9.95%
+         top:   1880/3447 = 54.54% (text end 1840 + 40 below)
+         width: 322/402   = 80.10%
+         height: 636/3447 = 18.45% */
     .m-f2-chart-container {
       position: absolute;
-      top: 53.64%;
+      top: 54.54%;
       left: 9.95%;
       width: 80.10%;
-      height: 18.54%;
+      height: 18.45%;
       z-index: 3;
     }
     .m-f2-chart {
@@ -4656,10 +4657,11 @@ main { padding-top: var(--header-h); }
           <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 18.87%; left: 50%; width: 50%;" aria-label="Show Minnesota data"></button>
           <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 24.53%; left: 50%; width: 50%;" aria-label="Show New York data"></button>
         </div>
-        <!-- F2 mobile (402×3430): video thumb y=2950, h=400 → top 86.01%, h 11.66%.
-             Base unchanged in this round, so video position kept as-is. -->
+        <!-- F2 mobile new base (402×3527 cropped to 3447). Photo at
+             translate(40, 3047), 322×400 → top 3047/3447 = 88.40%,
+             h 400/3447 = 11.60%. -->
         <button class="m-tap" type="button" data-m-video="1188574671"
-                style="top: 86.01%; left: 9.95%; width: 80.10%; height: 11.66%;" aria-label="Play Finding 2 video"></button>
+                style="top: 88.40%; left: 9.95%; width: 80.10%; height: 11.60%;" aria-label="Play Finding 2 video"></button>
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" loading="lazy" />
