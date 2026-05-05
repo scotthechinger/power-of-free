@@ -3279,6 +3279,60 @@ main { padding-top: var(--header-h); }
   .action-card { border-right: 0; border-bottom: 1px solid var(--rule); }
   .quotes-head { flex-direction: column; align-items: flex-start; }
 }
+
+/* ============================================================
+   TABLET / SMALL-DESKTOP RESPONSIVE (768–1280px)
+   Mobile shell takes over below 768; full Pallavi layout works
+   above ~1280. This block fills the in-between range.
+============================================================ */
+
+/* (1) Header burger ALWAYS visible at <900 (where primary-nav is hidden)
+   so users can still reach About / Findings / Take Action. The CTA stays
+   in place; the burger sits to its left as a fixed pill, not the corner.
+   At 768-899 we're above mobile shell but below the desktop nav cutoff. */
+@media (max-width: 899px) and (min-width: 768px) {
+  .header-burger {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    /* Sit just LEFT of the CTA — CTA is at the right edge with width
+       ~ 12-16ch + clamp padding. 156-220px clear gives enough room without
+       overlapping. */
+    right: clamp(170px, 20vw, 240px);
+    top: clamp(8px, 1.4vh, 14px);
+    width: 44px; height: 44px;
+  }
+  /* When scrolled, the CTA hides (via .is-scrolled rules) so the burger
+     can return to the top-right corner. */
+  .site-header.is-scrolled .header-burger {
+    right: clamp(16px, 2vw, 32px);
+    top: clamp(16px, 2vh, 24px);
+  }
+}
+
+/* (2) Subnav squish — 8 tabs can't fit "REHABILITATION" at narrow widths.
+   Phase 1 (<1100px): tighten everything so labels still fit.
+   Phase 2 (<960px):  drop tab labels entirely, keep PREV/COUNTER/NEXT + Skip. */
+@media (max-width: 1100px) and (min-width: 768px) {
+  .subnav-position { min-width: 134px; padding: 0 10px; gap: 4px; }
+  .subnav-counter  { font-size: 10px; min-width: 72px; letter-spacing: 0.08em; }
+  .subnav-tab      { font-size: 10.5px; padding: 0 6px; letter-spacing: 0; }
+  .subnav-skip     { padding: 0 12px; font-size: 10.5px; letter-spacing: 0.06em; }
+}
+@media (max-width: 960px) and (min-width: 768px) {
+  /* Below 960 even the shrunk labels collide. Hide the 8-tab strip and
+     let users navigate findings via the PREV/NEXT arrows in the position
+     zone (which expands to take the freed space). */
+  .subnav-tabs { display: none; }
+  .subnav-position { flex: 1 1 auto; min-width: 0; padding: 0 16px; gap: 8px; }
+  .subnav-counter { min-width: auto; flex: 0 0 auto; }
+}
+
+/* (3) Action Center cards overflow — fixed 238px height couldn't contain
+   body text at <1280px, causing it to spill into the next "RESOURCES"
+   heading. Switch to min-height so cards can grow when text wraps onto
+   more lines. Within a row, grid auto-aligns cards to the tallest one. */
+.actions-card { height: auto; min-height: 238px; }
 </style>
 </head>
 <body>
