@@ -3914,14 +3914,15 @@ main { padding-top: var(--header-h); }
        scroll lands at what was action-center's old y but is now somewhere
        around F2 because the page got taller after lazy images loaded. */
     /* All 8 findings on Rebuild 5.3 mobile dimensions. */
-    #m-f1 .m-finding-img { aspect-ratio: 402 / 3182; }
-    #m-f2 .m-finding-img { aspect-ratio: 402 / 3430; }
-    #m-f3 .m-finding-img { aspect-ratio: 402 / 3467; }
-    #m-f4 .m-finding-img { aspect-ratio: 402 / 3181; }
-    #m-f5 .m-finding-img { aspect-ratio: 402 / 3447; }
-    #m-f6 .m-finding-img { aspect-ratio: 402 / 3213; }
-    #m-f7 .m-finding-img { aspect-ratio: 402 / 3490; }
-    #m-f8 .m-finding-img { aspect-ratio: 402 / 3344; }
+    /* New 2026-05-05 mobile assets — see backup files for prior dims. */
+    #m-f1 .m-finding-img { aspect-ratio: 402 / 3182; }   /* unchanged */
+    #m-f2 .m-finding-img { aspect-ratio: 402 / 3430; }   /* unchanged (no new F2) */
+    #m-f3 .m-finding-img { aspect-ratio: 402 / 3390; }   /* was 3467 */
+    #m-f4 .m-finding-img { aspect-ratio: 402 / 3026; }   /* was 3181, now PNG */
+    #m-f5 .m-finding-img { aspect-ratio: 402 / 3340; }   /* was 3447 */
+    #m-f6 .m-finding-img { aspect-ratio: 402 / 3064; }   /* was 3213, now PNG */
+    #m-f7 .m-finding-img { aspect-ratio: 402 / 3341; }   /* was 3490 */
+    #m-f8 .m-finding-img { aspect-ratio: 402 / 3300; }   /* was 3344 */
     /* Mobile F2 chart container — Rebuild 5.3 chart (323×604). Final QA
        F2 SVG (402×3430, was 3452, content shifted up 22). Chart slot at
        native y=1842 (was 1864). 1842/3430 = 53.70%; 604/3430 = 17.61%. */
@@ -4645,42 +4646,39 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f3" data-finding-idx="2" data-finding-area="Families">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-03.svg" alt="Finding 3: Stronger Family and Community Relationships" loading="lazy" />
-        <!-- Video thumb: bottom photo y=2987, h=400 in 3467 → top 86.16%, h 11.54% -->
+        <!-- New 2026-05-05 SVG (402×3390). Photo h=400 at bottom → top 88.20%, h 11.80%. -->
         <button class="m-tap" type="button" data-m-video="1188574901"
-                style="top: 86.16%; left: 9.95%; width: 80.10%; height: 11.54%;" aria-label="Play Finding 3 video"></button>
+                style="top: 88.20%; left: 9.95%; width: 80.10%; height: 11.80%;" aria-label="Play Finding 3 video"></button>
       </article>
       <article class="m-finding" id="m-f4" data-finding-idx="3" data-finding-area="Parenting">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-04.svg" alt="Finding 4: Parenting and Child Development" loading="lazy" />
-        <!-- Video thumb: bottom photo y=2701, h=400 in 3181 → top 84.91%, h 12.57% -->
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-04.png" alt="Finding 4: Parenting and Child Development" loading="lazy" />
+        <!-- New 2026-05-05 PNG (402×3026). Photo h=400 at bottom → top 86.78%, h 13.22%. -->
         <button class="m-tap" type="button" data-m-video="1188574923"
-                style="top: 84.91%; left: 9.95%; width: 80.10%; height: 12.57%;" aria-label="Play Finding 4 video"></button>
-        <!-- Play-button overlay over baked title bar (y=3045, h=56). Center y=3073 → top 96.04%. -->
+                style="top: 86.78%; left: 9.95%; width: 80.10%; height: 13.22%;" aria-label="Play Finding 4 video"></button>
       </article>
       <article class="m-finding" id="m-f5" data-finding-idx="4" data-finding-area="Health">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-05.svg" alt="Finding 5: Improved Mental and Physical Health" loading="lazy" />
-        <!-- F5 Rebuild 5.3 (402×3447): video thumb y=2967,h=400 → top 86.07%, h 11.60%
-             Title bar baked into SVG (y=3311, h=56). -->
+        <!-- New 2026-05-05 SVG (402×3340). Photo h=400 at bottom → top 88.02%, h 11.98%. -->
         <button class="m-tap" type="button" data-m-video="1188574952"
-                style="top: 86.07%; left: 9.95%; width: 80.10%; height: 11.60%;" aria-label="Play Finding 5 video"></button>
+                style="top: 88.02%; left: 9.95%; width: 80.10%; height: 11.98%;" aria-label="Play Finding 5 video"></button>
       </article>
       <article class="m-finding" id="m-f6" data-finding-idx="5" data-finding-area="Safety">
-        <img class="m-finding-img" src="assets/mobile/mobile-finding-06.svg" alt="Finding 6: Less Violence and Operational Disruption" loading="lazy" />
-        <!-- Video thumb: bottom photo y=2733, h=400 in 3213 → top 85.06%, h 12.45% -->
+        <img class="m-finding-img" src="assets/mobile/mobile-finding-06.png" alt="Finding 6: Less Violence and Operational Disruption" loading="lazy" />
+        <!-- New 2026-05-05 PNG (402×3064). Photo h=400 at bottom → top 86.95%, h 13.05%. -->
         <button class="m-tap" type="button" data-m-video="1188646485"
-                style="top: 85.06%; left: 9.95%; width: 80.10%; height: 12.45%;" aria-label="Play Finding 6 video"></button>
+                style="top: 86.95%; left: 9.95%; width: 80.10%; height: 13.05%;" aria-label="Play Finding 6 video"></button>
       </article>
       <article class="m-finding" id="m-f7" data-finding-idx="6" data-finding-area="Rehabilitation">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-07.svg" alt="Finding 7: Rehabilitation" loading="lazy" />
-        <!-- F7 Rebuild 5.3 (402×3490): video thumb y=3010,h=400 → top 86.25%, h 11.46%
-             Title bar baked into SVG (y=3354, h=56). -->
+        <!-- New 2026-05-05 SVG (402×3341). Photo h=400 at bottom → top 88.03%, h 11.97%. -->
         <button class="m-tap" type="button" data-m-video="1188574993"
-                style="top: 86.25%; left: 9.95%; width: 80.10%; height: 11.46%;" aria-label="Play Finding 7 video"></button>
+                style="top: 88.03%; left: 9.95%; width: 80.10%; height: 11.97%;" aria-label="Play Finding 7 video"></button>
       </article>
       <article class="m-finding" id="m-f8" data-finding-idx="7" data-finding-area="Reentry">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-08.svg" alt="Finding 8: Reentry Planning and Success" loading="lazy" />
-        <!-- Video thumb: bottom photo y=2864, h=400 in 3344 → top 85.65%, h 11.96% -->
+        <!-- New 2026-05-05 SVG (402×3300). Photo h=400 at bottom → top 87.88%, h 12.12%. -->
         <button class="m-tap" type="button" data-m-video="1188849398"
-                style="top: 85.65%; left: 9.95%; width: 80.10%; height: 11.96%;" aria-label="Play Finding 8 video"></button>
+                style="top: 87.88%; left: 9.95%; width: 80.10%; height: 12.12%;" aria-label="Play Finding 8 video"></button>
       </article>
     </div>
 
