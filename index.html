@@ -3013,8 +3013,9 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* Rebuild 5.3 F6 SVG: 1440×2137 natural. F6 not in 83-crop QA list. */
-  aspect-ratio: 1440 / 2137;
+  /* New 2026-05-05 SVG: 1440×2193 with 80px section-bottom-strip; crop
+     to 2113. Overlay percentages map as top% = svg_y / 2113. */
+  aspect-ratio: 1440 / 2113;
   margin: 0;
   overflow: hidden;
 }
