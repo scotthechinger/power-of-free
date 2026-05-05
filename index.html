@@ -2469,12 +2469,14 @@ main { padding-top: var(--header-h); }
   gap: clamp(14px, 2.2vh, 22px);
 }
 .footer-copyright {
+  /* Pallavi spec: Inter Display Bold, 15 / 110% / 5% letter-spacing, lavender */
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.18em;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
+  color: var(--soft-lavender);
   margin: 0;
 }
 .footer-email {
@@ -2499,15 +2501,16 @@ main { padding-top: var(--header-h); }
   justify-content: center;
   width: 42px;
   height: 42px;
-  border: 1.5px solid rgba(255,255,255,0.28);
+  border: 1.5px solid var(--soft-lavender);
   border-radius: 50%;
-  color: #ffffff;
+  color: var(--soft-lavender);
   background: transparent;
   transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
 }
 .footer-social-icon:hover {
   background: var(--warm-coral);
   border-color: var(--warm-coral);
+  color: #fff;
   transform: translateY(-2px);
 }
 .footer-social-icon svg { width: 16px; height: 16px; display: block; }
