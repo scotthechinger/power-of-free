@@ -2287,7 +2287,7 @@ main { padding-top: var(--header-h); }
 .site-footer {
   background: var(--deep-plum);
   color: #ffffff;
-  padding: clamp(72px, 11vh, 132px) var(--gutter) clamp(56px, 8vh, 96px);
+  padding: 80px var(--gutter);  /* fixed 80 top, 80 bottom — per Pallavi spec */
   position: relative;
 }
 
@@ -2390,21 +2390,25 @@ main { padding-top: var(--header-h); }
   max-width: 580px;
 }
 .footer-signup-label {
+  /* Pallavi spec: Inter Display ExtraBold, 32 / 120% / -3% letter-spacing */
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(22px, 2.4vw, 36px);
-  line-height: 1.18;
-  letter-spacing: -0.01em;
-  margin: 0 0 clamp(24px, 3.5vh, 40px);
+  font-size: 32px;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin: 0 0 80px;             /* 80 between bottom of "News & Updates" and SIGN UP button */
   color: #ffffff;
 }
 .footer-signup-label em {
+  /* Pallavi spec: ConcretteXL Italic, 33 / 120% / -3% letter-spacing */
   font-family: var(--accent);
   font-weight: 500;
   font-style: italic;
+  font-size: 33px;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
   color: var(--soft-lavender);
   text-transform: none;
-  letter-spacing: -0.01em;
 }
 .footer-signup-form {
   display: flex;
