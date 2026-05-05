@@ -3286,25 +3286,17 @@ main { padding-top: var(--header-h); }
    above ~1280. This block fills the in-between range.
 ============================================================ */
 
-/* (1) Header burger ALWAYS visible at <900 (where primary-nav is hidden)
-   so users can still reach About / Findings / Take Action. The CTA stays
-   in place; the burger sits to its left as a fixed pill, not the corner.
-   At 768-899 we're above mobile shell but below the desktop nav cutoff. */
+/* (1) At 768-899 (mobile shell off, desktop primary-nav already hidden)
+   show ONLY the hamburger top-right and hide the inline 'Read the Report'
+   CTA. The hamburger menu already includes the Read the Report link as
+   its own CTA, so functionality is preserved without the visual collision
+   of two right-edge elements. */
 @media (max-width: 899px) and (min-width: 768px) {
+  .header-cta { display: none; }
   .header-burger {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    /* Sit just LEFT of the CTA — CTA is at the right edge with width
-       ~ 12-16ch + clamp padding. 156-220px clear gives enough room without
-       overlapping. */
-    right: clamp(170px, 20vw, 240px);
-    top: clamp(8px, 1.4vh, 14px);
-    width: 44px; height: 44px;
-  }
-  /* When scrolled, the CTA hides (via .is-scrolled rules) so the burger
-     can return to the top-right corner. */
-  .site-header.is-scrolled .header-burger {
     right: clamp(16px, 2vw, 32px);
     top: clamp(16px, 2vh, 24px);
   }
