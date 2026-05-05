@@ -3940,15 +3940,16 @@ main { padding-top: var(--header-h); }
     #m-f8 .m-finding-img { aspect-ratio: 402 / 3300; }   /* was 3344 */
     /* Mobile F2 chart container — chart 322×636. New base 402×3527
        (cropped wrap 402/3447). Chart sits 40 below body text "what
-       families previously paid" (ends y≈1840 in source), 40 margin
-       each side.
+       families previously paid".
+       QA bumped up 40px (text end was earlier than estimated) →
+       chart top y=1840 → 1840/3447 = 53.38%.
          left:  40/402    = 9.95%
-         top:   1880/3447 = 54.54% (text end 1840 + 40 below)
+         top:   1840/3447 = 53.38%
          width: 322/402   = 80.10%
          height: 636/3447 = 18.45% */
     .m-f2-chart-container {
       position: absolute;
-      top: 54.54%;
+      top: 53.38%;
       left: 9.95%;
       width: 80.10%;
       height: 18.45%;
