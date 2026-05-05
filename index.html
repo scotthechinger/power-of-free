@@ -2721,14 +2721,15 @@ main { padding-top: var(--header-h); }
   display: block;
   pointer-events: none;
 }
-/* Video click overlay — F1 default. Locked to photo exact position:
-   y=1288, h=700 in cropped 1988 frame → top 64.79%, height 35.21%. */
+/* Video click overlay — F1 default. New 1440×2039 SVG (2026-05-05):
+   orange-jacket photo top at y≈1240, title bar bottom at y≈2020 →
+   top 60.81%, height 38.30%. F2-F8 override these in their own rules. */
 .f-video-click {
   position: absolute;
-  top: 64.79%;
+  top: 60.81%;
   left: 0;
   width: 100%;
-  height: 35.21%;
+  height: 38.30%;
   background: transparent;
   border: 0;
   padding: 0;
@@ -2738,10 +2739,10 @@ main { padding-top: var(--header-h); }
 }
 .f-video-player {
   position: absolute;
-  top: 64.79%;
+  top: 60.81%;
   left: 0;
   width: 100%;
-  height: 35.21%;
+  height: 38.30%;
   background: var(--cloud-neutral); /* was #000 — neutral letterbox per client preference */
   z-index: 20;
   display: none;
@@ -3194,8 +3195,11 @@ main { padding-top: var(--header-h); }
    cy=840 / cy=876 in source 2068-tall SVG.
      Prisons: top (840-18)/1988 = 41.35%, height 36/1988 = 1.81%
      Jails:   top (876-18)/1988 = 43.16%, height 1.81% */
-.f1-tog-prisons { top: 41.35%; left: 5.56%; width: 14%; height: 1.81%; }
-.f1-tog-jails   { top: 43.16%; left: 5.56%; width: 14%; height: 1.81%; }
+/* F1 toggle radios — new 2026-05-05 SVG (1440×2039) places:
+   PRISONS dot at y≈780 (38.25%), JAILS dot at y≈815 (39.97%).
+   Tap zones 35px tall, non-overlapping, centered on each radio. */
+.f1-tog-prisons { top: 37.27%; left: 5.56%; width: 14%; height: 1.72%; }
+.f1-tog-jails   { top: 38.99%; left: 5.56%; width: 14%; height: 1.72%; }
 
 /* ----- Top-right block overlay (covers the baked block in the PNG) ----- */
 /* Position values derived from the F1 PNG layout. The baked top-right block
