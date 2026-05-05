@@ -3242,7 +3242,9 @@ main { padding-top: var(--header-h); }
   width: 60%; height: auto;
   z-index: 4;
 }
-/* Debug coloring — pink for prisons, blue for jails so they're easy to tell apart */
+/* Debug coloring — pink for prisons, blue for jails, magenta for F1 video.
+   Triggered by data-debug="1" on .f1-wrap OR by adding ?debug=1 to the URL
+   (which sets data-debug="1" on every .fN-wrap via JS at page load). */
 .f1-wrap[data-debug="1"] .f1-tog-prisons {
   outline: 2px dashed #ff0066 !important;
   background: rgba(255, 0, 102, 0.18) !important;
@@ -3250,6 +3252,10 @@ main { padding-top: var(--header-h); }
 .f1-wrap[data-debug="1"] .f1-tog-jails {
   outline: 2px dashed #00aaff !important;
   background: rgba(0, 170, 255, 0.18) !important;
+}
+.f1-wrap[data-debug="1"] .f-video-click {
+  background: rgba(255, 0, 128, 0.35) !important;
+  outline: 2px dashed #f0f !important;
 }
 
 /* Color utility */
@@ -6437,6 +6443,20 @@ main { padding-top: var(--header-h); }
       player.setAttribute('aria-hidden', 'true');
     });
   });
+
+  /* ---------- ?debug=1 query param: flip every finding into debug mode ----------
+     Visit any URL with ?debug=1 (e.g. /poweroffree?debug=1) and every
+     .fN-wrap gets data-debug="1" set, which paints the toggle / video-click
+     tap zones (pink for prisons, blue for jails, magenta for video) so you
+     can see exactly where they sit. ?debug=0 or no param = normal. */
+  (function () {
+    var sp = new URLSearchParams(window.location.search);
+    if (sp.get('debug') === '1') {
+      document.querySelectorAll('[class*="-wrap"]').forEach(function (el) {
+        if (/\bf[1-8]-wrap\b/.test(el.className)) el.setAttribute('data-debug', '1');
+      });
+    }
+  })();
 
   /* ---------- Auto-stop video when scrolled out of view ----------
      If a user starts a finding/hero video and then scrolls (or jumps via
