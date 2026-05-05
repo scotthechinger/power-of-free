@@ -2310,46 +2310,50 @@ main { padding-top: var(--header-h); }
 /* Mailchimp signup form — desktop footer (SVG 1440×368).
    Email line in baked SVG: x=80→485, y≈250 (line at y≈275).
    SIGN UP coral pill: x=505→625, y=240→285.
-   Form is positioned absolutely; input + button overlay both. */
+   Children are positioned absolutely (not flex) so each lands exactly
+   over its baked-in counterpart — flex was producing surprises. */
 .footer-mc-form {
   position: absolute;
-  top: 65.22%;       /* 240/368 — matches SIGN UP top */
-  left: 5.56%;       /* 80/1440 — matches email line left */
-  width: 38.19%;     /* (625-80)/1440 — covers email line + SIGN UP */
-  height: 13.04%;    /* 48/368 */
+  inset: 0;
   z-index: 6;
-  display: flex;
-  align-items: stretch;
   margin: 0;
   padding: 0;
+  pointer-events: none; /* let only the children pick up clicks */
 }
 .footer-mc-email {
-  flex: 1 1 auto;
+  position: absolute;
+  top: 65.22%;       /* 240/368 — same band as SIGN UP */
+  left: 5.56%;       /* 80/1440 */
+  width: 28.13%;     /* 405/1440 — up to ~x=485, just before coral pill */
+  height: 13.04%;    /* 48/368 */
   background: transparent;
   border: 0;
   outline: 0;
-  padding: 0 8px 0 0;
+  padding: 0;
   margin: 0;
   font-family: var(--display);
   font-size: 18px;
   font-weight: 500;
   color: #fff;
   letter-spacing: 0.01em;
+  cursor: text;
+  pointer-events: auto;
 }
-.footer-mc-email::placeholder {
-  color: rgba(255,255,255,0.55);
-}
+.footer-mc-email::placeholder { color: transparent; }
 .footer-mc-submit {
-  flex: 0 0 22.06%;  /* 124/(625-80) = 22.75% — coral pill in form's width */
-  background: transparent; /* visual is the SVG coral pill underneath */
+  position: absolute;
+  top: 65.22%;       /* 240/368 */
+  left: 35.07%;      /* 505/1440 — coral pill */
+  width: 8.61%;      /* 124/1440 */
+  height: 13.04%;    /* 48/368 */
+  background: transparent;  /* SVG has the coral visual */
   border: 0;
   cursor: pointer;
-  font-family: var(--display);
-  font-size: 0;       /* hide the "SIGN UP" label since SVG already has it */
+  font-size: 0;       /* hide the 'SIGN UP' label since SVG already has it */
   color: transparent;
   padding: 0;
   margin: 0;
-  margin-left: auto;
+  pointer-events: auto;
 }
 .footer-tap {
   position: absolute;
@@ -4881,7 +4885,7 @@ main { padding-top: var(--header-h); }
       <!-- Mailchimp signup form — overlays the baked email line + SIGN UP
            button. Same Mailchimp endpoint + interest-group tag as desktop. -->
       <form class="m-footer-mc-form" action="https://worthrises.us17.list-manage.com/subscribe/post?u=d5deffca38b8d1f6cd5d6dfc9&amp;id=461baa50bf&amp;f_id=00cf15e1f0" method="post" target="_blank" novalidate>
-        <input class="m-footer-mc-email" type="email" name="EMAIL" placeholder="Email Address" required aria-label="Email Address">
+        <input class="m-footer-mc-email" type="email" name="EMAIL" placeholder=" " required aria-label="Email Address">
         <button class="m-footer-mc-submit" type="submit" name="subscribe">SIGN UP</button>
         <div aria-hidden="true" style="position:absolute; left:-5000px;"><input type="text" name="b_d5deffca38b8d1f6cd5d6dfc9_461baa50bf" tabindex="-1" value=""></div>
         <input type="hidden" name="group[3][4]" value="4">
@@ -5982,7 +5986,9 @@ main { padding-top: var(--header-h); }
        group (group_id=3, value=4). target="_blank" so the user lands on
        Mailchimp's confirmation page in a new tab without leaving the site. -->
   <form class="footer-mc-form" action="https://worthrises.us17.list-manage.com/subscribe/post?u=d5deffca38b8d1f6cd5d6dfc9&amp;id=461baa50bf&amp;f_id=00cf15e1f0" method="post" target="_blank" novalidate>
-    <input class="footer-mc-email" type="email" name="EMAIL" placeholder="Email Address" required aria-label="Email Address">
+    <!-- Empty placeholder — the SVG already has 'Email Address' baked in.
+         When the user types, their text appears on top in the same area. -->
+    <input class="footer-mc-email" type="email" name="EMAIL" placeholder=" " required aria-label="Email Address">
     <button class="footer-mc-submit" type="submit" name="subscribe">SIGN UP</button>
     <!-- Honeypot anti-spam (Mailchimp expects this exact name) -->
     <div aria-hidden="true" style="position:absolute; left:-5000px;"><input type="text" name="b_d5deffca38b8d1f6cd5d6dfc9_461baa50bf" tabindex="-1" value=""></div>
