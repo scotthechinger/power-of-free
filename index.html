@@ -43,7 +43,8 @@
      The JS-based new Image() preload sometimes garbage-collects before the file is fully
      fetched — these <link rel="preload"> tags pin the request at high browser priority. -->
 <link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-no-number.svg">
-<link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-jails-no-number.svg">
+<link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-prisons-chart.svg">
+<link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-jails-chart.svg">
 <link rel="preload" as="image" href="assets/mobile/mobile-finding-01.svg">
 <link rel="preload" as="image" href="assets/mobile/mobile-finding-01-jails.svg">
 <link rel="preload" as="image" href="assets/charts/desktop/Federal.svg">
@@ -3208,12 +3209,27 @@ main { padding-top: var(--header-h); }
    cy=840 / cy=876 in source 2068-tall SVG.
      Prisons: top (840-18)/1988 = 41.35%, height 36/1988 = 1.81%
      Jails:   top (876-18)/1988 = 43.16%, height 1.81% */
-/* Final working SVGs 2026-05-05 (cropped wrap 1440×1959 from 2039
-   natural): radios at cx=88, cy=789 / cy=825.
-     Prisons: top (789-18)/1959 = 39.36%, height 36/1959 = 1.84%
-     Jails:   top (825-18)/1959 = 41.19% */
-.f1-tog-prisons { top: 39.36%; left: 5.56%; width: 14%; height: 1.84%; }
-.f1-tog-jails   { top: 41.19%; left: 5.56%; width: 14%; height: 1.84%; }
+/* New chart-overlay approach (2026-05-05): empty base SVG + 560×422
+   chart graph layered on top at left=80, top=739 in source 2039.
+   Chart's own radios are at cx=8 cy=94/130 within chart → in source:
+     PRISONS: y = 739 + 94 = 833  → 833/1959 = 42.52%
+     JAILS:   y = 739 + 130 = 869 → 869/1959 = 44.36%
+   Tap zones 36px tall, centered on radio cy. */
+.f1-tog-prisons { top: 41.60%; left: 5.56%; width: 14%; height: 1.84%; }
+.f1-tog-jails   { top: 43.44%; left: 5.56%; width: 14%; height: 1.84%; }
+
+/* F1 chart overlay — 560×422 at left=80, top=739 in source 2039 (wrap 1959). */
+.f1-chart {
+  position: absolute;
+  top: 37.72%;
+  left: 5.56%;
+  width: 38.89%;
+  height: 21.54%;
+  z-index: 3;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
 
 /* ----- Top-right block overlay (covers the baked block in the PNG) ----- */
 /* Position values derived from the F1 PNG layout. The baked top-right block
@@ -5506,6 +5522,16 @@ main { padding-top: var(--header-h); }
           </svg>
         </button>
       </div>
+      <!-- Chart overlay — sits in the empty chart slot of the base SVG.
+           Swaps src between prisons / jails chart graphs via JS toggle.
+           Position: 80 from left, 739 from top in source 2039 → cropped 1959 wrap.
+             left:  80/1440  = 5.56%
+             top:   739/1959 = 37.72%
+             width: 560/1440 = 38.89%
+             height:422/1959 = 21.54% -->
+      <img id="f1-chart" class="f1-chart"
+           src="assets/illustrations/separated/finding-01/finding-01-prisons-chart.svg"
+           alt="Call minutes per person — chart" />
       <!-- Toggle click overlays (calibrated positions) -->
       <button class="f1-tog f1-tog-prisons" type="button"
               data-state="prisons"
@@ -6303,26 +6329,26 @@ main { padding-top: var(--header-h); }
      The locked PNG IS the chart. Click overlay buttons swap the <img> src
      between the two state PNGs (prisons + jails). All numbers, eyebrow,
      and chart shapes change because the entire image swaps. */
-  var f1Img = document.getElementById('f1-img');
+  var f1Chart = document.getElementById('f1-chart');
   var f1Toggles = document.querySelectorAll('.f1-tog');
-  if (f1Img && f1Toggles.length) {
-    var f1Sources = {
-      prisons: 'assets/illustrations/separated/finding-01/finding-01-no-number.svg',
-      jails:   'assets/illustrations/separated/finding-01/finding-01-jails-no-number.svg'
+  if (f1Chart && f1Toggles.length) {
+    // New chart-overlay approach: empty base SVG stays loaded. Toggle
+    // swaps the CHART graph (prisons/jails) layered on top.
+    var f1ChartSources = {
+      prisons: 'assets/illustrations/separated/finding-01/finding-01-prisons-chart.svg',
+      jails:   'assets/illustrations/separated/finding-01/finding-01-jails-chart.svg'
     };
     f1Toggles.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var state = btn.getAttribute('data-state');
-        if (f1Sources[state]) f1Img.src = f1Sources[state];
+        if (f1ChartSources[state]) f1Chart.src = f1ChartSources[state];
       });
     });
 
-    // Preload BOTH state SVGs immediately on page load, so the first toggle
-    // click is instant instead of waiting on a ~10MB download. (Previously
-    // gated on IntersectionObserver with rootMargin 300px — not enough lead
-    // time when the user scrolls fast on a slow connection.)
-    var f1PreA = new Image(); f1PreA.src = f1Sources.prisons;
-    var f1PreB = new Image(); f1PreB.src = f1Sources.jails;
+    // Preload both chart graphs (small files now, ~45KB each — preload
+    // is just for instant swap on first click).
+    var f1PreA = new Image(); f1PreA.src = f1ChartSources.prisons;
+    var f1PreB = new Image(); f1PreB.src = f1ChartSources.jails;
   }
 
   /* ---------- Top-nav anchor scroll handler ----------
