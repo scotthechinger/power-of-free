@@ -2307,6 +2307,50 @@ main { padding-top: var(--header-h); }
   user-select: none;
   -webkit-user-drag: none;
 }
+/* Mailchimp signup form — desktop footer (SVG 1440×368).
+   Email line in baked SVG: x=80→485, y≈250 (line at y≈275).
+   SIGN UP coral pill: x=505→625, y=240→285.
+   Form is positioned absolutely; input + button overlay both. */
+.footer-mc-form {
+  position: absolute;
+  top: 65.22%;       /* 240/368 — matches SIGN UP top */
+  left: 5.56%;       /* 80/1440 — matches email line left */
+  width: 38.19%;     /* (625-80)/1440 — covers email line + SIGN UP */
+  height: 13.04%;    /* 48/368 */
+  z-index: 6;
+  display: flex;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+}
+.footer-mc-email {
+  flex: 1 1 auto;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 0 8px 0 0;
+  margin: 0;
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+.footer-mc-email::placeholder {
+  color: rgba(255,255,255,0.55);
+}
+.footer-mc-submit {
+  flex: 0 0 22.06%;  /* 124/(625-80) = 22.75% — coral pill in form's width */
+  background: transparent; /* visual is the SVG coral pill underneath */
+  border: 0;
+  cursor: pointer;
+  font-family: var(--display);
+  font-size: 0;       /* hide the "SIGN UP" label since SVG already has it */
+  color: transparent;
+  padding: 0;
+  margin: 0;
+  margin-left: auto;
+}
 .footer-tap {
   position: absolute;
   background: transparent;
@@ -4197,6 +4241,45 @@ main { padding-top: var(--header-h); }
       user-select: none;
       -webkit-user-drag: none;
     }
+    /* Mailchimp signup form — mobile footer (SVG 402×504).
+       Email line: ~y=180→210 in source. SIGN UP coral pill: x=40, y=235→285. */
+    .m-footer-mc-form {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      z-index: 6;
+    }
+    .m-footer-mc-email {
+      position: absolute;
+      top: 35.71%;       /* 180/504 */
+      left: 9.95%;       /* 40/402 */
+      width: 80.10%;     /* 322/402 */
+      height: 7.14%;     /* 36/504 */
+      background: transparent;
+      border: 0;
+      outline: 0;
+      padding: 0;
+      margin: 0;
+      font-family: var(--display);
+      font-size: 16px;
+      color: #fff;
+      letter-spacing: 0.01em;
+    }
+    .m-footer-mc-email::placeholder { color: rgba(255,255,255,0.55); }
+    .m-footer-mc-submit {
+      position: absolute;
+      top: 46.63%;       /* 235/504 — SIGN UP coral pill top */
+      left: 9.95%;       /* 40/402 */
+      width: 44.78%;     /* 180/402 */
+      height: 9.92%;     /* 50/504 */
+      background: transparent;  /* SVG has the coral visual */
+      border: 0;
+      cursor: pointer;
+      font-size: 0;
+      color: transparent;
+      padding: 0;
+      margin: 0;
+    }
 
     .m-footer {
       position: relative;
@@ -4795,8 +4878,14 @@ main { padding-top: var(--header-h); }
              X         at center (~180, 420): top 79.37%, left 39.80%, size 10.45%×8.33% -->
     <footer class="m-footer-locked">
       <img class="m-footer-img" src="assets/mobile/mobile-footer.svg" alt="Sign up to receive news and updates from Worth Rises." />
-      <a class="m-tap is-link" href="https://worthrises.org/subscribe" target="_blank" rel="noopener"
-         style="top: 44.05%; left: 9.95%; width: 23.13%; height: 7.14%;" aria-label="Sign up for news and updates"></a>
+      <!-- Mailchimp signup form — overlays the baked email line + SIGN UP
+           button. Same Mailchimp endpoint + interest-group tag as desktop. -->
+      <form class="m-footer-mc-form" action="https://worthrises.us17.list-manage.com/subscribe/post?u=d5deffca38b8d1f6cd5d6dfc9&amp;id=461baa50bf&amp;f_id=00cf15e1f0" method="post" target="_blank" novalidate>
+        <input class="m-footer-mc-email" type="email" name="EMAIL" placeholder="Email Address" required aria-label="Email Address">
+        <button class="m-footer-mc-submit" type="submit" name="subscribe">SIGN UP</button>
+        <div aria-hidden="true" style="position:absolute; left:-5000px;"><input type="text" name="b_d5deffca38b8d1f6cd5d6dfc9_461baa50bf" tabindex="-1" value=""></div>
+        <input type="hidden" name="group[3][4]" value="4">
+      </form>
       <a class="m-tap is-link" href="mailto:info@worthrises.com"
          style="top: 63.49%; left: 9.95%; width: 41.05%; height: 4.96%;" aria-label="Email Worth Rises"></a>
       <a class="m-tap is-link" href="https://facebook.com/worthrises" target="_blank" rel="noopener"
@@ -5887,8 +5976,19 @@ main { padding-top: var(--header-h); }
 ============================================================ -->
 <footer class="site-footer site-footer-locked" aria-label="Site footer">
   <img class="site-footer-img" src="assets/illustrations/desktop-footer.svg" alt="Sign up to receive news and updates from Worth Rises." data-anim="fade-up" />
-  <a class="footer-tap" href="https://worthrises.org/subscribe" target="_blank" rel="noopener"
-     style="top: 65.22%; left: 35.07%; width: 8.61%; height: 13.04%;" aria-label="Sign up for news and updates"></a>
+  <!-- Mailchimp signup form — overlays the email line + SIGN UP button
+       baked into the footer SVG. Submits to Worth Rises' Mailchimp list,
+       auto-tagged with "Connecting Families and Prison Telecom" interest
+       group (group_id=3, value=4). target="_blank" so the user lands on
+       Mailchimp's confirmation page in a new tab without leaving the site. -->
+  <form class="footer-mc-form" action="https://worthrises.us17.list-manage.com/subscribe/post?u=d5deffca38b8d1f6cd5d6dfc9&amp;id=461baa50bf&amp;f_id=00cf15e1f0" method="post" target="_blank" novalidate>
+    <input class="footer-mc-email" type="email" name="EMAIL" placeholder="Email Address" required aria-label="Email Address">
+    <button class="footer-mc-submit" type="submit" name="subscribe">SIGN UP</button>
+    <!-- Honeypot anti-spam (Mailchimp expects this exact name) -->
+    <div aria-hidden="true" style="position:absolute; left:-5000px;"><input type="text" name="b_d5deffca38b8d1f6cd5d6dfc9_461baa50bf" tabindex="-1" value=""></div>
+    <!-- Auto-tag with "Connecting Families and Prison Telecom" interest group -->
+    <input type="hidden" name="group[3][4]" value="4">
+  </form>
   <a class="footer-tap" href="mailto:info@worthrises.com"
      style="top: 56%; right: 4.86%; width: 19.44%; height: 9%;" aria-label="Email Worth Rises"></a>
   <a class="footer-tap" href="https://facebook.com/worthrises" target="_blank" rel="noopener"
