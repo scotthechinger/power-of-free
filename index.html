@@ -2689,8 +2689,11 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* Rebuild 5.3 prisons v2: 1440×2068 natural. Bottom 80px cropped. */
-  aspect-ratio: 1440 / 1988;
+  /* New 2026-05-05 SVG is 1440×2039 (no bottom-crop intended).
+     Wrap aspect-ratio matches the SVG's full natural aspect so percentage
+     positions on overlays (toggle radios, video click) map directly to
+     SVG y-coordinates: top% = svg_y / 2039. */
+  aspect-ratio: 1440 / 2039;
   margin: 0;
   overflow: hidden;
 }
@@ -3195,11 +3198,15 @@ main { padding-top: var(--header-h); }
    cy=840 / cy=876 in source 2068-tall SVG.
      Prisons: top (840-18)/1988 = 41.35%, height 36/1988 = 1.81%
      Jails:   top (876-18)/1988 = 43.16%, height 1.81% */
-/* F1 toggle radios — new 2026-05-05 SVG (1440×2039) places:
-   PRISONS dot at y≈780 (38.25%), JAILS dot at y≈815 (39.97%).
-   Tap zones 35px tall, non-overlapping, centered on each radio. */
-.f1-tog-prisons { top: 37.27%; left: 5.56%; width: 14%; height: 1.72%; }
-.f1-tog-jails   { top: 38.99%; left: 5.56%; width: 14%; height: 1.72%; }
+/* F1 toggle radios — new 2026-05-05 SVG (1440×2039). Verified actual
+   SVG circle coords: PRISONS at cx=88 cy=789, JAILS at cx=88 cy=825.
+   With wrap aspect now 1440/2039, percentage = svg_y / 2039.
+     PRISONS center: 789/2039 = 38.70% → tap top 37.70%
+     JAILS center:   825/2039 = 40.46% → tap top 39.70%
+   Tap zones 2% (≈41px) tall, adjacent (no overlap, no gap), covering
+   radio circle + "IN PRISONS" / "IN JAILS" label to the right. */
+.f1-tog-prisons { top: 37.70%; left: 4%; width: 16%; height: 2.00%; }
+.f1-tog-jails   { top: 39.70%; left: 4%; width: 16%; height: 2.00%; }
 
 /* ----- Top-right block overlay (covers the baked block in the PNG) ----- */
 /* Position values derived from the F1 PNG layout. The baked top-right block
