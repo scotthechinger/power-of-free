@@ -3151,19 +3151,21 @@ main { padding-top: var(--header-h); }
 .f2-wrap .f-video-click,
 .f2-wrap .f-video-player { top: 64.34%; height: 32.01%; left: 0; width: 100%; }
 
-/* QA 2026-05-05: overlay was 33px above photo top in new SVG (wrap
-   2017). Shift down 33/2017 = 1.64% → top 68.64%, h reduced same. */
+/* QA 2026-05-05 v2: previous shift went the wrong direction; overlay
+   ended up 70px below photo top. Shift UP 70/2017 = 3.47% from prior
+   value → top 65.17%, extend height to reach 100% wrap bottom. */
 .f3-wrap .f-video-click,
-.f3-wrap .f-video-player { top: 68.64%; height: 31.50%; left: 0; width: 100%; }
+.f3-wrap .f-video-player { top: 65.17%; height: 34.83%; left: 0; width: 100%; }
 
 /* F4 v2: photo y=1322 in cropped 2019 wrap → top 65.48%, h 34.67% */
 .f4-wrap .f-video-click,
 .f4-wrap .f-video-player { top: 65.48%; height: 34.67%; left: 0; width: 100%; }
 
-/* QA 2026-05-05: overlay was ~10px above photo top in new SVG (wrap
-   2069). Shift down 10/2069 = 0.48% → top 67.08%, h reduced same. */
+/* QA 2026-05-05 v2: previous shift went the wrong direction; overlay
+   ended up 20px below photo top. Shift UP 20/2069 = 0.97% from prior
+   value → top 66.11%, extend height to reach 100%. */
 .f5-wrap .f-video-click,
-.f5-wrap .f-video-player { top: 67.08%; height: 33.06%; left: 0; width: 100%; }
+.f5-wrap .f-video-player { top: 66.11%; height: 33.89%; left: 0; width: 100%; }
 
 /* F6: locked to photo exact position. Photo y=1357, h=700 in 2137 wrap. */
 .f6-wrap .f-video-click,
