@@ -6442,6 +6442,41 @@ main { padding-top: var(--header-h); }
     });
   });
 
+  /* ---------- Auto-stop video when scrolled out of view ----------
+     If a user starts a finding/hero video and then scrolls (or jumps via
+     subnav) to another section, the iframe keeps playing audio in the
+     background — confusing because there's no visible player to stop.
+     IntersectionObserver catches when the player drops below ~10%
+     visibility and force-closes it so audio stops and the section
+     returns to its thumbnail/poster state. */
+  function _stopFindingPlayer(player) {
+    if (!player || !player.classList.contains('is-open')) return;
+    var iframe = player.querySelector('.f-video-frame');
+    if (iframe) iframe.removeAttribute('src');
+    player.classList.remove('is-open');
+    player.setAttribute('aria-hidden', 'true');
+  }
+  function _stopHeroPlayer(section) {
+    if (!section || !section.classList.contains('is-playing')) return;
+    var iframe = section.querySelector('.hero-video-frame');
+    if (iframe) iframe.removeAttribute('src');
+    section.classList.remove('is-playing');
+  }
+  if ('IntersectionObserver' in window) {
+    var _videoVisObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.intersectionRatio < 0.1) {
+          var el = entry.target;
+          if (el.classList.contains('f-video-player')) _stopFindingPlayer(el);
+          else if (el.classList.contains('hero-video-section')) _stopHeroPlayer(el);
+        }
+      });
+    }, { threshold: [0, 0.1, 0.25] });
+    document.querySelectorAll('.f-video-player').forEach(function (p) { _videoVisObs.observe(p); });
+    var heroSec = document.querySelector('.hero-video-section');
+    if (heroSec) _videoVisObs.observe(heroSec);
+  }
+
   /* ---------- Hero cord draw-on (getTotalLength approach) ----------
      pathLength="1" + stroke-dasharray:1 wasn't reliably honored across
      browsers (the cord rendered as a static line). Using getTotalLength()
