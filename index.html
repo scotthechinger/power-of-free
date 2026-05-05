@@ -990,11 +990,26 @@ main { padding-top: var(--header-h); }
 .hero-video-section.is-playing .hero-video-poster,
 .hero-video-section.is-playing .hero-video-card { display: none; }
 .hero-video-section.is-playing .hero-video-frame { display: block; }
+/* When playing, the section background swaps from dark to cloud-neutral
+   so any letterbox area (visible whenever the section's aspect doesn't
+   match the video's 16:9) shows the brand cream instead of black bars.
+   Per design call: better to keep the section at its current size on
+   every screen and accept some neutral side / top-bottom space than to
+   resize the section and cause a layout jump. */
+.hero-video-section.is-playing { background: var(--cloud-neutral); }
 .hero-video-frame {
   display: none;
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  /* Object-fit: contain semantics — the iframe sizes itself to a 16:9
+     box that fits INSIDE the section (whichever of width/height is more
+     restrictive). margin:auto + inset:0 centers it. The section bg shows
+     in the remaining cream space. */
+  inset: 0;
+  margin: auto;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
   border: 0;
   z-index: 5;
 }
@@ -2727,14 +2742,23 @@ main { padding-top: var(--header-h); }
   left: 0;
   width: 100%;
   height: 35.21%;
-  background: #000;
+  background: var(--cloud-neutral); /* was #000 — neutral letterbox per client preference */
   z-index: 20;
   display: none;
 }
 .f-video-player.is-open { display: block; }
 .f-video-frame {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
+  /* Object-fit: contain semantics — iframe sized to a 16:9 box that fits
+     inside the player block (whichever of width/height is more restrictive),
+     centered. The player bg shows in the remaining cream space rather
+     than Vimeo's default black letterbox. */
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
   border: 0;
   display: block;
 }
