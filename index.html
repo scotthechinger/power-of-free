@@ -3074,11 +3074,13 @@ main { padding-top: var(--header-h); }
 }
 /* Rebuild 5.3 desktop SVG aspect ratios — bottom 83px cropped per QA:
    F3 2195→2112, F4 2175→2092, F5 2170→2087, F7 2094→2011, F8 2198→2115. */
-.f3-wrap { aspect-ratio: 1440 / 2112; }
-.f4-wrap { aspect-ratio: 1440 / 2019; }   /* Rebuild 5.3 v2: 2102 native − 83 crop */
-.f5-wrap { aspect-ratio: 1440 / 2087; }
-.f7-wrap { aspect-ratio: 1440 / 2011; }
-.f8-wrap { aspect-ratio: 1440 / 2115; }
+/* New 2026-05-05 desktop SVGs — wrap aspect = full natural SVG aspect
+   so percentage positions on overlays map directly to svg_y / svg_height. */
+.f3-wrap { aspect-ratio: 1440 / 2097; }   /* was 2112 */
+.f4-wrap { aspect-ratio: 1440 / 2215; }   /* was 2019 (cropped) */
+.f5-wrap { aspect-ratio: 1440 / 2149; }   /* was 2087 */
+.f7-wrap { aspect-ratio: 1440 / 2131; }   /* was 2011 (cropped) */
+.f8-wrap { aspect-ratio: 1440 / 2238; }   /* was 2115 */
 
 /* F4/5/6/8 top-right illustrations — flush against right edge of section.
    Spec from designer (top from top of block, in SVG units):
