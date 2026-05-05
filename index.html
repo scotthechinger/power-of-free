@@ -2689,11 +2689,11 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* New 2026-05-05 SVG is 1440×2039 (no bottom-crop intended).
-     Wrap aspect-ratio matches the SVG's full natural aspect so percentage
-     positions on overlays (toggle radios, video click) map directly to
-     SVG y-coordinates: top% = svg_y / 2039. */
-  aspect-ratio: 1440 / 2039;
+  /* New 2026-05-05 SVG is 1440×2039 with 80px section-bottom-strip baked
+     in at the bottom. Crop those 80 → 1959 wrap height. Photo + title
+     bar ends exactly at the crop line. Overlay percentages map as
+     top% = svg_y / 1959. */
+  aspect-ratio: 1440 / 1959;
   margin: 0;
   overflow: hidden;
 }
@@ -2724,15 +2724,16 @@ main { padding-top: var(--header-h); }
   display: block;
   pointer-events: none;
 }
-/* Video click overlay — F1 default. New 1440×2039 SVG (2026-05-05):
-   orange-jacket photo top at y≈1240, title bar bottom at y≈2020 →
-   top 60.81%, height 38.30%. F2-F8 override these in their own rules. */
+/* Video click overlay — F1 default. New 2026-05-05 SVG:
+   photo+title bar y=1240 to ~1955 in source 2039. Wrap is 1440/1959
+   (80 cropped). top% = 1240/1959 = 63.30%, height = 715/1959 = 36.50%.
+   F2-F8 override these in their own rules. */
 .f-video-click {
   position: absolute;
-  top: 60.81%;
+  top: 63.30%;
   left: 0;
   width: 100%;
-  height: 38.30%;
+  height: 36.50%;
   background: transparent;
   border: 0;
   padding: 0;
@@ -2742,10 +2743,10 @@ main { padding-top: var(--header-h); }
 }
 .f-video-player {
   position: absolute;
-  top: 60.81%;
+  top: 63.30%;
   left: 0;
   width: 100%;
-  height: 38.30%;
+  height: 36.50%;
   background: var(--cloud-neutral); /* was #000 — neutral letterbox per client preference */
   z-index: 20;
   display: none;
@@ -3074,13 +3075,15 @@ main { padding-top: var(--header-h); }
 }
 /* Rebuild 5.3 desktop SVG aspect ratios — bottom 83px cropped per QA:
    F3 2195→2112, F4 2175→2092, F5 2170→2087, F7 2094→2011, F8 2198→2115. */
-/* New 2026-05-05 desktop SVGs — wrap aspect = full natural SVG aspect
-   so percentage positions on overlays map directly to svg_y / svg_height. */
-.f3-wrap { aspect-ratio: 1440 / 2097; }   /* was 2112 */
-.f4-wrap { aspect-ratio: 1440 / 2215; }   /* was 2019 (cropped) */
-.f5-wrap { aspect-ratio: 1440 / 2149; }   /* was 2087 */
-.f7-wrap { aspect-ratio: 1440 / 2131; }   /* was 2011 (cropped) */
-.f8-wrap { aspect-ratio: 1440 / 2238; }   /* was 2115 */
+/* New 2026-05-05 desktop SVGs — each has 80px section-bottom-strip baked
+   in at the bottom; crop those 80 to keep the photo+title bar flush.
+   Wrap aspect = (natural_height − 80). Overlay percentages map as
+   top% = svg_y / wrap_height. */
+.f3-wrap { aspect-ratio: 1440 / 2017; }   /* 2097 − 80 */
+.f4-wrap { aspect-ratio: 1440 / 2135; }   /* 2215 − 80 */
+.f5-wrap { aspect-ratio: 1440 / 2069; }   /* 2149 − 80 */
+.f7-wrap { aspect-ratio: 1440 / 2051; }   /* 2131 − 80 */
+.f8-wrap { aspect-ratio: 1440 / 2158; }   /* 2238 − 80 */
 
 /* F4/5/6/8 top-right illustrations — flush against right edge of section.
    Spec from designer (top from top of block, in SVG units):
@@ -3200,15 +3203,14 @@ main { padding-top: var(--header-h); }
    cy=840 / cy=876 in source 2068-tall SVG.
      Prisons: top (840-18)/1988 = 41.35%, height 36/1988 = 1.81%
      Jails:   top (876-18)/1988 = 43.16%, height 1.81% */
-/* F1 toggle radios — new 2026-05-05 SVG (1440×2039). Verified actual
-   SVG circle coords: PRISONS at cx=88 cy=789, JAILS at cx=88 cy=825.
-   With wrap aspect now 1440/2039, percentage = svg_y / 2039.
-     PRISONS center: 789/2039 = 38.70% → tap top 37.70%
-     JAILS center:   825/2039 = 40.46% → tap top 39.70%
-   Tap zones 2% (≈41px) tall, adjacent (no overlap, no gap), covering
-   radio circle + "IN PRISONS" / "IN JAILS" label to the right. */
-.f1-tog-prisons { top: 37.70%; left: 4%; width: 16%; height: 2.00%; }
-.f1-tog-jails   { top: 39.70%; left: 4%; width: 16%; height: 2.00%; }
+/* F1 toggle radios — new 2026-05-05 SVG. Verified SVG circle coords:
+   PRISONS at cx=88 cy=789, JAILS at cx=88 cy=825.
+   Wrap is 1440/1959 (80 cropped from natural 2039). Percentages:
+     PRISONS center: 789/1959 = 40.28% → tap top 39.36%
+     JAILS center:   825/1959 = 42.11% → tap top 41.20%
+   Tap zones 1.84% (≈36px) tall, adjacent (no overlap, no gap). */
+.f1-tog-prisons { top: 39.36%; left: 4%; width: 16%; height: 1.84%; }
+.f1-tog-jails   { top: 41.20%; left: 4%; width: 16%; height: 1.84%; }
 
 /* ----- Top-right block overlay (covers the baked block in the PNG) ----- */
 /* Position values derived from the F1 PNG layout. The baked top-right block
