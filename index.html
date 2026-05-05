@@ -2909,21 +2909,21 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* Final QA F2 SVG: 1440×2187 natural (was 2212; content shifted up 25). */
-  aspect-ratio: 1440 / 2187;
+  /* Final 2026-05-05 base: 1440×2186 with 80px section-bottom-strip;
+     crop to 2106. */
+  aspect-ratio: 1440 / 2106;
   margin: 0;
   overflow: hidden;
 }
 .f2-wrap .f2-base { object-fit: cover; object-position: top; }
-/* F2 chart container — Rebuild 5.3 desktop chart (560×560).
-   Final QA F2 SVG (1440×2187): chart slot at native y=772 (content shifted
-   up 25 in this re-export). 772/2187 = 35.30%; 560/2187 = 25.61%. */
+/* F2 chart container — chart 580×519, positioned at left=80, top=767 in
+   1440×2186 source (lower-left, below body text). */
 .f2-chart-container {
   position: absolute;
-  top: 35.30%;
-  left: 4.93%;
-  width: 38.89%;
-  height: 25.61%;
+  top: 36.42%;       /* 767 / 2106 */
+  left: 5.56%;       /* 80 / 1440 */
+  width: 40.28%;     /* 580 / 1440 */
+  height: 24.64%;    /* 519 / 2106 */
   z-index: 3;
 }
 .f2-chart {
@@ -2935,12 +2935,13 @@ main { padding-top: var(--header-h); }
   pointer-events: none;
   user-select: none;
 }
-/* Rebuild 5.3 chart (560×560) with radios at cx=8 cy=144/176/208/240/272/304. */
+/* Final chart (580×519) with radios at cx=8 cy=135/167/199/231/263/295.
+   Tap row 32 → top = (cy-16) / 519. */
 .f2-chart-radio {
   position: absolute;
   left: 0;
   width: 50%;        /* covers radio + label text */
-  height: 5.71%;     /* 32 / 560 */
+  height: 6.17%;     /* 32 / 519 */
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -3147,8 +3148,10 @@ main { padding-top: var(--header-h); }
    Calibrated to cropped wraps (F1, F3, F4, F5, F7, F8: bottom 83 cropped;
    F2, F6: full natural). Per-finding QA nudges baked in. */
 /* F2: locked to photo exact position. Photo y=1407, h=700 in 2187 wrap. */
+/* F2 video — wrap 1440/2106. Photo at translate(0, 1406), 720×700 →
+   top 1406/2106 = 66.76%, h 700/2106 = 33.24%. */
 .f2-wrap .f-video-click,
-.f2-wrap .f-video-player { top: 64.34%; height: 32.01%; left: 0; width: 100%; }
+.f2-wrap .f-video-player { top: 66.76%; height: 33.24%; left: 0; width: 100%; }
 
 /* QA 2026-05-05 v2: previous shift went the wrong direction; overlay
    ended up 70px below photo top. Shift UP 70/2017 = 3.47% from prior
@@ -3934,15 +3937,19 @@ main { padding-top: var(--header-h); }
     #m-f6 .m-finding-img { aspect-ratio: 402 / 3064; }   /* was 3213, now PNG */
     #m-f7 .m-finding-img { aspect-ratio: 402 / 3341; }   /* was 3490 */
     #m-f8 .m-finding-img { aspect-ratio: 402 / 3300; }   /* was 3344 */
-    /* Mobile F2 chart container — Rebuild 5.3 chart (323×604). Final QA
-       F2 SVG (402×3430, was 3452, content shifted up 22). Chart slot at
-       native y=1842 (was 1864). 1842/3430 = 53.70%; 604/3430 = 17.61%. */
+    /* Mobile F2 chart container — final 322×636 chart. Mobile base
+       unchanged at 402×3430. Chart sits 40 below body text (text ends
+       y≈1840), 40 margin each side.
+         left:  40/402   = 9.95%
+         top:   1840/3430 = 53.64%
+         width: 322/402  = 80.10%
+         height: 636/3430 = 18.54% */
     .m-f2-chart-container {
       position: absolute;
-      top: 53.70%;
-      left: 9.83%;
-      width: 80.35%;
-      height: 17.61%;
+      top: 53.64%;
+      left: 9.95%;
+      width: 80.10%;
+      height: 18.54%;
       z-index: 3;
     }
     .m-f2-chart {
@@ -3956,7 +3963,7 @@ main { padding-top: var(--header-h); }
     }
     .m-f2-chart-radio {
       position: absolute;
-      height: 5.30%;    /* 32 / 604 — radio tap-row height in 604-tall chart */
+      height: 5.03%;    /* 32 / 636 — radio tap-row height in 636-tall chart */
       background: transparent;
       border: 0;
       cursor: pointer;
@@ -4633,25 +4640,23 @@ main { padding-top: var(--header-h); }
       </article>
       <article class="m-finding" id="m-f2" data-finding-idx="1" data-finding-area="Money">
         <img class="m-finding-img" src="assets/mobile/mobile-finding-02.svg" alt="Finding 2: Financial Relief" loading="lazy" />
-        <!-- 6-state chart toggle (Rebuild 5.3 mobile charts, 323×604).
-             Radios baked into chart SVG at:
+        <!-- Final mobile chart (322×636). Radios at:
                LEFT col cx=8:   cy=100 (Federal), 136 (California), 172 (Connecticut)
                RIGHT col cx=172: cy=100 (Massachusetts), 136 (Minnesota), 172 (New York)
-             Each tap row 32px tall centered on cy → top = (cy-16)/604.
-             Connecticut is the default state. -->
+             Each tap row 32px tall → top = (cy-16)/636. -->
         <div class="m-f2-chart-container" data-f2-chart-wrap-mobile>
           <img class="m-f2-chart" data-f2-chart-mobile src="assets/charts/mobile/Connecticut.svg" alt="Connecticut chart" />
           <!-- Left column (cx=8) -->
-          <button type="button" class="m-f2-chart-radio" data-state="Federal"       style="top: 13.91%; left: 0;     width: 50%;" aria-label="Show Federal data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="California"    style="top: 19.87%; left: 0;     width: 50%;" aria-label="Show California data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="Connecticut"   style="top: 25.83%; left: 0;     width: 50%;" aria-label="Show Connecticut data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Federal"       style="top: 13.21%; left: 0;   width: 50%;" aria-label="Show Federal data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="California"    style="top: 18.87%; left: 0;   width: 50%;" aria-label="Show California data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Connecticut"   style="top: 24.53%; left: 0;   width: 50%;" aria-label="Show Connecticut data"></button>
           <!-- Right column (cx=172) -->
-          <button type="button" class="m-f2-chart-radio" data-state="Massachusetts" style="top: 13.91%; left: 50%;   width: 50%;" aria-label="Show Massachusetts data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 19.87%; left: 50%;   width: 50%;" aria-label="Show Minnesota data"></button>
-          <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 25.83%; left: 50%;   width: 50%;" aria-label="Show New York data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Massachusetts" style="top: 13.21%; left: 50%; width: 50%;" aria-label="Show Massachusetts data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="Minnesota"     style="top: 18.87%; left: 50%; width: 50%;" aria-label="Show Minnesota data"></button>
+          <button type="button" class="m-f2-chart-radio" data-state="New York"      style="top: 24.53%; left: 50%; width: 50%;" aria-label="Show New York data"></button>
         </div>
-        <!-- F2 Final QA (402×3430): video thumb y=2950,h=400 → top 86.01%, h 11.66%
-             Title bar baked into SVG — no HTML overlay needed. -->
+        <!-- F2 mobile (402×3430): video thumb y=2950, h=400 → top 86.01%, h 11.66%.
+             Base unchanged in this round, so video position kept as-is. -->
         <button class="m-tap" type="button" data-m-video="1188574671"
                 style="top: 86.01%; left: 9.95%; width: 80.10%; height: 11.66%;" aria-label="Play Finding 2 video"></button>
       </article>
@@ -5559,24 +5564,16 @@ main { padding-top: var(--header-h); }
         <img class="f-num-svg" src="assets/illustrations/separated/finding-02/number.svg" alt="$622 million saved by families to date" />
         <span class="f-num-counter">$0</span>
       </div>
-      <!-- 6-state chart toggle (Rebuild 5.3 chart 560×560, fixed-design re-export).
-           Radios at cx=8, cy=144/176/208/240/272/304 — single column, 32px row spacing.
-           Tap row 32 tall → top = (cy-16)/560.
-             Federal:        cy=144 → 22.86%
-             California:     cy=176 → 28.57%
-             Connecticut:    cy=208 → 34.29%
-             Massachusetts:  cy=240 → 40.00%
-             Minnesota:      cy=272 → 45.71%
-             New York:       cy=304 → 51.43%
-           Connecticut is default. -->
+      <!-- Final chart (580×519). Radios at cx=8, cy=135/167/199/231/263/295.
+           Tap row 32 → top = (cy-16)/519. -->
       <div class="f2-chart-container" data-f2-chart-wrap>
         <img class="f2-chart" data-f2-chart src="assets/charts/desktop/Connecticut.svg" alt="Connecticut chart — Financial Relief by state" />
-        <button type="button" class="f2-chart-radio" data-state="Federal"        style="top: 22.86%;" aria-label="Show Federal data"></button>
-        <button type="button" class="f2-chart-radio" data-state="California"     style="top: 28.57%;" aria-label="Show California data"></button>
-        <button type="button" class="f2-chart-radio" data-state="Connecticut"    style="top: 34.29%;" aria-label="Show Connecticut data"></button>
-        <button type="button" class="f2-chart-radio" data-state="Massachusetts"  style="top: 40.00%;" aria-label="Show Massachusetts data"></button>
-        <button type="button" class="f2-chart-radio" data-state="Minnesota"      style="top: 45.71%;" aria-label="Show Minnesota data"></button>
-        <button type="button" class="f2-chart-radio" data-state="New York"       style="top: 51.43%;" aria-label="Show New York data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Federal"        style="top: 22.93%;" aria-label="Show Federal data"></button>
+        <button type="button" class="f2-chart-radio" data-state="California"     style="top: 29.09%;" aria-label="Show California data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Connecticut"    style="top: 35.26%;" aria-label="Show Connecticut data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Massachusetts"  style="top: 41.43%;" aria-label="Show Massachusetts data"></button>
+        <button type="button" class="f2-chart-radio" data-state="Minnesota"      style="top: 47.59%;" aria-label="Show Minnesota data"></button>
+        <button type="button" class="f2-chart-radio" data-state="New York"       style="top: 53.76%;" aria-label="Show New York data"></button>
       </div>
       <!-- Video click target over baked thumbnail (bottom-left). TODO: add Vimeo ID. -->
       <button class="f-video-click" type="button"
