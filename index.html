@@ -2689,8 +2689,9 @@ main { padding-top: var(--header-h); }
   position: relative;
   width: 100%;
   display: block;
-  /* Rebuild 5.3 prisons v2: 1440×2068 natural. Bottom 80px cropped. */
-  aspect-ratio: 1440 / 1988;
+  /* Final working SVGs (2026-05-05): 1440×2039 natural. Bottom 80px
+     section-strip cropped → 1959 wrap height. */
+  aspect-ratio: 1440 / 1959;
   margin: 0;
   overflow: hidden;
 }
@@ -2721,14 +2722,15 @@ main { padding-top: var(--header-h); }
   display: block;
   pointer-events: none;
 }
-/* Video click overlay — F1 default. Locked to photo exact position:
-   y=1288, h=700 in cropped 1988 frame → top 64.79%, height 35.21%. */
+/* Video click overlay — F1 default. Final working SVGs 2026-05-05:
+   photo at y=1240, h=715 in source 2039 → cropped 1959 wrap →
+   top 1240/1959 = 63.30%, height 715/1959 = 36.50%. */
 .f-video-click {
   position: absolute;
-  top: 64.79%;
+  top: 63.30%;
   left: 0;
   width: 100%;
-  height: 35.21%;
+  height: 36.50%;
   background: transparent;
   border: 0;
   padding: 0;
@@ -2738,10 +2740,10 @@ main { padding-top: var(--header-h); }
 }
 .f-video-player {
   position: absolute;
-  top: 64.79%;
+  top: 63.30%;
   left: 0;
   width: 100%;
-  height: 35.21%;
+  height: 36.50%;
   background: var(--cloud-neutral); /* was #000 — neutral letterbox per client preference */
   z-index: 20;
   display: none;
@@ -3206,12 +3208,12 @@ main { padding-top: var(--header-h); }
    cy=840 / cy=876 in source 2068-tall SVG.
      Prisons: top (840-18)/1988 = 41.35%, height 36/1988 = 1.81%
      Jails:   top (876-18)/1988 = 43.16%, height 1.81% */
-/* Rebuild 5.3 prisons v2 (cropped wrap 1440×1988): radios at cx=88,
-   cy=840 / cy=876 in source 2068-tall SVG.
-     Prisons: top (840-18)/1988 = 41.35%, height 36/1988 = 1.81%
-     Jails:   top (876-18)/1988 = 43.16%, height 1.81% */
-.f1-tog-prisons { top: 41.35%; left: 5.56%; width: 14%; height: 1.81%; }
-.f1-tog-jails   { top: 43.16%; left: 5.56%; width: 14%; height: 1.81%; }
+/* Final working SVGs 2026-05-05 (cropped wrap 1440×1959 from 2039
+   natural): radios at cx=88, cy=789 / cy=825.
+     Prisons: top (789-18)/1959 = 39.36%, height 36/1959 = 1.84%
+     Jails:   top (825-18)/1959 = 41.19% */
+.f1-tog-prisons { top: 39.36%; left: 5.56%; width: 14%; height: 1.84%; }
+.f1-tog-jails   { top: 41.19%; left: 5.56%; width: 14%; height: 1.84%; }
 
 /* ----- Top-right block overlay (covers the baked block in the PNG) ----- */
 /* Position values derived from the F1 PNG layout. The baked top-right block
