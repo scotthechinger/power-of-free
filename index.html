@@ -2724,16 +2724,16 @@ main { padding-top: var(--header-h); }
   display: block;
   pointer-events: none;
 }
-/* Video click overlay — F1 default. New 2026-05-05 SVG:
-   photo+title bar y=1240 to ~1955 in source 2039. Wrap is 1440/1959
-   (80 cropped). top% = 1240/1959 = 63.30%, height = 715/1959 = 36.50%.
+/* Video click overlay — F1 default. New 2026-05-05 SVG, wrap 1440/1959.
+   QA: bottom of overlay was a few px short of photo bottom, bumped
+   height 36.50% → 36.80% so it reaches 100.10% (covers photo edge fully).
    F2-F8 override these in their own rules. */
 .f-video-click {
   position: absolute;
   top: 63.30%;
   left: 0;
   width: 100%;
-  height: 36.50%;
+  height: 36.80%;
   background: transparent;
   border: 0;
   padding: 0;
@@ -2746,7 +2746,7 @@ main { padding-top: var(--header-h); }
   top: 63.30%;
   left: 0;
   width: 100%;
-  height: 36.50%;
+  height: 36.80%;
   background: var(--cloud-neutral); /* was #000 — neutral letterbox per client preference */
   z-index: 20;
   display: none;
@@ -3151,15 +3151,19 @@ main { padding-top: var(--header-h); }
 .f2-wrap .f-video-click,
 .f2-wrap .f-video-player { top: 64.34%; height: 32.01%; left: 0; width: 100%; }
 
+/* QA 2026-05-05: overlay was 33px above photo top in new SVG (wrap
+   2017). Shift down 33/2017 = 1.64% → top 68.64%, h reduced same. */
 .f3-wrap .f-video-click,
-.f3-wrap .f-video-player { top: 67.00%; height: 33.14%; left: 0; width: 100%; }
+.f3-wrap .f-video-player { top: 68.64%; height: 31.50%; left: 0; width: 100%; }
 
 /* F4 v2: photo y=1322 in cropped 2019 wrap → top 65.48%, h 34.67% */
 .f4-wrap .f-video-click,
 .f4-wrap .f-video-player { top: 65.48%; height: 34.67%; left: 0; width: 100%; }
 
+/* QA 2026-05-05: overlay was ~10px above photo top in new SVG (wrap
+   2069). Shift down 10/2069 = 0.48% → top 67.08%, h reduced same. */
 .f5-wrap .f-video-click,
-.f5-wrap .f-video-player { top: 66.60%; height: 33.54%; left: 0; width: 100%; }
+.f5-wrap .f-video-player { top: 67.08%; height: 33.06%; left: 0; width: 100%; }
 
 /* F6: locked to photo exact position. Photo y=1357, h=700 in 2137 wrap. */
 .f6-wrap .f-video-click,
