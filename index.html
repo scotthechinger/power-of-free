@@ -43,8 +43,7 @@
      The JS-based new Image() preload sometimes garbage-collects before the file is fully
      fetched — these <link rel="preload"> tags pin the request at high browser priority. -->
 <link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-no-number.svg">
-<link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-prisons-chart.svg">
-<link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-jails-chart.svg">
+<link rel="preload" as="image" href="assets/illustrations/separated/finding-01/finding-01-jails-no-number.svg">
 <link rel="preload" as="image" href="assets/mobile/mobile-finding-01.svg">
 <link rel="preload" as="image" href="assets/mobile/mobile-finding-01-jails.svg">
 <link rel="preload" as="image" href="assets/charts/desktop/Federal.svg">
@@ -500,7 +499,7 @@ a { color: inherit; text-decoration: none; }
 /* Spacer so the fixed header doesn't overlap the first section */
 main { padding-top: var(--header-h); }
 .header-inner {
-  padding: 0 0 0 var(--gutter);   /* left padded; right edge flush so CTA hits viewport edge */
+  padding: 0 0 0 25px;            /* logo sits 25px from left edge; right edge flush so CTA hits viewport edge */
   display: flex;
   align-items: stretch;            /* let CTA stretch full height */
   justify-content: space-between;
@@ -1727,7 +1726,7 @@ main { padding-top: var(--header-h); }
    intentional. Live HTML text is overlaid in the upper-middle area; the
    figures' shoulders/arms intentionally overlap with the text region (Scott
    approved this — gives the compact "framed by figures" feel). */
-/* Action Center hero — Pallavi v3 SVG, native 1440×800 (no baked padding).
+/* Action Center hero — Pallavi v4 SVG (2026-05-12), native 1440×817 (no baked padding).
    Renders at natural ratio, full-bleed, sits flush against the next section. */
 .action-center {
   position: relative;
@@ -3284,8 +3283,8 @@ main { padding-top: var(--header-h); }
      PRISONS: y = 739 + 94 = 833  → 833/1959 = 42.52%
      JAILS:   y = 739 + 130 = 869 → 869/1959 = 44.36%
    Tap zones 36px tall, centered on radio cy. */
-.f1-tog-prisons { top: 41.60%; left: 5.56%; width: 14%; height: 1.84%; }
-.f1-tog-jails   { top: 43.44%; left: 5.56%; width: 14%; height: 1.84%; }
+.f1-tog-prisons { top: 39.76%; left: 5.56%; width: 14%; height: 1.84%; }
+.f1-tog-jails   { top: 41.60%; left: 5.56%; width: 14%; height: 1.84%; }
 
 /* F1 chart overlay — 560×422 at left=80, top=739 in source 2039 (wrap 1959). */
 .f1-chart {
@@ -4752,7 +4751,7 @@ main { padding-top: var(--header-h); }
                RIGHT col cx=172: cy=100 (Massachusetts), 136 (Minnesota), 172 (New York)
              Each tap row 32px tall → top = (cy-16)/636. -->
         <div class="m-f2-chart-container" data-f2-chart-wrap-mobile>
-          <img class="m-f2-chart" data-f2-chart-mobile src="assets/charts/mobile/Connecticut.svg" alt="Connecticut chart" />
+          <img class="m-f2-chart" data-f2-chart-mobile src="assets/charts/mobile/Federal.svg" alt="Federal chart" />
           <!-- Left column (cx=8) -->
           <button type="button" class="m-f2-chart-radio" data-state="Federal"       style="top: 13.21%; left: 0;   width: 50%;" aria-label="Show Federal data"></button>
           <button type="button" class="m-f2-chart-radio" data-state="California"    style="top: 18.87%; left: 0;   width: 50%;" aria-label="Show California data"></button>
@@ -5647,16 +5646,8 @@ main { padding-top: var(--header-h); }
           </svg>
         </button>
       </div>
-      <!-- Chart overlay — sits in the empty chart slot of the base SVG.
-           Swaps src between prisons / jails chart graphs via JS toggle.
-           Position: 80 from left, 739 from top in source 2039 → cropped 1959 wrap.
-             left:  80/1440  = 5.56%
-             top:   739/1959 = 37.72%
-             width: 560/1440 = 38.89%
-             height:422/1959 = 21.54% -->
-      <img id="f1-chart" class="f1-chart"
-           src="assets/illustrations/separated/finding-01/finding-01-prisons-chart.svg"
-           alt="Call minutes per person — chart" />
+      <!-- F1 desktop now uses full-base swap (no chart overlay layer).
+           Chart + number + everything baked into prisons/jails SVGs. -->
       <!-- Toggle click overlays (calibrated positions) -->
       <button class="f1-tog f1-tog-prisons" type="button"
               data-state="prisons"
@@ -5687,7 +5678,7 @@ main { padding-top: var(--header-h); }
       <!-- Final chart (580×519). Radios at cx=8, cy=135/167/199/231/263/295.
            Tap row 32 → top = (cy-16)/519. -->
       <div class="f2-chart-container" data-f2-chart-wrap>
-        <img class="f2-chart" data-f2-chart src="assets/charts/desktop/Connecticut.svg" alt="Connecticut chart — Financial Relief by state" />
+        <img class="f2-chart" data-f2-chart src="assets/charts/desktop/Federal.svg" alt="Federal chart — Financial Relief by state" />
         <button type="button" class="f2-chart-radio" data-state="Federal"        style="top: 22.93%;" aria-label="Show Federal data"></button>
         <button type="button" class="f2-chart-radio" data-state="California"     style="top: 29.09%;" aria-label="Show California data"></button>
         <button type="button" class="f2-chart-radio" data-state="Connecticut"    style="top: 35.26%;" aria-label="Show Connecticut data"></button>
@@ -6478,30 +6469,27 @@ main { padding-top: var(--header-h); }
     updateSubnavVisibility();
   }
 
-  /* ---------- Finding 01 v2: Prisons / Jails PNG toggle ----------
-     The locked PNG IS the chart. Click overlay buttons swap the <img> src
-     between the two state PNGs (prisons + jails). All numbers, eyebrow,
-     and chart shapes change because the entire image swaps. */
-  var f1Chart = document.getElementById('f1-chart');
+  /* ---------- Finding 01: Prisons / Jails full-base swap ----------
+     The desktop F1 base SVG now has chart + number + everything baked
+     in. Toggle buttons swap the entire <img id="f1-img"> src between
+     the two state SVGs. */
+  var f1Img = document.getElementById('f1-img');
   var f1Toggles = document.querySelectorAll('.f1-tog');
-  if (f1Chart && f1Toggles.length) {
-    // New chart-overlay approach: empty base SVG stays loaded. Toggle
-    // swaps the CHART graph (prisons/jails) layered on top.
-    var f1ChartSources = {
-      prisons: 'assets/illustrations/separated/finding-01/finding-01-prisons-chart.svg',
-      jails:   'assets/illustrations/separated/finding-01/finding-01-jails-chart.svg'
+  if (f1Img && f1Toggles.length) {
+    var f1Sources = {
+      prisons: 'assets/illustrations/separated/finding-01/finding-01-no-number.svg',
+      jails:   'assets/illustrations/separated/finding-01/finding-01-jails-no-number.svg'
     };
     f1Toggles.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var state = btn.getAttribute('data-state');
-        if (f1ChartSources[state]) f1Chart.src = f1ChartSources[state];
+        if (f1Sources[state]) f1Img.src = f1Sources[state];
       });
     });
 
-    // Preload both chart graphs (small files now, ~45KB each — preload
-    // is just for instant swap on first click).
-    var f1PreA = new Image(); f1PreA.src = f1ChartSources.prisons;
-    var f1PreB = new Image(); f1PreB.src = f1ChartSources.jails;
+    // Preload the alternate state for instant swap on first click.
+    var f1PreA = new Image(); f1PreA.src = f1Sources.prisons;
+    var f1PreB = new Image(); f1PreB.src = f1Sources.jails;
   }
 
   /* ---------- Top-nav anchor scroll handler ----------
