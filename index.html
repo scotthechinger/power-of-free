@@ -6815,18 +6815,13 @@ main { padding-top: var(--header-h); }
   }
 })();
 
-/* ---------- Finding copy-text button (PREVIEW via ?copy=1) ----------
-   Once approved by Ra, remove the URL-flag gate below (the two lines
-   marked "// PREVIEW GATE") to ship live everywhere. Copies the full
-   text of each finding — headline, key figures, body copy, quote(s),
-   and source citation — to the visitor's clipboard on click.
-   Works on both desktop and mobile. Text per finding lives in the
-   findingText map below; to update, edit the map. */
+/* ---------- Finding copy-text button (LIVE) ----------
+   Copies the full text of each finding — headline, key figures,
+   body copy, quote(s), and source citation — to the visitor's
+   clipboard on click. Works on both desktop and mobile.
+   Text per finding lives in the findingText map below;
+   to update any finding's text, edit that map. */
 (function () {
-  // PREVIEW GATE — remove these two lines to ship live
-  var _copyParams = new URLSearchParams(window.location.search);
-  if (_copyParams.get('copy') !== '1') return;
-
   var SOURCE = '—\nSource: "Critical Connections: The Power of Free Communication in Prisons and Jails"\nRead more: poweroffree.connectfamiliesnow.com';
 
   var findingText = {
