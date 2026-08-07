@@ -2750,6 +2750,71 @@ main { padding-top: var(--header-h); }
   min-height: 0;
   scroll-snap-align: start;
 }
+/* ============================================================
+   FINDING COPY-TEXT BUTTON (preview via ?copy=1)
+   ============================================================
+   Injected via JS onto each finding wrap when URL has ?copy=1.
+   Pulls sharable text from the finding <img>'s alt attribute.
+   Once approved by client, remove the ?copy=1 gate in the JS
+   below to ship live everywhere. */
+.finding-copy-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #F0EEE9;
+  color: #4B0F63;
+  border: 1.5px solid #4B0F63;
+  border-radius: 999px;
+  font-family: var(--display, "Inter", -apple-system, sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  -webkit-appearance: none;
+  appearance: none;
+  line-height: 1;
+}
+.finding-copy-btn:hover,
+.finding-copy-btn:focus-visible {
+  background: #E4572E;
+  color: #fff;
+  border-color: #E4572E;
+  transform: translateY(-1px);
+  outline: none;
+}
+.finding-copy-btn.is-copied {
+  background: #8FBF3D;
+  color: #fff;
+  border-color: #8FBF3D;
+  transform: translateY(0);
+}
+.finding-copy-btn svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+@media (max-width: 900px) {
+  .finding-copy-btn {
+    top: 14px;
+    right: 14px;
+    padding: 8px 12px;
+    font-size: 11px;
+    gap: 6px;
+  }
+  .finding-copy-btn svg { width: 12px; height: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .finding-copy-btn { transition: none; }
+  .finding-copy-btn:hover { transform: none; }
+}
+
 .f1-wrap {
   position: relative;
   width: 100%;
@@ -6748,6 +6813,247 @@ main { padding-top: var(--header-h); }
       hvCard.classList.add('is-in');
     }
   }
+})();
+
+/* ---------- Finding copy-text button (PREVIEW via ?copy=1) ----------
+   Once approved by Ra, remove the URL-flag gate below (the two lines
+   marked "// PREVIEW GATE") to ship live everywhere. Copies the full
+   text of each finding — headline, key figures, body copy, quote(s),
+   and source citation — to the visitor's clipboard on click.
+   Works on both desktop and mobile. Text per finding lives in the
+   findingText map below; to update, edit the map. */
+(function () {
+  // PREVIEW GATE — remove these two lines to ship live
+  var _copyParams = new URLSearchParams(window.location.search);
+  if (_copyParams.get('copy') !== '1') return;
+
+  var SOURCE = '—\nSource: "Critical Connections: The Power of Free Communication in Prisons and Jails"\nRead more: poweroffree.connectfamiliesnow.com';
+
+  var findingText = {
+    1: `FINDING 1 — INCREASED CONNECTION
+
+Key figures:
+• 6.4 billion additional minutes of connection
+• 600 million additional phone calls
+• In prisons: call minutes per person went from 25 to 45 (+80%)
+• In jails: call minutes per person went from 27 to 57 (+111%)
+
+Today, over 330,000 incarcerated people have access to fully free phone calls, and in some cases video calls and electronic messaging too, thanks to free communication policies in their jurisdictions. When the cost barrier to connection was removed, communication increased immediately, dramatically, and durably.
+
+These policies have enabled nearly 600 million additional calls and 6.4 billion additional call minutes between incarcerated people and their loved ones — that's millions more "I love yous" and billions more minutes of laughter, love, and hope.
+
+LOVE WITHOUT LIMITS
+
+What had once been rationed and rushed became abundant and consistent. In prisons, average daily usage increased from 25 to 45 minutes per person. In jails, the jump was even steeper — from 27 to 57 minutes — reflecting the urgent needs of people recently incarcerated and those awaiting trial.
+
+But this isn't just about quantity, it's also about quality. Without the constant stress of cost, conversations moved from brief, transactional agendas to sustained, relational connections. People were thoughtfully checking in on one another, doing homework with their children, watching movies with their spouses, and just being present for life's ups and downs — all without a clock running. The minutes matter, but what happens inside them matters more.
+
+"We have seen a significant increase in call activity, demonstrating that when financial barriers are removed, individuals in our care make greater use of opportunities to stay connected."
+— Commissioner Dan Martuscello III, New York
+
+${SOURCE}`,
+
+    2: `FINDING 2 — FINANCIAL RELIEF
+
+Key figure: $622 million saved by families — with 70% flowing to Black and brown families, who have borne this cost disproportionately.
+
+For decades, correctional telecom providers have charged incarcerated people and their families exorbitant rates to stay in touch. Given the remarkably low wages, if any, paid to incarcerated people, it is often families on the outside who bear this cost — households with limited financial means that have already been destabilized by the incarceration of a family member. One in three families goes into debt trying to stay connected, and 87% of those carrying the financial burden are women.
+
+The financial burden also carries immense emotional weight. Incarcerated people described a persistent sense of embarrassment and shame in asking family to pay for calls. When free communication policies were implemented, a weight was lifted on both sides of the wall.
+
+GROCERIES, RENT, AND ROOM TO BREATHE
+
+Savings for families with loved ones in prison ranged from $172 to $1,801 per year, depending on previous per-minute rates. They also accrued substantial value from the increase in free call time, which ranged from $244 to $2,927 per year. An outsized share of those savings flowed to the communities disproportionately impacted by incarceration with 70% of prison savings and 82% of jail savings went to Black and brown families. That new financial capacity did not sit idle — families used it to cover important expenses, reduce debt, and invest in their futures.
+
+Notably, the cost of communication also fell dramatically when the cost burden was shifted off of families to corrections agencies — a direct reflection of the perverse incentives and overcharging that have dominated the industry. On average, the rates corrections agencies now pay are over 60% less than what families previously paid.
+
+"We have been able to take that money and put it into a down payment for a mortgage. We've already saved $10,000 to put towards our future life together."
+— Brashani, Wife of an incarcerated person, Massachusetts
+
+${SOURCE}`,
+
+    3: `FINDING 3 — STRONGER FAMILY & COMMUNITY RELATIONSHIPS
+
+Key figures — share of people who said free calls helped build or repair relationships:
+• 82% of family members
+• 93% of incarcerated people
+
+Before the shift to free communication, incarcerated people and their families would go days, weeks, months, and even years between calls. Conversations were rationed around cost and limited to the most urgent matters. Communication was constrained and transactional, often focused on logistics or immediate needs rather than meaningful connection. But when the cost of communication was removed, that dynamic shifted.
+
+SUPPORT BOTH WAYS
+
+Without the financial stressor of paying for calls, communication centered on strengthening or repairing relationships. Incarcerated people and their loved ones expressed needing each other, rooting relationships in reciprocity that ensured support and accountability flowed both ways. And in doing so, this connection created a renewed sense of belonging and hope for the future. With more time and fewer constraints, families returned to the roles and rhythms of everyday life.
+
+These connections don't just sustain people through incarceration. Maintaining, and even expanding, social ties is critical for incarcerated people and their successful rehabilitation and reentry. They preserve the relationships that make hope, healing, and rehabilitation possible — and they become the foundation on which successful reentry is built.
+
+"I didn't feel like I'm looking at the time [and need] to hurry up and get through everything that I want to share within a 20-minute phone call. They can speak, and I can actually hear my family, loved ones, or friends vent about issues that they're having. I could literally just listen to them."
+— Hamza, Formerly incarcerated person, Massachusetts
+
+${SOURCE}`,
+
+    4: `FINDING 4 — PARENTING & CHILD DEVELOPMENT
+
+Nearly half of people in prison are parents to minor children, with 18% of those children four years old or younger. For incarcerated parents, connecting with their children over the phone is one of the primary ways they parent while separated. But the high cost of calls has long made that connection difficult to sustain at the levels necessary for child rearing. Parents are often forced to consider whether to spend their families' limited resources on staying involved in their children's lives or on other needs for their care and upbringing. The consistency that builds trust is the first to go.
+
+FOR THE NEXT GENERATION
+
+Free communication restored that consistency. Parents describe children running to the phone, eagerly anticipating daily calls, opening up in ways that intermittent, rationed conversations never allowed. For one family, daily calls between a father and his autistic daughter produced a concrete developmental change: she started speaking more, becoming vocal in ways she had never been before.
+
+Stronger parent-child relationships can help mitigate the harm of parental incarceration and improve outcomes for millions of impacted children — and the generations that follow. By enabling consistent parental engagement and supporting child development, free communication policies strengthen family stability and generational mobility.
+
+"When I say I raised my daughter over the phone, I mean it in the literal sense. Ninety-five percent of our engagement was over the phone — reading books to her, helping her with her homework, and praying with her."
+— Michael, Formerly incarcerated person, New York
+
+"You can't force a child to say what's going on in 30 minutes. But you can hear if your child is going through something by the tone of their voice. With free phone calls, if she has something going on, she can talk to me."
+— Natavia, Currently incarcerated person, New York
+
+${SOURCE}`,
+
+    5: `FINDING 5 — IMPROVED MENTAL & PHYSICAL HEALTH
+
+Key figures — described improvements in stress, stability, or overall wellbeing once calls became free:
+• 77% of family members
+• 76% of incarcerated people
+
+Prisons and jails are isolating by design. Incarceration cuts people off from their families and communities, leaving many feeling abandoned, worthless, and hopeless. These emotions erode the mental health of incarcerated people as well as their loved ones, who suffer real loss when they are removed from the home. Phone calls are a literal lifeline — and when they became free, people used them.
+
+HOPE IS ON THE LINE
+
+With free communication, families were able to stay present in one another's lives, share emotional support, and move through daily challenges together rather than apart. Calls eased loneliness and depression for incarcerated people, bringing back the sense of belonging incarceration often strips away and restoring the hope needed to keep going. These individual improvements in mental health rippled outward — a calmer person is a safer person. And for their loved ones on the outside, that same connection relieved worry and mitigated loss.
+
+Access to free communication also helped incarcerated people get urgent medical attention. Unable to call 911 or access emergency medical help, incarcerated people must rely on correctional officers to receive medical attention. When such efforts prove unsuccessful, incarcerated people could communicate urgent health needs to loved ones who could advocate for them by calling the facility and escalating their medical concerns.
+
+"Without the free phone calls, all your connections are cut off. You are literally isolated from everything. You get a sense of hope when you can still interact with people on the outside and see there's people out there that care about you."
+— Robert, Formerly incarcerated person, California
+
+${SOURCE}`,
+
+    6: `FINDING 6 — CALMER & SAFER FACILITIES
+
+Key figure: 100% of corrections staff recommended free communication as a security tool that reduces tensions and makes their jobs easier.
+
+Phones have long been one of the most volatile pressure points inside correctional facilities — where incarcerated people get good news and bad news that can change their day or their life. Artificial scarcity created by high call costs, limited infrastructure, and restrictive access meant that phones were a consistent source of tension. Ultimately, emotionally charged conversations were often cut short, leaving people to carry unresolved stress back into shared living spaces, which expectedly created broader environmental issues.
+
+BETTER FOR EVERYONE
+
+Free communication removed the scarcity that drove conflict, especially when implemented over personal tablets. Incarcerated people no longer had to compete for limited phone time or worry about when they would next be able to speak with loved ones. The prison environment had less tension, fewer conflicts, and more emotional stability. Overall, facilities became calmer, making both incarcerated people and corrections staff safer.
+
+With fewer conflicts and increased support from loved ones in navigating emotionally charged situations, there was a noticeable decrease in disciplinary infractions. These infractions often carry serious consequences that can affect a person's eligibility for early release, including parole. Thus, this shift not only improved daily life within facilities but also potentially enabled some incarcerated people to go home sooner.
+
+"I would go for it. It's going to be an enhancement for the incarcerated population and an enhancement for the security and civilian staff. It's a win-win on both sides."
+— Sergeant Mitchell, New York
+
+${SOURCE}`,
+
+    7: `FINDING 7 — REHABILITATION
+
+For many incarcerated people, staying connected to loved ones is not just about maintaining relationships — it is a catalyst for personal growth. Staying in touch allows people to remain connected to who they are as parents, partners, and members of their communities, rather than becoming defined solely by their time inside. This sense of identity and responsibility is motivating — when people feel connected to those who care about them and can see fruitful lives post incarceration, they are more likely to invest in their own growth and wellbeing.
+
+STAYING ON TRACK
+
+Regular communication with loved ones strengthens rehabilitation efforts by helping incarcerated people stay grounded in relationships that encourage self-improvement, accountability, and stability. When access is consistent, these connections become an ongoing source of motivation to participate in rehabilitative programs and avoid disciplinary infractions, both of which also influence early release decisions.
+
+In helping incarcerated people maintain identity, connection, and a sense of responsibility to others, free communication supports rehabilitation not by replacing formal programs, but by strengthening the social foundations that make those programs effective. In this way, these connections are not separate from rehabilitation, but part of it, perhaps even the root of it.
+
+"I see different individuals [when] they connect with their sons or their daughters or their wife. They're exercising more, getting involved in groups, going to church. Why? Because they want to become better men. I can see life, I can see the energy, I can see excitement. I can see the desire to do something different."
+— Saul, Currently incarcerated person, California
+
+"Conversations create a pathway for empathy and healing — and actually, just hope for a future when I get out. Without these phone calls, that would not have been possible. They were vital for my healing, for my sobriety, for my growth, and for my ability to do the positive things I'm doing now in prison — because I have a belief that there are people out there who care for me, who love me, and who I am responsible for."
+— Jasmeel, Currently incarcerated person, California
+
+${SOURCE}`,
+
+    8: `FINDING 8 — REENTRY PLANNING & SUCCESS
+
+Reentry can be daunting. Many incarcerated people are released without housing, employment, or the community support they need to help them navigate freedom — feeding high recidivism rates that undermine public safety. Research has repeatedly shown that having strong and consistent community ties is among the most important factors in reentry success because these ties increase the likelihood of securing housing, landing employment, and finding stability. Ultimately, the same connections that motivate rehabilitation make reentry possible — they become the foundation on which successful return is built.
+
+SAFER COMMUNITIES
+
+Free communication allows incarcerated people to plan for life after release while still inside, coordinating housing, employment, education, and treatment with the support of loved ones before the prison door opens. The bonds built through consistent connection during incarceration become the social infrastructure that makes reintegration possible.
+
+Access to free communication did not just give incarcerated people the means to plan for their freedom, but also to fight for it — participating in their own defense, preparing for parole hearings, or creating required release plans. For some, it meant coming home sooner.
+
+Successful reentry is not just a personal outcome — it is a public one. When people return home with stable housing, employment, and strong support networks, communities are safer and public systems are less burdened. Free communication is an investment in our communities that reaps returns.
+
+"It was because of free phone calls that I was able to call the organization that ended up connecting me with the university. Within a month I'm being hired in this amazing job!"
+— Elizabeth, Formerly incarcerated person, California
+
+"I was able to call social services, call transitional housing, call the school, call the Rock program. I got out in December, and in January, I was in school. All of that was possible because we didn't have to pay for the phone."
+— Donald, Formerly incarcerated person, California
+
+${SOURCE}`
+  };
+
+  function getFindingNum(wrap) {
+    // Desktop wraps have class like "f3-wrap"
+    var m = wrap.className.match(/\bf(\d)-wrap\b/);
+    if (m) return parseInt(m[1], 10);
+    // Mobile wraps sit inside an article like <article id="m-f3">
+    var article = wrap.closest('article[id^="m-f"]');
+    if (article) {
+      m = article.id.match(/^m-f(\d)$/);
+      if (m) return parseInt(m[1], 10);
+    }
+    return null;
+  }
+
+  var copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+
+  function makeCopyBtn(wrap) {
+    var num = getFindingNum(wrap);
+    if (!num || !findingText[num]) return;
+    var text = findingText[num];
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'finding-copy-btn';
+    btn.setAttribute('aria-label', 'Copy this finding\'s text to your clipboard');
+    btn.innerHTML = copyIcon + '<span class="copy-btn-label">Copy text</span>';
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var label = btn.querySelector('.copy-btn-label');
+      var original = label.textContent;
+
+      var done = function () {
+        label.textContent = 'Copied!';
+        btn.classList.add('is-copied');
+        setTimeout(function () {
+          label.textContent = original;
+          btn.classList.remove('is-copied');
+        }, 1600);
+      };
+      var fail = function () {
+        label.textContent = 'Press ⌘C';
+        setTimeout(function () { label.textContent = original; }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fail);
+      } else {
+        // Older-browser fallback
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); } catch (_) { fail(); }
+        document.body.removeChild(ta);
+      }
+    });
+
+    // ensure the wrap is positioned so absolute-positioned button lands correctly
+    var cs = window.getComputedStyle(wrap);
+    if (cs.position === 'static') wrap.style.position = 'relative';
+    wrap.appendChild(btn);
+  }
+
+  var wraps = document.querySelectorAll(
+    '.f1-wrap, .f2-wrap, .f3-wrap, .f4-wrap, .f5-wrap, .f6-wrap, .f7-wrap, .f8-wrap, .m-finding'
+  );
+  wraps.forEach(makeCopyBtn);
 })();
 </script>
 
